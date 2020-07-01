@@ -32,7 +32,7 @@ function unexpected(message: string, error: Error): WebApplicationException
     }
 
     // A response of '500 Internal Server Error'.
-    const response: Response = internalServerError(message, ContentType.TEXT_HTML_UTF8);
+    const response = internalServerError(message, ContentType.TEXT_HTML_UTF8);
 
     // Throw an exception having the response.
     return new WebApplicationException(response, error);
@@ -51,9 +51,10 @@ export abstract class BaseHandler<ArgType>
 
 
     /**
-     * The constructor
+     * The constructor.
      *
-     * @param api - An Authlete API client.
+     * @param api
+     *         An Authlete API client.
      */
     public constructor(api: AuthleteApi)
     {
@@ -83,16 +84,11 @@ export abstract class BaseHandler<ArgType>
         }
         catch (e)
         {
-            if (e instanceof WebApplicationException)
-            {
-                // Rethrow the error if it's a WebApplicationException.
-                throw e;
-            }
-            else
-            {
-                // Unexpected error.
-                throw unexpected(`Unexpected error in ${this.constructor.name}`, e);
-            }
+            // If it's a WebApplicationException, rethrow the error.
+            // Otherwise, wrap it with WebApplicationException class and
+            // throw it.
+            throw e instanceof WebApplicationException ?
+                e : unexpected(`Unexpected error in ${this.constructor.name}`, e);
         }
     }
 

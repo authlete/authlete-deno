@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Response } from 'https://deno.land/std/http/server.ts'
+import { Response } from 'https://deno.land/std/http/server.ts';
 
 
 /**
@@ -51,7 +51,9 @@ export class Header
 export class ContentType
 {
     public static readonly APPLICATION_FORM_URLENCODED = 'application/x-www-form-urlencoded';
+    public static readonly APPLICATION_JAVASCRIPT_UTF8 = 'application/javascript; charset=utf-8';
     public static readonly APPLICATION_JSON_UTF8       = 'application/json; charset=utf-8';
+    public static readonly JWT                         = 'application/jwt';
     public static readonly TEXT_HTML_UTF8              = 'text/html; charset=utf-8';
 }
 
@@ -76,11 +78,12 @@ export class Pragma
 
 /**
  * Create a response of `'200 OK'` with the given content formatted in
- * `'application/json; charset=UTF-8'`.
+ * the given type. The `type` parameter defaults to `ContentType.APPLICATION_JSON_UTF8`
+ * (= `application/javascript; charset=utf-8`).
  */
-export function ok(content: string)
+export function ok(content: string, type = ContentType.APPLICATION_JSON_UTF8)
 {
-    return buildResponse(Status.OK, buildHeadersOfApplicationJsonUtf8(), content);
+    return buildResponse(Status.OK, buildHeaders(type), content);
 }
 
 
@@ -90,7 +93,17 @@ export function ok(content: string)
  */
 export function form(content: string)
 {
-    return buildResponse(Status.OK, buildHeadersOfTextHtmlUtf8(), content);
+    return buildResponse(Status.OK, buildHeaders(ContentType.TEXT_HTML_UTF8), content);
+}
+
+
+/**
+ * Create a response of `'200 OK'` with the given content formatted in
+ * `'application/javascript; charset=utf-8'`.
+ */
+export function javascript(content: string)
+{
+    return buildResponse(Status.OK, buildHeaders(ContentType.APPLICATION_JAVASCRIPT_UTF8), content);
 }
 
 
@@ -172,7 +185,22 @@ export function internalServerError(content: string, type: string = ContentType.
 }
 
 
-function buildResponse(status: number, headers?: Headers, body?: string)
+/**
+ * Create a response with the given status and `WWW-Authenticate` header
+ * having the given challenge as its value.
+ */
+export function bearerError(status: number, challenge: string)
+{
+    const headers = buildHeaders();
+    headers.set(Header.WWW_AUTHENTICATE, challenge);
+    return buildResponse(status, headers);
+}
+
+
+/**
+ * Build a `Response` object.
+ */
+export function buildResponse(status: number, headers?: Headers, body?: string)
 {
     return { status: status, headers: headers, body: body } as Response;
 }
@@ -181,12 +209,6 @@ function buildResponse(status: number, headers?: Headers, body?: string)
 function buildHeadersOfApplicationJsonUtf8()
 {
     return buildHeaders(ContentType.APPLICATION_JSON_UTF8);
-}
-
-
-function buildHeadersOfTextHtmlUtf8()
-{
-    return buildHeaders(ContentType.TEXT_HTML_UTF8);
 }
 
 

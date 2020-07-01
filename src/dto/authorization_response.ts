@@ -231,12 +231,12 @@ export class AuthorizationResponse extends ApiResponse
 
     /**
      * The value of the `id_token` property in the `claims` request
-     * parameter or in the `claims` property in a request object.
+     * parameter or in the `"claims"` property in a request object.
      *
      * A client application may request certain claims be embedded in
      * an ID token or in a response from the UserInfo endpoint. There
      * are several ways. Including the `claims` request parameter and
-     * including the `claims` property in a request object are such examples.
+     * including the `"claims"` property in a request object are such examples.
      * In both the cases, the value of the `claims` parameter/property
      * is JSON. Its format is described in [5.5. Requesting Claims using
      * the "claims" Request Parameter](
@@ -285,12 +285,12 @@ export class AuthorizationResponse extends ApiResponse
 
     /**
      * The value of the `userinfo` property in the `claims` request
-     * parameter or in the `claims` property in a request object.
+     * parameter or in the `"claims"` property in a request object.
      *
      * A client application may request certain claims be embedded in
      * an ID token or in a response from the UserInfo endpoint. There
      * are several ways. Including the `claims` request parameter and
-     * including the `claims` property in a request object are such examples.
+     * including the `"claims"` property in a request object are such examples.
      * In both the cases, the value of the `claims` parameter/property
      * is JSON. Its format is described in [5.5. Requesting Claims using
      * the "claims" Request Parameter](

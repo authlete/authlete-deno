@@ -19,19 +19,25 @@ import { AuthorizationFailResponse } from '../dto/authorization_fail_response.ts
 import { AuthorizationIssueRequest } from '../dto/authorization_issue_request.ts';
 import { AuthorizationIssueResponse } from '../dto/authorization_issue_response.ts';
 import { AuthorizationRequest } from '../dto/authorization_request.ts';
+import { RevocationRequest } from '../dto/revocation_request.ts';
+import { StandardIntrospectionRequest } from '../dto/standard_introspection_request.ts';
 import { TokenFailRequest } from '../dto/token_fail_request.ts';
 import { TokenFailResponse } from '../dto/token_fail_response.ts';
 import { TokenIssueRequest } from '../dto/token_issue_request.ts';
 import { TokenIssueResponse } from '../dto/token_issue_response.ts';
 import { TokenRequest } from '../dto/token_request.ts';
-import { isObject } from '../util/util.ts';
-import { badRequest, ContentType, form, internalServerError, location, ok } from './response_util.ts';
+import { UserInfoIssueRequest } from '../dto/user_info_issue_request.ts';
+import { UserInfoIssueResponse } from '../dto/user_info_issue_response.ts';
+import { UserInfoRequest } from '../dto/user_info_request.ts';
+import { isEmpty, isObject } from '../util/util.ts';
+import { badRequest, bearerError, ContentType, form, internalServerError, location, noContent, ok, Status } from './response_util.ts';
 import { formUrlEncode } from './url_coder.ts';
 import { WebApplicationException } from './web_application_exception.ts';
 import AfrAction = AuthorizationFailResponse.Action;
 import AirAction = AuthorizationIssueResponse.Action;
 import TfrAction = TokenFailResponse.Action;
 import TirAction = TokenIssueResponse.Action;
+import UirAction = UserInfoIssueResponse.Action;
 
 
 /**
@@ -280,7 +286,7 @@ export class AuthleteApiCaller
 
 
     /**
-     * Call Authlete `/api/auth/authorization/issue` API.
+     * Call Authlete `/api/auth/token` API.
      */
     public async callToken(request: TokenRequest)
     {
@@ -398,6 +404,181 @@ export class AuthleteApiCaller
             default:
                 // This never happens.
                 throw unknownAction('/api/auth/token/issue');
+        }
+    }
+
+
+    /**
+     * Call Authlete `/api/auth/userinfo` API.
+     */
+    public async callUserInfo(request: UserInfoRequest)
+    {
+        try
+        {
+            // Call Authlete /api/auth/userinfo API.
+            return await this.api.userInfo(request);
+        }
+        catch (e)
+        {
+            // Process the error.
+            throw processError(e, '/api/auth/userinfo');
+        }
+    }
+
+
+    /**
+     * Call Authlete `/api/auth/userinfo/issue` API.
+     */
+    private async callUserInfoIssue(request: UserInfoIssueRequest)
+    {
+        try
+        {
+            // Call Authlete /api/auth/userinfo/issue API.
+            return await this.api.userInfoIssue(request);
+        }
+        catch (e)
+        {
+            // Process the error.
+            throw processError(e, '/api/auth/userinfo/issue');
+        }
+    }
+
+
+    /**
+     * Issue a JSON or a JWT containing user information.
+     * This method calls Authlete `/api/auth/userinfo/issue` API.
+     */
+    public async userInfoIssue(request: UserInfoIssueRequest)
+    {
+        // Call Authlete /api/auth/userinfo/issue API.
+        const response = await this.callUserInfoIssue(request);
+
+        // Dispatch according to the action.
+        switch (response.action)
+        {
+            case UirAction.INTERNAL_SERVER_ERROR:
+                // 500 Internal Server Error.
+                return bearerError(Status.INTERNAL_SERVER_ERROR, response.responseContent);
+
+            case UirAction.BAD_REQUEST:
+                // 400 Bad Request.
+                return bearerError(Status.BAD_REQUEST, response.responseContent);
+
+            case UirAction.UNAUTHORIZED:
+                // 401 Unauthorized.
+                return bearerError(Status.UNAUTHORIZED, response.responseContent);
+
+            case UirAction.FORBIDDEN:
+                // 403 Forbidden.
+                return bearerError(Status.FORBIDDEN, response.responseContent);
+
+            case UirAction.JSON:
+                // 200 OK.
+                return ok(response.responseContent);
+
+            case UirAction.JWT:
+                // 200 OK.
+                return ok(response.responseContent, ContentType.JWT);
+
+            default:
+                // This never happens.
+                throw unknownAction('/api/auth/authorization/issue');
+        }
+    }
+
+
+    /**
+     * Call Authlete `/api/auth/revocation` API.
+     */
+    public async callRevocation(request: RevocationRequest)
+    {
+        try
+        {
+            // Call Authlete /api/auth/revocation API.
+            return await this.api.revocation(request);
+        }
+        catch (e)
+        {
+            // Process the error.
+            throw processError(e, '/api/auth/revocation');
+        }
+    }
+
+
+    /**
+     * Call Authlete `/api/auth/introspection/standard` API.
+     */
+    public async callStandardIntrospection(request: StandardIntrospectionRequest)
+    {
+        try
+        {
+            // Call Authlete /api/auth/introspection/standard API.
+            return await this.api.standardIntrospection(request);
+        }
+        catch (e)
+        {
+            // Process the error.
+            throw processError(e, '/api/auth/introspection/standard');
+        }
+    }
+
+
+    /**
+     * Get the JWK Set of the service. This method calls Authlete
+     * `/api/service/jwks/get` API.
+     */
+    private async callServiceJwksGet(pretty: boolean, includePrivateKeys: boolean)
+    {
+        try
+        {
+            // Call Authlete /api/service/jwks/get API.
+            //
+            // NOTE: If the API returns a response of '302 Found' with
+            // the service's JWKs URI (, which is set in the 'Location'
+            // header), 'getServiceJwks()' internally tries to follow
+            // the redirection and fetch JWKs from the JWKs URI.
+            return await this.api.getServiceJwks(pretty, includePrivateKeys);
+        }
+        catch (e)
+        {
+            // Process the error.
+            throw processError(e, '/api/service/jwks/get');
+        }
+    }
+
+
+    /**
+     * Get the JWK Set of the service. This method calls Authlete
+     * `/api/service/jwks/get` API.
+     */
+    public async serviceJwksGet(pretty: boolean, includePrivateKeys: boolean)
+    {
+        // Call Authlete /api/service/jwks/get API.
+        const json = await this.callServiceJwksGet(pretty, includePrivateKeys);
+
+        // If the fetched JSON string is empty, return a response
+        // of '204 No Content'.
+        if (isEmpty(json)) return noContent();
+
+        // Return '200 OK' with the JSON.
+        return ok(json);
+    }
+
+
+    /**
+     * Call Authlete `/api/service/configuration` API.
+     */
+    public async callServiceConfiguration(pretty: boolean)
+    {
+        try
+        {
+            // Call Authlete /api/service/configuration API.
+            return await this.api.getServiceConfiguration(pretty);
+        }
+        catch (e)
+        {
+            // Process the error.
+            throw processError(e, '/api/service/configuration');
         }
     }
 }

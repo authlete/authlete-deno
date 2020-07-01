@@ -48,10 +48,12 @@ export class AuthorizationRequestHandler extends BaseHandler<AuthorizationReques
     /**
      * The constructor.
      *
-     * @param api - an Authlete API client.
+     * @param api
+     *         An Authlete API client.
      *
-     * @param spi - An implementation of  `AuthorizationRequestHandlerSpi`
-     *              interface.
+     * @param spi
+     *         An implementation of `AuthorizationDecisionRequestHandlerSpi`
+     *         interface.
      */
     public constructor(api: AuthleteApi, spi: AuthorizationRequestHandlerSpi)
     {

@@ -20,14 +20,24 @@ import { AuthorizationRequest } from '../dto/authorization_request.ts';
 import { AuthorizationResponse } from '../dto/authorization_response.ts';
 import { Client } from '../dto/client.ts';
 import { ClientListResponse } from '../dto/client_list_response.ts';
+import { IntrospectionRequest } from '../dto/introspection_request.ts';
+import { IntrospectionResponse } from '../dto/introspection_response.ts';
+import { RevocationRequest } from '../dto/revocation_request.ts';
+import { RevocationResponse } from '../dto/revocation_response.ts';
 import { Service } from '../dto/service.ts';
 import { ServiceListResponse } from '../dto/service_list_response.ts';
+import { StandardIntrospectionRequest } from '../dto/standard_introspection_request.ts';
+import { StandardIntrospectionResponse } from '../dto/standard_introspection_response.ts';
 import { TokenFailRequest } from '../dto/token_fail_request.ts';
 import { TokenFailResponse } from '../dto/token_fail_response.ts';
 import { TokenIssueRequest } from '../dto/token_issue_request.ts';
 import { TokenIssueResponse } from '../dto/token_issue_response.ts';
 import { TokenRequest } from '../dto/token_request.ts';
 import { TokenResponse } from '../dto/token_response.ts';
+import { UserInfoIssueRequest } from '../dto/user_info_issue_request.ts';
+import { UserInfoIssueResponse } from '../dto/user_info_issue_response.ts';
+import { UserInfoRequest } from '../dto/user_info_request.ts';
+import { UserInfoResponse } from '../dto/user_info_response.ts';
 
 
 /**
@@ -38,7 +48,7 @@ export interface AuthleteApi
     /**
      * Call `/auth/authorization` API.
      *
-     * @param request - A request.
+     * @param request - Request parameters passed to the API.
      */
     authorization(request: AuthorizationRequest): Promise<AuthorizationResponse>;
 
@@ -46,7 +56,7 @@ export interface AuthleteApi
     /**
      * Call `/auth/authorization/issue` API.
      *
-     * @param request - A request.
+     * @param request - Request parameters passed to the API.
      */
     authorizationIssue(request: AuthorizationIssueRequest): Promise<AuthorizationIssueResponse>;
 
@@ -54,7 +64,7 @@ export interface AuthleteApi
     /**
      * Call `/auth/authorization/fail` API.
      *
-     * @param request - A request.
+     * @param request - Request parameters passed to the API.
      */
     authorizationFail(request: AuthorizationFailRequest): Promise<AuthorizationFailResponse>;
 
@@ -62,7 +72,7 @@ export interface AuthleteApi
     /**
      * Call `/auth/token` API.
      *
-     * @param request - A request.
+     * @param request - Request parameters passed to the API.
      */
     token(request: TokenRequest):Promise<TokenResponse>;
 
@@ -70,7 +80,7 @@ export interface AuthleteApi
     /**
      * Call `/auth/token/issue` API.
      *
-     * @param request - A request.
+     * @param request - Request parameters passed to the API.
      */
     tokenIssue(request: TokenIssueRequest): Promise<TokenIssueResponse>;
 
@@ -78,9 +88,49 @@ export interface AuthleteApi
     /**
      * Call `/auth/token/fail` API.
      *
-     * @param request - A request.
+     * @param request - Request parameters passed to the API.
      */
     tokenFail(request: TokenFailRequest): Promise<TokenFailResponse>;
+
+
+    /**
+     * Call Authlete `/auth/revocation` API.
+     *
+     * @param request - Request parameters passed to the API.
+     */
+    revocation(request: RevocationRequest): Promise<RevocationResponse>;
+
+
+    /**
+     * Call Authlete `/auth/userinfo` API.
+     *
+     * @param request - Request parameters passed to the API.
+     */
+    userInfo(request: UserInfoRequest): Promise<UserInfoResponse>;
+
+
+    /**
+     * Call Authlete `/auth/userinfo/issue` API.
+     *
+     * @param request - Request parameters passed to the API.
+     */
+    userInfoIssue(request: UserInfoIssueRequest): Promise<UserInfoIssueResponse>;
+
+
+    /**
+     * Call Authlete `/auth/introspection` API.
+     *
+     * @param request - Request parameters passed to the API.
+     */
+    introspection(request: IntrospectionRequest): Promise<IntrospectionResponse>;
+
+
+    /**
+     * Call Authlete `/auth/introspection/standard` API.
+     *
+     * @param request - Request parameters passed to the API.
+     */
+    standardIntrospection(request: StandardIntrospectionRequest): Promise<StandardIntrospectionResponse>;
 
 
     /**
@@ -125,6 +175,49 @@ export interface AuthleteApi
      * @param apiKey - The API key of a service.
      */
     deleteService(apiKey: number): Promise<void>
+
+
+    /**
+     * Get the JWK Set of a service.
+     *
+     * You can register either or both (1) the content of a JWK set and
+     * (2) the URI of a JWK set. The table below describes how registration
+     * combinations affect the response from this method.
+     *
+     * // TBW.
+     *
+     * @param pretty
+     *         `true` to get the JSON in pretty format.
+     *
+     * @param includePrivateKeys
+     *         `true` to keep private keys in the JSON. `false` to remove
+     *         private keys.
+     *
+     * @returns JSON representation of the JWK Set of the service. `null`
+     *          is returned when the service has registered neither
+     *          content or URI of its JWK Set.
+     *
+     * For more details, see [RFC 7517: JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517).
+     */
+    getServiceJwks(pretty?: boolean, includePrivateKeys?: boolean): Promise<string>;
+
+
+    /**
+     * Get the configuration of the service in JSON format that complies
+     * with [OpenID Connect Discovery 1.0](
+     * http://openid.net/specs/openid-connect-discovery-1_0.html).
+     *
+     * The value returned from this method can be used as the response
+     * body from `/.well-known/openid-configuration`. See "[4. Obtaining
+     * OpenID Provider Configuration Information](
+     * http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig)"
+     * in OpenID Connect Discovery 1.0 for details.
+     *
+     * @param pretty - `true` to get the JSON in pretty format.
+     *
+     * @returns The configuration of the service in JSON format.
+     */
+    getServiceConfiguration(pretty?: boolean): Promise<string>;
 
 
     /**
