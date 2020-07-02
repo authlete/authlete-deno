@@ -30,10 +30,10 @@ export class IntrospectionRequest
      * `FORBIDDEN` as the action and `insufficient_scope` as the error
      * code.
      *
-     * @param scopes - Scopes required to access the target protected
-     *                 resource. If this property is not set, Authlete
-     *                 `/auth/introspection` endpoint does not perform
-     *                 scope checking.
+     * @param scopes
+     *         Scopes required to access the target protected resource.
+     *         If this property is not set, Authlete `/auth/introspection`
+     *         endpoint does not perform scope checking.
      */
     public scopes?: string[];
 
@@ -45,11 +45,11 @@ export class IntrospectionRequest
      * access token, Authlete `/auth/introspection` API returns `FORBIDDEN`
      * as the action and `invalid_request` as the error code.
      *
-     * @param subject - Subject (= end-user ID managed by the service
-     *                  implementation) which is required to access the
-     *                  protected resource. If this property is not set,
-     *                  Authlete `/auth/introspection` endpoint does not
-     *                  perform subject checking.
+     * @param subject
+     *         Subject (= end-user ID managed by the service implementation)
+     *         which is required to access the protected resource. If
+     *         this property is not set, Authlete `/auth/introspection`
+     *         endpoint does not perform subject checking.
      */
     public subject?: string;
 
@@ -58,7 +58,8 @@ export class IntrospectionRequest
      * The client certificate, used to validate binding against access
      * tokens using the TLS client certificate confirmation method.
      *
-     * @param clientCertificate - The certificate in PEM format.
+     * @param clientCertificate
+     *         The certificate in PEM format.
      */
     public clientCertificate?: string;
 }

@@ -38,8 +38,11 @@ export class BasicCredentials
     /**
      * The constructor with the credentials.
      *
-     * @param userId - The ID of a user.
-     * @param password - The password of a user.
+     * @param userId
+     *         The ID of a user.
+     *
+     * @param password
+     *         The password of a user.
      */
     constructor(userId: string | null, password: string | null)
     {
@@ -51,9 +54,10 @@ export class BasicCredentials
     /**
      * Parse `Authorization` header for Basic authentication.
      *
-     * @param input - The value of `Authorization` header. Expected inputs
-     *                are either `"Basic _{Base64-Encoded-UserID-and-Password}_"`,
-     *                or `"_{Base64-Encoded-UserID-and-Password}_"`.
+     * @param input
+     *         The value of `Authorization` header. Expected inputs are
+     *         either `"Basic _{Base64-Encoded-UserID-and-Password}_"`,
+     *         or `"_{Base64-Encoded-UserID-and-Password}_"`.
      *
      * @returns If `input` was successfully parsed, parsed credentials
      *          is returned. Otherwise, null is returned.

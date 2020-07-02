@@ -19,12 +19,6 @@ const { Type } = ct;
 
 
 /**
- * The alias for type of claims.
- */
-export type Claims = { [key: string]: any }
-
-
-/**
  * Request to Authlete `/auth/authorization/issue` API.
  */
 export class AuthorizationIssueRequest

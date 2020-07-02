@@ -123,7 +123,7 @@ export class UserInfoRequestHandler extends BaseHandler<UserInfoRequestHandler.P
         const clientCertificate = params.clientCertificate;
         if (clientCertificate) request.clientCertificate = clientCertificate;
 
-        // Call Authlete '/api/auth/userinfo' API.
+        // Call Authlete /api/auth/userinfo API.
         return await this.apiCaller.callUserInfo(request);
     }
 

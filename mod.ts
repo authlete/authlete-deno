@@ -36,13 +36,19 @@ export * from './src/dto/authz_details_element.ts';
 export * from './src/dto/client.ts';
 export * from './src/dto/client_extension.ts';
 export * from './src/dto/client_list_response.ts';
+export * from './src/dto/introspection_request.ts';
+export * from './src/dto/introspection_response.ts';
 export * from './src/dto/named_uri.ts';
 export * from './src/dto/pair.ts';
 export * from './src/dto/property.ts';
+export * from './src/dto/revocation_request.ts';
+export * from './src/dto/revocation_response.ts';
 export * from './src/dto/scope.ts';
 export * from './src/dto/service.ts';
 export * from './src/dto/service_list_response.ts';
 export * from './src/dto/sns_credentials.ts';
+export * from './src/dto/standard_introspection_request.ts';
+export * from './src/dto/standard_introspection_response.ts';
 export * from './src/dto/tagged_value.ts';
 export * from './src/dto/token_fail_request.ts';
 export * from './src/dto/token_fail_response.ts';
@@ -50,12 +56,21 @@ export * from './src/dto/token_issue_request.ts';
 export * from './src/dto/token_issue_response.ts';
 export * from './src/dto/token_request.ts';
 export * from './src/dto/token_response.ts';
+export * from './src/dto/user_info_issue_request.ts';
+export * from './src/dto/user_info_issue_response.ts';
+export * from './src/dto/user_info_request.ts';
+export * from './src/dto/user_info_issue_response.ts';
 
 // handler
 export * from './src/handler/authorization_decision_handler.ts';
 export * from './src/handler/authorization_request_handler.ts';
 export * from './src/handler/base_handler.ts';
+export * from './src/handler/configuration_request_handler.ts';
+export * from './src/handler/introspection_request_handler.ts';
+export * from './src/handler/jwks_request_handler.ts';
+export * from './src/handler/revocation_request_handler.ts';
 export * from './src/handler/token_request_handler.ts';
+export * from './src/handler/user_info_request_handler.ts';
 
 // model
 export * from './src/model/authorization_page_model.ts';
@@ -67,6 +82,8 @@ export * from './src/spi/authorization_request_handler_spi.ts';
 export * from './src/spi/authorization_request_handler_spi_adapter.ts';
 export * from './src/spi/token_request_handler_spi.ts';
 export * from './src/spi/token_request_handler_spi_adapter.ts';
+export * from './src/spi/user_info_request_handler_spi.ts';
+export * from './src/spi/user_info_request_handler_spi_adapter.ts';
 
 // type
 export * from './src/type/application_type.ts';

@@ -35,9 +35,11 @@ export class WebApplicationException extends Error
     /**
      * Constructor with an HTTP response and an error.
      *
-     * @param response - An HTTP response associated with this exception.
+     * @param response
+     *         An HTTP response associated with this exception.
      *
-     * @param error - An error associated with this exception.
+     * @param error
+     *         An error associated with this exception.
      */
     public constructor(response: Response, error?: Error)
     {

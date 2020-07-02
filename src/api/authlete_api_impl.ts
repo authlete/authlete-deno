@@ -279,7 +279,6 @@ function createRequestInit(method: HttpMethod, credentials: BasicCredentials, re
 }
 
 
-
 /**
  * If the target class (= `clazz`) is given, this method converts the
  * response body to an instance of the target class and returns it.
@@ -401,7 +400,8 @@ export class AuthleteApiImpl implements AuthleteApi
     /**
      * The constructor.
      *
-     * @param configuration - Configuration for a new instance.
+     * @param configuration
+     *         Configuration for a new instance of this class.
      */
     public constructor(configuration: AuthleteConfiguration)
     {
@@ -592,8 +592,8 @@ export class AuthleteApiImpl implements AuthleteApi
 
     public async getServiceJwks(pretty: boolean = false, includePrivateKeys: boolean = false)
     {
-        return <string>await this.callServiceGetApi(
-            SERVICE_JWKS_GET_API_PATH, { pretty: `${pretty}`, includePrivateKeys: `${includePrivateKeys}` });
+        return (<string>await this.callServiceGetApi(
+            SERVICE_JWKS_GET_API_PATH, { pretty: `${pretty}`, includePrivateKeys: `${includePrivateKeys}` })) || null;
     }
 
 

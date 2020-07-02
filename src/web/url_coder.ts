@@ -15,8 +15,8 @@
 /**
  * Convert the given object to a string formatted in `'application/x-www-form-urlencoded'`
  *
- * @param parameters - an object representing form parameters on an HTTP
- *                     `POST` request.
+ * @param parameters
+ *         An object representing form parameters on an HTTP `POST` request.
  */
 export function formUrlEncode(parameters: { [key: string]: string }): string
 {

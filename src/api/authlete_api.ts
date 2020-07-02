@@ -48,7 +48,8 @@ export interface AuthleteApi
     /**
      * Call `/auth/authorization` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     authorization(request: AuthorizationRequest): Promise<AuthorizationResponse>;
 
@@ -56,7 +57,8 @@ export interface AuthleteApi
     /**
      * Call `/auth/authorization/issue` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     authorizationIssue(request: AuthorizationIssueRequest): Promise<AuthorizationIssueResponse>;
 
@@ -64,7 +66,8 @@ export interface AuthleteApi
     /**
      * Call `/auth/authorization/fail` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     authorizationFail(request: AuthorizationFailRequest): Promise<AuthorizationFailResponse>;
 
@@ -72,15 +75,17 @@ export interface AuthleteApi
     /**
      * Call `/auth/token` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
-    token(request: TokenRequest):Promise<TokenResponse>;
+    token(request: TokenRequest): Promise<TokenResponse>;
 
 
     /**
      * Call `/auth/token/issue` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     tokenIssue(request: TokenIssueRequest): Promise<TokenIssueResponse>;
 
@@ -88,7 +93,8 @@ export interface AuthleteApi
     /**
      * Call `/auth/token/fail` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     tokenFail(request: TokenFailRequest): Promise<TokenFailResponse>;
 
@@ -96,7 +102,8 @@ export interface AuthleteApi
     /**
      * Call Authlete `/auth/revocation` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     revocation(request: RevocationRequest): Promise<RevocationResponse>;
 
@@ -104,7 +111,8 @@ export interface AuthleteApi
     /**
      * Call Authlete `/auth/userinfo` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     userInfo(request: UserInfoRequest): Promise<UserInfoResponse>;
 
@@ -112,7 +120,8 @@ export interface AuthleteApi
     /**
      * Call Authlete `/auth/userinfo/issue` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     userInfoIssue(request: UserInfoIssueRequest): Promise<UserInfoIssueResponse>;
 
@@ -120,7 +129,8 @@ export interface AuthleteApi
     /**
      * Call Authlete `/auth/introspection` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     introspection(request: IntrospectionRequest): Promise<IntrospectionResponse>;
 
@@ -128,7 +138,8 @@ export interface AuthleteApi
     /**
      * Call Authlete `/auth/introspection/standard` API.
      *
-     * @param request - Request parameters passed to the API.
+     * @param request
+     *         Request parameters passed to the API.
      */
     standardIntrospection(request: StandardIntrospectionRequest): Promise<StandardIntrospectionResponse>;
 
@@ -136,7 +147,8 @@ export interface AuthleteApi
     /**
      * Get information about a service.
      *
-     * @param apiKey - The API key of a service.
+     * @param apiKey
+     *         The API key of a service.
      */
     getService(apiKey: number): Promise<Service>;
 
@@ -144,11 +156,13 @@ export interface AuthleteApi
     /**
      * Get list of services.
      *
-     * @param start - The start index (inclusive) of the result set.
-     *                The default value is 0. Must not be a negative number.
+     * @param start
+     *         The start index (inclusive) of the result set. The default
+     *         value is 0. Must not be a negative number.
      *
-     * @param end - The end index (exclusive) of the result set. The default
-     *              value is 5. Must not be a negative number.
+     * @param end
+     *         The end index (exclusive) of the result set. The default
+     *         value is 5. Must not be a negative number.
      */
     getServiceList(start?: number, end?: number): Promise<ServiceListResponse>
 
@@ -156,7 +170,8 @@ export interface AuthleteApi
     /**
      * Create a service.
      *
-     * @param service A `Service` object representing a new service.
+     * @param service
+     *         A service to create.
      */
     createService(service: Service): Promise<Service>
 
@@ -164,7 +179,8 @@ export interface AuthleteApi
     /**
      * Update a service.
      *
-     * @param service A `Service` object representing an updated service.
+     * @param service
+     *         A service to update.
      */
     updateService(service: Service): Promise<Service>
 
@@ -172,7 +188,8 @@ export interface AuthleteApi
     /**
      * Delete a service.
      *
-     * @param apiKey - The API key of a service.
+     * @param apiKey
+     *         The API key of a service.
      */
     deleteService(apiKey: number): Promise<void>
 
@@ -180,11 +197,13 @@ export interface AuthleteApi
     /**
      * Get the JWK Set of a service.
      *
-     * You can register either or both (1) the content of a JWK set and
-     * (2) the URI of a JWK set. The table below describes how registration
-     * combinations affect the response from this method.
+     * This methods returns the value of the service's `jwks` property
+     * or the value provided at the service's `jwksUri` location. If
+     * both properties have been set, the value of the `jwks` property
+     * is returned in preference to the other one.
      *
-     * // TBW.
+     * For more details, see [RFC 7517: JSON Web Key (JWK)](
+     * https://tools.ietf.org/html/rfc7517).
      *
      * @param pretty
      *         `true` to get the JSON in pretty format.
@@ -194,12 +213,10 @@ export interface AuthleteApi
      *         private keys.
      *
      * @returns JSON representation of the JWK Set of the service. `null`
-     *          is returned when the service has registered neither
-     *          content or URI of its JWK Set.
-     *
-     * For more details, see [RFC 7517: JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517).
+     *          is returned when the service has registered neither content
+     *          or URI of its JWK Set.
      */
-    getServiceJwks(pretty?: boolean, includePrivateKeys?: boolean): Promise<string>;
+    getServiceJwks(pretty?: boolean, includePrivateKeys?: boolean): Promise<string | null>;
 
 
     /**
@@ -213,7 +230,8 @@ export interface AuthleteApi
      * http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig)"
      * in OpenID Connect Discovery 1.0 for details.
      *
-     * @param pretty - `true` to get the JSON in pretty format.
+     * @param pretty
+     *         `true` to get the JSON in pretty format.
      *
      * @returns The configuration of the service in JSON format.
      */
@@ -223,7 +241,8 @@ export interface AuthleteApi
     /**
      * Get information about a client application.
      *
-     * @param clientId - The client ID of a client application.
+     * @param clientId
+     *         The client ID of a client application.
      */
     getClient(clientId: number): Promise<Client>
 
@@ -231,17 +250,19 @@ export interface AuthleteApi
     /**
      * Get list of client applications.
      *
-     * @param developer - The developer of client applications. If this
-     *                    parameter is specified, client applications
-     *                    of the specified developer are returned.
-     *                    Otherwise, all the client applications that
-     *                    belong to the service are returned.
+     * @param developer
+     *         The developer of client applications. If this parameter
+     *         is specified, client applications of the specified developer
+     *         are returned. Otherwise, all the client applications that
+     *         belong to the service are returned.
      *
-     * @param start - The start index (inclusive) of the result set.
-     *                The default value is 0. Must not be a negative number.
+     * @param start
+     *         The start index (inclusive) of the result set. The default
+     *         value is 0. Must not be a negative number.
      *
-     * @param end - The end index (exclusive) of the result set. The default
-     *              value is 5. Must not be a negative number.
+     * @param end
+     *         The end index (exclusive) of the result set. The default
+     *         value is 5. Must not be a negative number.
      */
     getClientList(developer?: string, start?: number, end?: number): Promise<ClientListResponse>;
 
@@ -249,7 +270,8 @@ export interface AuthleteApi
     /**
      * Create a client application.
      *
-     * @param client A `Client` object representing a new client application.
+     * @param client
+     *         A client application to create.
      */
     createClient(client: Client): Promise<Client>;
 
@@ -257,7 +279,8 @@ export interface AuthleteApi
     /**
      * Update a client application.
      *
-     * @param client A `Client` object representing an updated client application.
+     * @param client
+     *         A client application to update.
      */
     updateClient(client: Client): Promise<Client>;
 
@@ -265,7 +288,8 @@ export interface AuthleteApi
     /**
      * Delete a client application.
      *
-     * @param clientId - The client ID of a client application.
+     * @param clientId
+     *         The client ID of a client application.
      */
     deleteClient(clientId: number): Promise<void>;
 }

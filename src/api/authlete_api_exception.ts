@@ -44,19 +44,24 @@ export class AuthleteApiException extends Error
     /**
      * Create an `AuthleteApiException` instance.
      *
-     * @param message - A message of the exception.
+     * @param message
+     *         A message of the exception.
      *
-     * @param statusCode - HTTP status code of the error response
-     *                     to be associated with the exception.
+     * @param statusCode
+     *         HTTP status code of the error response to be associated
+     *         with the exception.
      *
-     * @param statusMessage - HTTP status message of the error response
-     *                        to be associated with the exception.
+     * @param statusMessage
+     *         HTTP status message of the error response to be associated
+     *         with the exception.
      *
-     * @param responseBody - The body of the error response to be
-     *                       associated with the exception.
+     * @param responseBody
+     *         The body of the error response to be associated with the
+     *         exception.
      *
-     * @param headers - The headers of the error response to be
-     *                  associated with the exception.
+     * @param headers
+     *         The headers of the error response to be associated with
+     *         the exception.
      */
     public constructor(
         message?: string, statusCode?: number, statusMessage?: string, responseBody?: string, headers?: Headers)

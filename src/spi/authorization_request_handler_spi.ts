@@ -129,9 +129,10 @@ export interface AuthorizationRequestHandlerSpi
      * authorization request. The authorization server should receive
      * the decision and call `AuthorizationDecisionHandler.handle` method.
      *
-     * @param info - A response from Authlete `/api/auth/authorization`
-     *               API. Key information that should be displayed in
-     *               an authorization page is stored in the object.
+     * @param info
+     *         A response from Authlete `/api/auth/authorization` API.
+     *         Key information that should be displayed in an authorization
+     *         page is stored in the object.
      *
      * @returns A response to show an authorization page.
      */

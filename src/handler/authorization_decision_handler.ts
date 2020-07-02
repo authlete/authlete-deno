@@ -297,8 +297,9 @@ export namespace AuthorizationDecisionHandler
         /**
          * Create a `Params` instance from an instance of `AuthorizationResponse`.
          *
-         * @param response - An response from Authlete `/api/auth/authorization`
-         *                   API.
+         * @param response
+         *         An response from Authlete `/api/auth/authorization`
+         *         API.
          */
         public static from(info: AuthorizationResponse)
         {

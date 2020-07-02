@@ -554,11 +554,11 @@ export class AuthleteApiCaller
     public async serviceJwksGet(pretty: boolean, includePrivateKeys: boolean)
     {
         // Call Authlete /api/service/jwks/get API.
-        const json = await this.callServiceJwksGet(pretty, includePrivateKeys);
+        const json: string | null = await this.callServiceJwksGet(pretty, includePrivateKeys);
 
         // If the fetched JSON string is empty, return a response
         // of '204 No Content'.
-        if (isEmpty(json)) return noContent();
+        if (!json) return noContent();
 
         // Return '200 OK' with the JSON.
         return ok(json);

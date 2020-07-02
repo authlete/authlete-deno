@@ -115,7 +115,7 @@ export class AuthorizationRequestHandler extends BaseHandler<AuthorizationReques
         // Normalize parameters.
         request.parameters = normalizeParameters(parameters);
 
-        // Call Authlete '/api/auth/authorization' API.
+        // Call Authlete /api/auth/authorization API.
         return await this.apiCaller.callAuthorization(request);
     }
 
@@ -192,7 +192,8 @@ export class AuthorizationRequestHandler extends BaseHandler<AuthorizationReques
     private createAuthorizationIssueRequest(
         ticket: string, subject: string, authTime: number, acr: string | null, sub: string | null)
     {
-        // Create a request for Authlete /api/auth/authorization/issue API.
+        // Create a request for Authlete /api/auth/authorization/issue
+        // API.
         const request = new AuthorizationIssueRequest();
 
         // Set parameters.
@@ -241,22 +242,14 @@ export class AuthorizationRequestHandler extends BaseHandler<AuthorizationReques
         // Get the requested maximum authentication age.
         const maxAge = response.maxAge;
 
-        // If no maximum authentication age is requested.
-        if (maxAge === 0)
-        {
-            // No check is needed.
-            return;
-        }
+        // No check is needed if no maximum authentication age is requested.
+        if (maxAge === 0) return;
 
         // The time at which the authentication expires.
         const expiresAtMillis = (authTime + maxAge) * 1000;
 
-        // If the authentication has not expired yet.
-        if (Date.now() < expiresAtMillis)
-        {
-            // OK.
-            return;
-        }
+        // Ensure that the authentication has not expired yet.
+        if (Date.now() < expiresAtMillis) return;
 
         // The maximum authentication age has elapsed.
         throw await this.authorizationFail(response.ticket, Reason.EXCEEDS_MAX_AGE);
@@ -268,19 +261,11 @@ export class AuthorizationRequestHandler extends BaseHandler<AuthorizationReques
         // Get the requested subject.
         const requestedSubject = response.subject;
 
-        // If no subject is requested.
-        if (!requestedSubject)
-        {
-            // No check is needed.
-            return;
-        }
+        // No check is needed if no subject is requested.
+        if (!requestedSubject) return;
 
-        // If the requested subject matches the current user.
-        if (requestedSubject === subject)
-        {
-            // OK.
-            return;
-        }
+        // Check if the requested subject matches the current user.
+        if (requestedSubject === subject) return;
 
         // The current user is different from the requested subject.
         throw await this.authorizationFail(response.ticket, Reason.DIFFERENT_SUBJECT);
@@ -292,35 +277,26 @@ export class AuthorizationRequestHandler extends BaseHandler<AuthorizationReques
         // Get the list of requested ACRs.
         const requestedAcrs = response.acrs;
 
-        // If no ACR is requested.
-        if (isEmpty(requestedAcrs))
-        {
-            // No check is needed.
-            return;
-        }
+        // No check is needed if no ACR is requested.
+        if (isEmpty(requestedAcrs)) return;
 
         for (const requestedAcr of requestedAcrs!)
         {
-            if (requestedAcr === acr)
-            {
-                // OK. The ACR satisfied when the current user was
-                // authenticated matches one of the requested ACRs.
-                return;
-            }
+            // Check if the ACR satisfied when the current user was
+            // authenticated matches one of the requested ACRs.
+            if (requestedAcr === acr) return;
         }
 
-        // If one of the requested ACRs must be satisfied.
-        if (response.acrEssential)
-        {
-            // None of the requested ACRs is satisfied.
-            throw await this.authorizationFail(response.ticket, Reason.ACR_NOT_SATISFIED);
-        }
+        // If none of the requested ACRs is essential.
+        if (!response.acrEssential) return;
 
-        // The ACR satisfied when the current user was authenticated
-        // does not match any one of the requested ACRs, but the
-        // authorization request from the client application did not
-        // request ACR as essential. Therefore, it is not necessary to
-        // raise an error here.
+        // The authorization request from the client application requests
+        // ACR as essential. However, the ACR satisfied when the current
+        // user was authenticated does not match any one of the requested
+        // ACRs.
+
+        // None of the requested ACRs is satisfied.
+        throw await this.authorizationFail(response.ticket, Reason.ACR_NOT_SATISFIED);
     }
 
 
@@ -333,7 +309,7 @@ export class AuthorizationRequestHandler extends BaseHandler<AuthorizationReques
         request.ticket = ticket;
         request.reason = reason;
 
-        // Call Authlete '/api/auth/authorization/fail' API and handle
+        // Call Authlete /api/auth/authorization/fail API and handle
         // the response.
         return await this.apiCaller.authorizationFail(request);
     }

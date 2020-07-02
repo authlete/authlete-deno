@@ -70,8 +70,10 @@ export abstract class BaseHandler<ArgType>
      * containing a Deno's standard `Response` object (defined in
      * 'https://deno.land/std/http/server.ts').
      *
-     * @param args - The arguments for this method. The type of the
-     *               arguments must be the type specified by `ArgType`.
+     * @param args
+     *         The arguments for this method. The type of the arguments
+     *         must be the type specified by `ArgType` you specify for
+     *         this class.
      *
      * @returns A promise containing a `Response` object.
      */
@@ -99,7 +101,8 @@ export abstract class BaseHandler<ArgType>
      * method. Also, this method must return a promise containing a Deno's
      * standard `Response` object (defined in 'https://deno.land/std/http/server.ts').
      *
-     * @param args - The arguments passed to `handle` method.
+     * @param args
+     *         The arguments passed to `handle` method.
      *
      * @returns A promise containing a `Response` object.
      */
