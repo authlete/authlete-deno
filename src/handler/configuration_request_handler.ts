@@ -58,7 +58,7 @@ export class ConfigurationRequestHandler extends BaseHandler<boolean>
         // Discovery 1.0.
         const json = await this.apiCaller.callServiceConfiguration(pretty);
 
-        // Response as "application/json;charset=UTF-8" with 200 OK.
+        // Response as 'application/json;charset=UTF-8' with '200 OK'.
         return ok(json);
     }
 }

@@ -36,7 +36,7 @@ const CHALLENGE_ON_MISSING_ACCESS_TOKEN =
 
 /**
  * Handler for userinfo requests to a "[UserInfo Endpoint](
- * http://openid.net/specs/openid-connect-core-1_0.html#UserInfo) defined
+ * http://openid.net/specs/openid-connect-core-1_0.html#UserInfo)" defined
  * in [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html).
  *
  * In an implementation of userinfo endpoint, call one of `handle()`
