@@ -40,7 +40,7 @@ import { AuthleteApiFactory } from 'https://github.com/authlete/authlete-deno/ra
 **Step 2**: `AuthleteApi` のインスタンスを初期化。
 
 ```ts
-// 設定用オブジェクトを作成。
+// configuration 用のオブジェクトを作成。
 // 注意: 以下のクレデンシャルは自身のものに置き換えること。
 const config = {
     serviceOwnerApiKey:    'YOUR_SERVICE_OWNER_API_KEY',
@@ -100,7 +100,7 @@ console.log(response);
 **方法 1**: `AuthleteApiImpl` クラスのコンストラクターを利用する。
 
 ```ts
-// 設定オブジェクトを作成。
+// configuration 用のオブジェクトを作成。
 const config: AuthleteConfiguration = { ... };
 
 // AuthleteApiImpl クラスのインスタンスを作成。
@@ -110,7 +110,7 @@ const authleteApi: AuthleteApi = new AuthleteApiImpl(config);
 **方法 2**: `AuthleteApiFactory` クラスの `create()` メソッドを利用する。
 
 ```ts
-// 設定オブジェクトを作成。
+// configuration 用のオブジェクトを作成。
 const config: AuthleteConfiguration = { ... };
 
 // AuthleteApiImpl クラスのインスタンスを作成。
@@ -137,7 +137,7 @@ _注意: `AuthleteApiFactory` クラスの `getDefault()` メソッドが初め�
 **方法 1**: `AuthleteConfiguration` インターフェースを利用する。
 
 ```ts
-// 設定オブジェクトを作成。
+// configuration 用のオブジェクトを作成。
 const config: AuthleteConfiguration = {
     baseUrl:               '...',
     serviceOwnerApiKey:    '...',
@@ -155,10 +155,11 @@ const api = new AuthleteApiFactory.create(config);
 外部ファイルを用いて設定を行いたい場合は、`AuthleteConfiguration`
 インターフェースの実装クラスである `AuthletePropertyConfiguration`
 クラスを利用してください。このクラスの `create()` メソッドは、実行ディレクトリ直下にある設定ファイル
-(`authlete.json`) をロードし、その内容に基づいた設定オブジェクトを作成します。以下のその例です。
+(`authlete.json`) をロードし、その内容に基づいて configuration 用のオブジェクトを作成します。
+以下のその例です。
 
 ```ts
-// 'authlete.json' をロードして、設定オブジェクトを作成する。
+// 'authlete.json' をロードして、configuration 用のオブジェクトを作成。
 const config = await AuthletePropertyConfiguration.create();
 
 // AuthleteApi のインスタンスを作成。
@@ -206,6 +207,28 @@ const api = new AuthleteApiFactory.create(config);
   - `getClient(clientId: number)`
   - `getClientList(developer?: string, start?: number, end?: number)`
   - `updateClient(client: Client)`
+
+  5. アクセストークンの情報取得のためのメソッド群
+
+  - `introspection(request: IntrospectionRequest)`
+  - `standardIntrospection(request: StandardIntrospectionRequest)`
+
+  6. アクセストークン取り消しエンドポイント実装のためのメソッド群
+
+  - `revocation(request: RevocationRequest)`
+
+  7. ユーザー情報エンドポイント実装のためのメソッド群
+
+  - `userInfo(request: UserInfoRequest)`
+  - `userInfoIssue(request: UserInfoIssueRequest)`
+
+  8. JWK セットエンドポイント実装のためのメソッド群
+
+  - `getServiceJwks(pretty: boolean, includePrivateKeys: boolean)`
+
+  9. OpenID Connect Discovery のためのメソッド群
+
+  - `getServiceConfiguration(pretty: boolean)`
 
 その他の情報
 ------------

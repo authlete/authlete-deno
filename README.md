@@ -214,6 +214,28 @@ Methods in `AuthleteApi` interface can be divided into some categories.
   - `getClientList(developer?: string, start?: number, end?: number)`
   - `updateClient(client: Client)`
 
+  5. Methods for Access Token Introspection
+
+  - `introspection(request: IntrospectionRequest)`
+  - `standardIntrospection(request: StandardIntrospectionRequest)`
+
+  6. Methods for Revocation Endpoint Implementation
+
+  - `revocation(request: RevocationRequest)`
+
+  7. Methods for User Info Endpoint Implementation
+
+  - `userInfo(request: UserInfoRequest)`
+  - `userInfoIssue(request: UserInfoIssueRequest)`
+
+  8. Methods for JWK Set Endpoint Implementation
+
+  - `getServiceJwks(pretty: boolean, includePrivateKeys: boolean)`
+
+  9. Methods for OpenID Connect Discovery
+
+  - `getServiceConfiguration(pretty: boolean)`
+
 See Also
 --------
 
