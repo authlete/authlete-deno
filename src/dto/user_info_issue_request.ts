@@ -12,71 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
-import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
-import { Property } from './property.ts';
-const { Type } = ct;
-
-
 /**
- * Request to Authlete `/auth/authorization/issue` API.
+ * Request to Authlete `/auth/userinfo/issue` API
  */
-export class AuthorizationIssueRequest
+export class UserInfoIssueRequest
 {
     /**
-     * The ticket issued by Authlete `/auth/authorization` endpoint.
+     * The access token which has been issued by Authlete. The access
+     * token is the one that has come along with the [userinfo request](
+     * http://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest)
+     * from the client application.
      */
-    public ticket?: string;
+    public token?: string;
 
 
     /**
-     * The subject (end-user) managed by the service.
-     */
-    public subject?: string;
-
-
-    /**
-     * The value of the `sub` claim in an ID token. When this field is
-     * empty, `subject` is used.
-     */
-    public sub?: string;
-
-
-    /**
-     * The time when the end-user was authenticated.
-     */
-    public authTime?: number;
-
-
-    /**
-     * The authentication context class reference.
-     */
-    public acr?: string;
-
-
-    /**
-     * Claims in JSON format.
+     * The claims in JSON format.
      */
     public claims?: string;
 
 
     /**
-     * Extra properties to associate with an access token and/or an
-     * authorization code.
+     * The value of the `"sub"` claim. If a non-empty value is given,
+     * it is used as the value of the `"sub"` claim. Otherwise, the value
+     * of the subject associated with the access token is used.
      */
-    @Type(() => Property)
-    public properties?: Property[];
-
-
-    /**
-     * Scopes to associate with an access token and/or an authorization
-     * code. If this field is unset, the scopes specified in the original
-     * authorization request from the client application are used. In
-     * other cases, including the case of an empty array, the scopes
-     * here will replace the original scopes contained in the original
-     * request.
-     */
-    public scopes?: string[];
+    public sub?: string;
 
 
     /**

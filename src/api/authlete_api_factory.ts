@@ -122,15 +122,16 @@ export class AuthleteApiFactory
      * Create an instance of a class that implements `AuthleteApi`
      * interface with configuration.
      *
-     * @param config - Configuration passed to the constructor of the
-     *                 target implementation class specified by `implInfo`.
+     * @param config
+     *         Configuration passed to the constructor of the target
+     *         implementation class specified by `implInfo`.
      *
-     * @param implInfo - The information about a class that implements
-     *                   `AuthleteApi` interface. Defaults to the information
-     *                   about the standard implementation. Note that
-     *                   an implementation class specified by this must
-     *                   have a constructor that only takes one argument
-     *                   of type `AuthleteConfiguration`.
+     * @param implInfo
+     *         The information about a class that implements `AuthleteApi`
+     *         interface. Defaults to the information about the standard
+     *         implementation. Note that an implementation class specified
+     *         by this must have a constructor that only takes one argument
+     *         of type `AuthleteConfiguration`.
      */
     public static async create(config: AuthleteConfiguration, implInfo: ImplInfo = STANDARD_IMPL_INFO)
     {

@@ -109,11 +109,12 @@ export class AuthorizationPageModel
      * A constructor with an `AuthorizationResponse` instance and a
      * `User` object.
      *
-     * @param info - A response returned from Authlete `/auth/authorization`
-     *               API.
+     * @param info
+     *         A response returned from Authlete `/auth/authorization`
+     *         API.
      *
-     * @param user - A user that the client application is asking for
-     *               authorization.
+     * @param user
+     *         A user that the client application is asking for authorization.
      */
     public constructor(info: AuthorizationResponse, user?: User)
     {

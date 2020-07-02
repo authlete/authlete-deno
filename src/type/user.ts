@@ -28,19 +28,19 @@ export interface User
     /**
      * Get the value of a claim of the user.
      *
-     * @param claimName - A claim name such as `name` and `family_name`.
-     *                    Standard claim names are listed in [5.1. Standard
-     *                    Claims](http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims)
-     *                    of [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
-     *                    Those values are listed by `StandardClaims`
-     *                    class.
+     * @param claimName
+     *         A claim name such as `name` and `family_name`. Standard
+     *         claim names are listed in [5.1. Standard Claims](
+     *         http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims)
+     *         of [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
+     *         Those values are listed by `StandardClaims` class.
      *
-     * @param languageTag - A language tag such as `en` and `ja`.
-     *                      Implementations should take this into account
-     *                      whenever possible. See [5.2. Claims Languages
-     *                      and Scripts](http://openid.net/specs/openid-connect-core-1_0.html#ClaimsLanguagesAndScripts)
-     *                      in [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
-     *                      for details.
+     * @param languageTag
+     *         A language tag such as `en` and `ja`. Implementations
+     *         should take this into account whenever possible. See [5.2.
+     *         Claims Languages and Scripts](http://openid.net/specs/openid-connect-core-1_0.html#ClaimsLanguagesAndScripts)
+     *         in [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
+     *         for details.
      *
      * @returns The claim value. `null` if the claim value of the claim
      *          is not available.
@@ -51,7 +51,8 @@ export interface User
     /**
      * The value of an attribute of the user.
      *
-     * @param attributeName - An attribute name.
+     * @param attributeName
+     *         An attribute name.
      *
      * @returns The attribute value. `null` if the attribute value of
      *          the attribute is not available.

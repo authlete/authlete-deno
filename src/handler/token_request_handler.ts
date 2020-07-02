@@ -34,33 +34,6 @@ const CHALLENGE = 'Basic realm="token"';
 
 
 /**
- * Set up client credentials (client ID and client secret)
- * to the given request.
- */
-function setupClientCredentials(request: TokenRequest, authorization: string | null)
-{
-    // The credentials of the client application extracted from
-    // 'Authorization' header. These may be null.
-    const credentials: BasicCredentials | null = BasicCredentials.parse(authorization);
-
-    if (!credentials)
-    {
-        // The credentials of the client application are not given.
-        return;
-    }
-
-    if (credentials.userId)
-    {
-        request.clientId = credentials.userId;
-    }
-
-    if (credentials.password)
-    {
-        request.clientSecret = credentials.password;
-    }
-}
-
-/**
  * Handler for token requests to a [token endpoint](
  * https://tools.ietf.org/html/rfc6749#section-3.2) of OAuth 2.0 ([RFC
  * 6749](https://tools.ietf.org/html/rfc6749)).
@@ -82,10 +55,11 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
     /**
      * The constructor.
      *
-     * @param api - an Authlete API client.
+     * @param api
+     *         An Authlete API client.
      *
-     * @param spi - An implementation of  `TokenRequestHandlerSpi`
-     *              interface.
+     * @param spi
+     *         An implementation of  `TokenRequestHandlerSpi` interface.
      */
     public constructor(api: AuthleteApi, spi: TokenRequestHandlerSpi)
     {
@@ -98,7 +72,7 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
     protected async doHandle(params: TokenRequestHandler.Params)
     {
         // Call Authlete /api/auth/token API.
-        const response = await this.apiCaller.callToken( this.createTokenRequest(params) );
+        const response = await this.callToken(params);
 
         // Dispatch according to the action.
         switch (response.action)
@@ -130,22 +104,26 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
     }
 
 
-    private createTokenRequest(params: TokenRequestHandler.Params)
+    private async callToken(params: TokenRequestHandler.Params)
     {
         // Create a request for Authlete /api/auth/token API.
         const request = new TokenRequest();
 
-        // Set the 'parameters' parameter.
+        // The 'parameters' parameter.
         request.parameters = normalizeParameters(params.parameters);
 
-        // Set up client ID and client secret.
-        setupClientCredentials(request, params.authorization);
+        // The credentials of the client application extracted from
+        // 'Authorization' header.
+        const credentials = BasicCredentials.parse(params.authorization);
+        if (credentials && credentials.userId) request.clientId = credentials.userId;
+        if (credentials && credentials.password) request.clientSecret = credentials.password;
 
         // Extra properties to associate with an access token.
         const properties = this.spi.getProperties();
         if (properties) request.properties = properties;
 
-        return request;
+        // Call Authlete /api/auth/token API.
+        return await this.apiCaller.callToken(request);
     }
 
 
@@ -161,7 +139,7 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
         if (subject)
         {
             // Issue an access token and optionally an ID token.
-            return this.tokenIssue(response.ticket, subject!);
+            return this.tokenIssue(response.ticket, subject);
         }
         else
         {
@@ -176,8 +154,10 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
         // Create a request for Authlete /api/auth/token/issue API.
         const request = new TokenIssueRequest();
 
-        // Set parameters.
+        // The ticket issued by Authlete auth/token API.
         request.ticket = ticket;
+
+        // The subject of the authenticated user.
         request.subject = subject;
 
         // Extra properties to associate with an access token.
@@ -194,8 +174,10 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
         // Create a request for /api/auth/token/fail API.
         const request = new TokenFailRequest();
 
-        // Set parameters.
+        // The ticket issued by Authlete auth/token API.
         request.ticket = ticket;
+
+        // The reason of the failure.
         request.reason = reason;
 
         // Create a response to the client application with the help of
@@ -208,7 +190,7 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
 export namespace TokenRequestHandler
 {
     /**
-     * Input parameters for the 'handle' method of TokenRequestHandler
+     * Input parameters for the `handle()` method of `TokenRequestHandler`
      * class.
      */
     export interface Params

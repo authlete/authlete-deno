@@ -23,14 +23,24 @@ import { AuthorizationRequest } from '../dto/authorization_request.ts';
 import { AuthorizationResponse } from '../dto/authorization_response.ts';
 import { Client } from '../dto/client.ts';
 import { ClientListResponse } from '../dto/client_list_response.ts';
+import { IntrospectionRequest } from '../dto/introspection_request.ts';
+import { IntrospectionResponse } from '../dto/introspection_response.ts';
+import { RevocationRequest } from '../dto/revocation_request.ts';
+import { RevocationResponse } from '../dto/revocation_response.ts';
 import { Service } from '../dto/service.ts';
 import { ServiceListResponse } from '../dto/service_list_response.ts';
+import { StandardIntrospectionRequest } from '../dto/standard_introspection_request.ts';
+import { StandardIntrospectionResponse } from '../dto/standard_introspection_response.ts';
 import { TokenFailRequest } from '../dto/token_fail_request.ts';
 import { TokenFailResponse } from '../dto/token_fail_response.ts';
 import { TokenIssueRequest } from '../dto/token_issue_request.ts';
 import { TokenIssueResponse } from '../dto/token_issue_response.ts';
 import { TokenRequest } from '../dto/token_request.ts';
 import { TokenResponse } from '../dto/token_response.ts';
+import { UserInfoIssueRequest } from '../dto/user_info_issue_request.ts';
+import { UserInfoIssueResponse } from '../dto/user_info_issue_response.ts';
+import { UserInfoRequest } from '../dto/user_info_request.ts';
+import { UserInfoResponse } from '../dto/user_info_response.ts';
 import { isNotUndefined } from '../util/util.ts';
 import { BasicCredentials } from '../web/basic_credentials.ts';
 import { AuthleteApi } from './authlete_api.ts';
@@ -41,22 +51,29 @@ const { classToPlain, plainToClass } = ct;
 /**
  * API Path.
  */
-const AUTHORIZATION_API_PATH       = '/auth/authorization';
-const AUTHORIZATION_ISSUE_API_PATH = '/auth/authorization/issue';
-const AUTHORIZATION_FAIL_API_PATH  = '/auth/authorization/fail';
-const TOKEN_API_PATH               = '/auth/token';
-const TOKEN_ISSUE_API_PATH         = '/auth/token/issue';
-const TOKEN_FAIL_API_PATH          = '/auth/token/fail';
-const SERVICE_GET_API_PATH         = '/service/get/{apiKey}';
-const SERVICE_GET_LIST_API_PATH    = '/service/get/list';
-const SERVICE_CREATE_API_PATH      = '/service/create';
-const SERVICE_UPDATE_API_PATH      = '/service/update';
-const SERVICE_DELETE_API_PATH      = '/api/service/delete/{apiKey}';
-const CLIENT_GET_API_PATH          = '/client/get/{clientId}';
-const CLIENT_GET_LIST_API_PATH     = '/client/get/list';
-const CLIENT_CREATE_API_PATH       = '/client/create';
-const CLIENT_UPDATE_API_PATH       = '/client/update';
-const CLIENT_DELETE_API_PATH       = '/client/delete/{clientId}';
+const AUTHORIZATION_API_PATH          = '/auth/authorization';
+const AUTHORIZATION_ISSUE_API_PATH    = '/auth/authorization/issue';
+const AUTHORIZATION_FAIL_API_PATH     = '/auth/authorization/fail';
+const TOKEN_API_PATH                  = '/auth/token';
+const TOKEN_ISSUE_API_PATH            = '/auth/token/issue';
+const TOKEN_FAIL_API_PATH             = '/auth/token/fail';
+const REVOCATION_API_PATH             = '/auth/revocation';
+const USER_INFO_API_PATH              = '/auth/userinfo';
+const USER_INFO_ISSUE_API_PATH        = '/auth/userinfo/issue';
+const INTROSPECTION_API_PATH          = '/auth/introspection';
+const INTROSPECTION_STANDARD_API_PATH = '/auth/introspection/standard';
+const SERVICE_GET_API_PATH            = '/service/get/{apiKey}';
+const SERVICE_GET_LIST_API_PATH       = '/service/get/list';
+const SERVICE_CREATE_API_PATH         = '/service/create';
+const SERVICE_UPDATE_API_PATH         = '/service/update';
+const SERVICE_DELETE_API_PATH         = '/api/service/delete/{apiKey}';
+const SERVICE_JWKS_GET_API_PATH       = '/service/jwks/get';
+const SERVICE_CONFIGURATION_API_PATH  = '/service/configuration';
+const CLIENT_GET_API_PATH             = '/client/get/{clientId}';
+const CLIENT_GET_LIST_API_PATH        = '/client/get/list';
+const CLIENT_CREATE_API_PATH          = '/client/create';
+const CLIENT_UPDATE_API_PATH          = '/client/update';
+const CLIENT_DELETE_API_PATH          = '/client/delete/{clientId}';
 
 
 /**
@@ -383,7 +400,8 @@ export class AuthleteApiImpl implements AuthleteApi
     /**
      * The constructor.
      *
-     * @param configuration - Configuration for a new instance.
+     * @param configuration
+     *         Configuration for a new instance of this class.
      */
     public constructor(configuration: AuthleteConfiguration)
     {
@@ -530,10 +548,58 @@ export class AuthleteApiImpl implements AuthleteApi
     }
 
 
+    public async revocation(request: RevocationRequest)
+    {
+        return <RevocationResponse>
+            await this.callServicePostApi(REVOCATION_API_PATH, request, RevocationResponse);
+    }
+
+
+    public async userInfo(request: UserInfoRequest)
+    {
+        return <UserInfoResponse>
+            await this.callServicePostApi(USER_INFO_API_PATH, request, UserInfoResponse);
+    }
+
+
+    public async userInfoIssue(request: UserInfoIssueRequest)
+    {
+        return <UserInfoIssueResponse>
+            await this.callServicePostApi(USER_INFO_ISSUE_API_PATH, request, UserInfoIssueResponse);
+    }
+
+
+    public async introspection(request: IntrospectionRequest)
+    {
+        return <IntrospectionResponse>
+            await this.callServicePostApi(INTROSPECTION_API_PATH, request, IntrospectionResponse);
+    }
+
+
+    public async standardIntrospection(request: StandardIntrospectionRequest)
+    {
+        return <StandardIntrospectionResponse>
+            await this.callServicePostApi(INTROSPECTION_STANDARD_API_PATH, request, StandardIntrospectionResponse);
+    }
+
+
     public async getService(apiKey: number)
     {
         return <Service>await this.callServiceOwnerGetApi(
             SERVICE_GET_API_PATH.replace('{apiKey}', apiKey.toString()), undefined, Service);
+    }
+
+
+    public async getServiceJwks(pretty: boolean = false, includePrivateKeys: boolean = false)
+    {
+        return (<string>await this.callServiceGetApi(
+            SERVICE_JWKS_GET_API_PATH, { pretty: `${pretty}`, includePrivateKeys: `${includePrivateKeys}` })) || null;
+    }
+
+
+    public async getServiceConfiguration(pretty: boolean = false)
+    {
+        return <string>await this.callServiceGetApi(SERVICE_CONFIGURATION_API_PATH, { pretty: `${pretty}` });
     }
 
 
@@ -569,8 +635,7 @@ export class AuthleteApiImpl implements AuthleteApi
     }
 
 
-    public async getClientList(
-        developer?: string, start?: number, end?: number)
+    public async getClientList(developer?: string, start?: number, end?: number)
     {
         return <ClientListResponse>await this.callServiceGetApi(
             CLIENT_GET_LIST_API_PATH, buildQueryParamsForClientGetListApi(developer, start, end), ClientListResponse);

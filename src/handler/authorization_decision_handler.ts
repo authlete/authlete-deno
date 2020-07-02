@@ -17,8 +17,7 @@ import { AuthorizationFailRequest } from '../dto/authorization_fail_request.ts';
 import { AuthorizationIssueRequest } from '../dto/authorization_issue_request.ts';
 import { AuthorizationResponse } from '../dto/authorization_response.ts';
 import { AuthorizationDecisionHandlerSpi } from '../spi/authorization_decision_handler_spi.ts';
-import { isEmpty, isNotEmpty } from '../util/util.ts';
-import { WebApplicationException } from '../web/web_application_exception.ts';
+import { isEmpty, isNotEmpty, isUndefined } from '../util/util.ts';
 import { BaseHandler } from './base_handler.ts';
 import Reason = AuthorizationFailRequest.Reason;
 
@@ -28,11 +27,8 @@ import Reason = AuthorizationFailRequest.Reason;
  */
 function normalizeClaimLocales(claimLocales?: string[]): string[] | null
 {
-    if (isEmpty(claimLocales))
-    {
-        // OK. No claim locale is specified.
-        return null;
-    }
+    // If no claim locale is specified.
+    if (isEmpty(claimLocales)) return null;
 
     // From 5.2. Claims Languages and Scripts in OpenID Connect Core 1.0
     //
@@ -61,26 +57,8 @@ function normalizeClaimLocales(claimLocales?: string[]): string[] | null
         list.push(claimLocale);
     })
 
+    // Return the collected claim locales or null.
     return list.length > 0 ? list : null;
-}
-
-
-/**
- * Handle an error.
- */
-function handleError(e: Error)
-{
-    if (e instanceof WebApplicationException)
-    {
-        // Return a response associated to the error if the error is a
-        // WebApplicationException.
-        return e.response;
-    }
-    else
-    {
-        // Rethrow the other type of error.
-        throw e;
-    }
 }
 
 
@@ -104,10 +82,12 @@ export class AuthorizationDecisionHandler extends BaseHandler<AuthorizationDecis
     /**
      * The constructor.
      *
-     * @param api - an Authlete API client.
+     * @param api
+     *         An Authlete API client.
      *
-     * @param spi - An implementation of `AuthorizationDecisionRequestHandlerSpi`
-     *              interface.
+     * @param spi
+     *         An implementation of `AuthorizationDecisionRequestHandlerSpi`
+     *         interface.
      */
     public constructor(api: AuthleteApi, spi: AuthorizationDecisionHandlerSpi)
     {
@@ -124,7 +104,7 @@ export class AuthorizationDecisionHandler extends BaseHandler<AuthorizationDecis
         if (!this.spi.isClientAuthorized())
         {
             // The end-user denied the authorization request.
-            return this.fail(params.ticket, Reason.DENIED);
+            throw await this.fail(params.ticket, Reason.DENIED);
         }
 
         // The subject (= unique identifier) of the end-user.
@@ -134,7 +114,7 @@ export class AuthorizationDecisionHandler extends BaseHandler<AuthorizationDecis
         if (isEmpty(subject))
         {
             // The end-user is not authenticated.
-            return this.fail(params.ticket, Reason.NOT_AUTHENTICATED);
+            throw await this.fail(params.ticket, Reason.NOT_AUTHENTICATED);
         }
 
         // Authorize the authorization request.
@@ -144,18 +124,12 @@ export class AuthorizationDecisionHandler extends BaseHandler<AuthorizationDecis
 
     private async authorize(params: AuthorizationDecisionHandler.Params, subject: string)
     {
-        try
-        {
-            // Generate a redirect response containing an authorization code,
-            // an access token and/or an ID token. If the original authorization
-            // request had response_type=none, no tokens will be contained in
-            // the generated response, though.
-            return await this.apiCaller.authorizationIssue( this.createAuthorizationIssueRequest(params, subject) );
-        }
-        catch (e)
-        {
-            return handleError(e);
-        }
+        // Generate a redirect response containing an authorization code,
+        // an access token and/or an ID token. If the original authorization
+        // request had response_type=none, no tokens will be contained
+        // in the generated response, though.
+        return await this.apiCaller
+            .authorizationIssue(this.createAuthorizationIssueRequest(params, subject));
     }
 
 
@@ -208,10 +182,7 @@ export class AuthorizationDecisionHandler extends BaseHandler<AuthorizationDecis
     private collectClaims(claimNames?: string[], claimLocales?: string[]): { [key: string]: any } | null
     {
         // If no claim is required.
-        if (isEmpty(claimNames))
-        {
-            return null;
-        }
+        if (isEmpty(claimNames)) return null;
 
         // Drop empty and duplicate entries from claimLocales.
         const normalizedClaimLocales = normalizeClaimLocales(claimLocales);
@@ -225,45 +196,39 @@ export class AuthorizationDecisionHandler extends BaseHandler<AuthorizationDecis
             if (claimName.length === 0) return;
 
             // Split the claim name into the name part and the tag part.
-            const elements = claimName.split('#', 2);
-            const name     = elements[0];
-            const tag      = elements[1] || null;
+            const [ name, tag ] = claimName.split('#', 2);
 
             // Skip if the name part is empty.
             if (name.length === 0) return;
 
             // Get the claim value of the claim.
-            const value = this.getClaim(name, tag, normalizedClaimLocales);
+            const value = this.getClaim(normalizedClaimLocales, name, tag);
 
             // Skip if the claim value was not obtained.
             if (value === null) return;
 
             // Just for an edge case where claimName ends with '#'.
-            if (tag === null) claimName = name;
+            if (isUndefined(tag)) claimName = name;
 
             // Add the pair of the claim name and the claim value.
             claims[claimName] = value;
         });
 
+        // Return the collected claims or null.
         return Object.keys(claims).length > 0 ? claims : null;
     }
 
 
-    private getClaim(name: string, tag: string | null, claimLocales: string[] | null): object | null
+    private getClaim(claimLocales: string[] | null, name: string, tag?: string): object | null
     {
-        // If a language tag is explicitly appended.
-        if (isNotEmpty(tag))
-        {
-            // Get the claim value of the claim with the specific language tag.
-            return this.spi.getUserClaim(name, tag!);
-        }
+        // If a language tag is explicitly appended, get the claim value
+        // of the claim with the specific language tag.
+        if (isNotEmpty(tag)) return this.spi.getUserClaim(name, tag!);
 
-        // If claim locales are not specified by 'claims_locales' request parameter.
-        if (isEmpty(claimLocales))
-        {
-            // Get the claim value of the claim without any language tag.
-            return this.spi.getUserClaim(name);
-        }
+        // If claim locales are not specified by 'claims_locales' request
+        // parameter, get the claim value of the claim without any language
+        // tag.
+        if (isEmpty(claimLocales)) return this.spi.getUserClaim(name);
 
         // For each claim locale. They are ordered by preference.
         for(const claimLocale of claimLocales!)
@@ -289,16 +254,9 @@ export class AuthorizationDecisionHandler extends BaseHandler<AuthorizationDecis
         request.ticket = ticket;
         request.reason = reason;
 
-        try
-        {
-            // Generate an error response to indicate that
-            // the authorization request failed.
-            return (await this.apiCaller.authorizationFail(request)).response;
-        }
-        catch (e)
-        {
-            return handleError(e);
-        }
+        // Generate an error response to indicate that the authorization
+        // request failed.
+        return await this.apiCaller.authorizationFail(request);
     }
 }
 
@@ -339,8 +297,9 @@ export namespace AuthorizationDecisionHandler
         /**
          * Create a `Params` instance from an instance of `AuthorizationResponse`.
          *
-         * @param response - An response from Authlete `/api/auth/authorization`
-         *                   API.
+         * @param response
+         *         An response from Authlete `/api/auth/authorization`
+         *         API.
          */
         public static from(info: AuthorizationResponse)
         {

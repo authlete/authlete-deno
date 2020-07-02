@@ -64,13 +64,15 @@ export class BaseExtendedEnum
  * https://github.com/typestack/class-transformer) (the object mapper
  * we internally use). Manual use of this method is not recommended.
  *
- * @param source - A string or string array to convert to the corresponding
- *                 `TExtendedEnum` class or an array of the `TExtendedEnum`
- *                 class (e.g. `'CODE'`).
+ * @param source
+ *         A string or string array to convert to the corresponding
+ *         `TExtendedEnum` class or an array of the `TExtendedEnum`
+ *         class (e.g. `'CODE'`).
  *
- * @param target - A target class to which the `source` is converted to.
- *                 Must be a class that extends `BaseExtendedEnum` class
- *                 (e.g. `ResponseType`).
+ * @param target
+ *         A target class to which the `source` is converted to. Must
+ *         be a class that extends `BaseExtendedEnum` class (e.g.
+ *         `ResponseType`).
  *
  * @returns An instance of the `TExtendedEnum` class or an array of the
  *          `TExtendedEnum` class. `undefined` is returned if the the
@@ -119,13 +121,14 @@ export function fromJsonValue<TExtendedEnum extends BaseExtendedEnum>(
  * https://github.com/typestack/class-transformer) (the object mapper
  * we internally use). Manual use of this method is not recommended.
  *
- * @param target - An instance of an 'extended enum' class (a class that
- *                 extends `BaseExtendedEnum` class) or an array of the
- *                 'extended enum' class. The 'extended enum' class must
- *                 have a property pointing to the instance.
+ * @param target
+ *         An instance of an 'extended enum' class (a class that extends
+ *         `BaseExtendedEnum` class) or an array of the 'extended enum'
+ *         class. The 'extended enum' class must have a property pointing
+ *         to the instance.
  *
- * @returns A string or array of string that corresponds to the
- *          `TExtendedEnum` class.
+ * @returns A string or array of string that corresponds to the `TExtendedEnum`
+ *          class.
  */
 export function toJsonValue<TExtendedEnum extends BaseExtendedEnum>(
     target: TExtendedEnum | TExtendedEnum[]
