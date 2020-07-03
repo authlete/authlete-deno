@@ -63,11 +63,12 @@ export * from './src/dto/user_info_issue_response.ts';
 
 // handler
 export * from './src/handler/authorization_decision_handler.ts';
-export * from './src/handler/authorization_request_handler.ts';
+export * from './src/handler/authorization_request_error_handler.ts';
 export * from './src/handler/base_handler.ts';
 export * from './src/handler/configuration_request_handler.ts';
 export * from './src/handler/introspection_request_handler.ts';
 export * from './src/handler/jwks_request_handler.ts';
+export * from './src/handler/no_interaction_handler.ts';
 export * from './src/handler/revocation_request_handler.ts';
 export * from './src/handler/token_request_handler.ts';
 export * from './src/handler/user_info_request_handler.ts';
@@ -80,8 +81,12 @@ export * from './src/spi/authorization_decision_handler_spi.ts';
 export * from './src/spi/authorization_decision_handler_spi_adapter.ts';
 export * from './src/spi/authorization_request_handler_spi.ts';
 export * from './src/spi/authorization_request_handler_spi_adapter.ts';
+export * from './src/spi/no_interaction_handler_spi.ts';
+export * from './src/spi/no_interaction_handler_spi_adapter.ts';
 export * from './src/spi/token_request_handler_spi.ts';
 export * from './src/spi/token_request_handler_spi_adapter.ts';
+export * from './src/spi/user_claim_provider.ts';
+export * from './src/spi/user_claim_provider_adapter.ts';
 export * from './src/spi/user_info_request_handler_spi.ts';
 export * from './src/spi/user_info_request_handler_spi_adapter.ts';
 
@@ -113,4 +118,3 @@ export * from './src/util/util.ts';
 export * from './src/web/basic_credentials.ts';
 export * from './src/web/response_util.ts'
 export * from './src/web/url_coder.ts';
-export * from './src/web/web_application_exception.ts';

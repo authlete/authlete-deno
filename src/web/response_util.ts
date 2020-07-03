@@ -91,7 +91,7 @@ export function ok(content: string, type = ContentType.APPLICATION_JSON_UTF8)
  * Create a response of `'200 OK'` with the given content formatted in
  * `'text/html; charset=UTF-8'`.
  */
-export function form(content: string)
+export function okHtml(content: string)
 {
     return buildResponse(Status.OK, buildHeaders(ContentType.TEXT_HTML_UTF8), content);
 }
@@ -149,7 +149,7 @@ export function badRequest(content: string)
 /**
  * Create a response of `'401 Unauthorized'` formatted in `'application/json; charset=UTF-8'`.
  */
-export function unauthorized(content: string, challenge: string)
+export function unauthorized(challenge: string, content?: string)
 {
     const headers = buildHeadersOfApplicationJsonUtf8();
     headers.set(Header.WWW_AUTHENTICATE, challenge);
@@ -176,8 +176,9 @@ export function notFound(content: string)
 
 
 /**
- * Create a response of `'500 Internal Server Error'` formatted in
- * `'application/json; charset=UTF-8'`.
+ * Create a response of `'500 Internal Server Error'` formatted in the
+ * given type. The `type` parameter defaults to `ContentType.APPLICATION_JSON_UTF8`
+ * (= `application/javascript; charset=utf-8`).
  */
 export function internalServerError(content: string, type: string = ContentType.APPLICATION_JSON_UTF8)
 {

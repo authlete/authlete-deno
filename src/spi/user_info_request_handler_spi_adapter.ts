@@ -12,17 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { UserInfoRequestHandlerSpi } from './user_info_request_handler_spi.ts';
+import { UserClaimProviderAdapter } from './user_claim_provider_adapter.ts';
+
+
 /**
  * Empty implementation of `UserInfoRequestHandlerSpi` interface.
  */
-export class UserInfoRequestHandlerSpiAdapter
+export class UserInfoRequestHandlerSpiAdapter extends UserClaimProviderAdapter implements UserInfoRequestHandlerSpi
 {
-    public prepareUserClaims(subject: string, claimNames: string[]): void
-    {
-    }
-
-
-    public getUserClaim(claimName: string, languageTag?: string): any
+    public getSub(): string | null
     {
         return null;
     }

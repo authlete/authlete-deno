@@ -12,22 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { AuthorizationRequestHandlerSpi } from './authorization_request_handler_spi.ts';
+import { AuthleteApi } from '../api/authlete_api.ts';
+import { BaseHandler } from './base_handler.ts';
 
 
 /**
- * Service Provider Interface to work with `AuthorizationDecisionHandler`.
- *
- * An implementation of this interface must be given to the constructor
- * of `AuthorizationDecisionHandler` class.
+ * The base class for a handler class that calls Authlete APIs.
  */
-export interface AuthorizationDecisionHandlerSpi extends AuthorizationRequestHandlerSpi
+export abstract class BaseApiRequestHandler<ArgType> extends BaseHandler<ArgType>
 {
     /**
-     * Get the decision on the authorization request.
-     *
-     * @returns `true` if the end-user has decided to grant authorization
-     *          to the client application. Otherwise, `false`.
+     * The implementation of `AuthleteApi` interface.
      */
-    isClientAuthorized(): boolean;
+    protected api: AuthleteApi;
+
+
+    /**
+     * The constructor.
+     *
+     * @param api
+     *         An implementation of `AuthleteApi` interface.
+     */
+    public constructor(api: AuthleteApi)
+    {
+        super();
+
+        this.api = api;
+    }
 }

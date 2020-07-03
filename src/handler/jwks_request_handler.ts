@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { BaseHandler } from './base_handler.ts';
+import { noContent, ok } from '../web/response_util.ts';
+import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 
 
 /**
@@ -27,13 +28,31 @@ import { BaseHandler } from './base_handler.ts';
  * if the OP supports [OpenID Connect Discovery 1.0](
  * http://openid.net/specs/openid-connect-discovery-1_0.html).
  */
-export class JwksRequestHandler extends BaseHandler<boolean>
+export class JwksRequestHandler extends BaseApiRequestHandler<boolean>
 {
-    protected async doHandle(pretty: boolean)
+    /**
+     * Handle a request to a JWK Set document endpoint.
+     *
+     * @param pretty
+     *         `true` to format the JWK Set document in a more human-readable
+     *         way.
+     *
+     * @returns An HTTP response that should be returned from the JWK
+     *          Set document endpoint implementation to the client
+     *          application.
+     */
+    public async handle(pretty: boolean)
     {
         // Call Authlete /api/service/configuration API.
         // The API returns a JSON that complies with OpenID Connect
         // Discovery 1.0.
-        return await this.apiCaller.serviceJwksGet(pretty, false);
+        const json: string | null = await this.api.getServiceJwks(pretty);
+
+        // If the fetched JSON string is empty, return a response
+        // of '204 No Content'.
+        if (!json) return noContent();
+
+        // Return '200 OK' with the JSON.
+        return ok(json);
     }
 }

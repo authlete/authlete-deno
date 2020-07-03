@@ -14,14 +14,17 @@
 
 import { AuthleteApi } from '../api/authlete_api.ts';
 import { UserInfoIssueRequest } from '../dto/user_info_issue_request.ts';
+import { UserInfoIssueResponse } from '../dto/user_info_issue_response.ts';
 import { UserInfoRequest } from '../dto/user_info_request.ts';
 import { UserInfoResponse } from '../dto/user_info_response.ts';
 import { UserInfoRequestHandlerSpi } from '../spi/user_info_request_handler_spi.ts';
-import { isEmpty, isUndefined } from '../util/util.ts';
-import { unknownAction } from '../web/authlete_api_caller.ts';
-import { bearerError, Status } from '../web/response_util.ts';
-import { BaseHandler } from './base_handler.ts';
-import Action = UserInfoResponse.Action;
+import { isEmpty } from '../util/util.ts';
+import { bearerError, ContentType, ok, Status } from '../web/response_util.ts';
+import { BaseApiRequestHandler } from './base_api_request_handler.ts';
+import { unknownAction } from './base_handler.ts';
+import { ClaimCollector } from './claim_collector.ts';
+import UirAction = UserInfoResponse.Action;
+import UiirAction = UserInfoIssueResponse.Action;
 
 
 /**
@@ -44,7 +47,7 @@ const CHALLENGE_ON_MISSING_ACCESS_TOKEN =
  * to the client application. `handle()` method calls Authlete `/api/auth/userinfo`
  * API and `/api/auth/userinfo/issue` API.
  */
-export class UserInfoRequestHandler extends BaseHandler<UserInfoRequestHandler.Params>
+export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoRequestHandler.Params>
 {
     /**
      * The SPI class for this handler.
@@ -59,7 +62,7 @@ export class UserInfoRequestHandler extends BaseHandler<UserInfoRequestHandler.P
      *         An Authlete API client.
      *
      * @param spi
-     *         An implementation of  `UserInfoRequestHandlerSpi` interface.
+     *         An implementation of `TokenRequestHandler` interface.
      */
     public constructor(api: AuthleteApi, spi: UserInfoRequestHandlerSpi)
     {
@@ -69,7 +72,17 @@ export class UserInfoRequestHandler extends BaseHandler<UserInfoRequestHandler.P
     }
 
 
-    protected async doHandle(params: UserInfoRequestHandler.Params)
+    /**
+     * Handle a userinfo request. This method calls Authlete `/api/auth/userinfo`
+     * API and conditionally `/api/auth/userinfo/issue` API.
+     *
+     * @param params
+     *         Parameters for this handler.
+     *
+     * @returns An HTTP response that should be returned from the userinfo
+     *          endpoint implementation to the client application.
+     */
+    public async handle(params: UserInfoRequestHandler.Params)
     {
         // Return a response of '400 Bad Request' if an access token is
         // not available.
@@ -84,29 +97,29 @@ export class UserInfoRequestHandler extends BaseHandler<UserInfoRequestHandler.P
         // Dispatch according to the action.
         switch (response.action)
         {
-            case Action.INTERNAL_SERVER_ERROR:
+            case UirAction.INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error.
                 return bearerError(Status.INTERNAL_SERVER_ERROR, response.responseContent!);
 
-            case Action.BAD_REQUEST:
+            case UirAction.BAD_REQUEST:
                 // 400 Bad Request.
                 return bearerError(Status.BAD_REQUEST, response.responseContent!);
 
-            case Action.UNAUTHORIZED:
+            case UirAction.UNAUTHORIZED:
                 // 401 Unauthorized.
                 return bearerError(Status.UNAUTHORIZED, response.responseContent!);
 
-            case Action.FORBIDDEN:
+            case UirAction.FORBIDDEN:
                 // 403 Forbidden.
                 return bearerError(Status.FORBIDDEN, response.responseContent!);
 
-            case Action.OK:
+            case UirAction.OK:
                 // Return the user information.
-                return this.getUserInfo(response);
+                return await this.getUserInfo(response);
 
             default:
                 // This never happens.
-                throw unknownAction('/api/auth/userinfo');
+                return unknownAction('/api/auth/userinfo');
         }
     }
 
@@ -116,78 +129,76 @@ export class UserInfoRequestHandler extends BaseHandler<UserInfoRequestHandler.P
         // Create a request for Authlete /api/auth/userinfo API.
         const request = new UserInfoRequest();
 
-        // Set the 'token' parameter.
+        // Access token.
         request.token = params.accessToken;
 
-        // Set the 'clientCertificate' parameter.
+        // Client Certificate.
         const clientCertificate = params.clientCertificate;
         if (clientCertificate) request.clientCertificate = clientCertificate;
 
         // Call Authlete /api/auth/userinfo API.
-        return await this.apiCaller.callUserInfo(request);
+        return await this.api.userInfo(request);
     }
 
 
-    /**
-     * Generate a JSON or a JWT containing user information by calling
-     * Authlete `/api/auth/userinfo/issue` API.
-     */
-    private async getUserInfo(response: UserInfoResponse)
+    private async getUserInfo(uir: UserInfoResponse)
+    {
+        // Call Authlete /api/auth/userinfo/issue API.
+        const response = await this.callUserInfoIssue(uir);
+
+        // Dispatch according to the action.
+        switch (response.action)
+        {
+            case UiirAction.INTERNAL_SERVER_ERROR:
+                // 500 Internal Server Error.
+                return bearerError(Status.INTERNAL_SERVER_ERROR, response.responseContent);
+
+            case UiirAction.BAD_REQUEST:
+                // 400 Bad Request.
+                return bearerError(Status.BAD_REQUEST, response.responseContent);
+
+            case UiirAction.UNAUTHORIZED:
+                // 401 Unauthorized.
+                return bearerError(Status.UNAUTHORIZED, response.responseContent);
+
+            case UiirAction.FORBIDDEN:
+                // 403 Forbidden.
+                return bearerError(Status.FORBIDDEN, response.responseContent);
+
+            case UiirAction.JSON:
+                // 200 OK.
+                return ok(response.responseContent);
+
+            case UiirAction.JWT:
+                // 200 OK.
+                // TODO
+                return ok(response.responseContent, ContentType.JWT);
+
+            default:
+                // This never happens.
+                return unknownAction('/api/auth/authorization/issue');
+        }
+    }
+
+
+    private async callUserInfoIssue(uir: UserInfoResponse)
     {
         // Create a request for Authlete /api/auth/userinfo/issue API.
         const request = new UserInfoIssueRequest();
 
-        // Set the 'token' parameter.
-        request.token = response.token;
+        // Access token.
+        request.token = uir.token;
+
+        // The value of the 'sub' claim (optional).
+        const sub = this.spi.getSub();
+        if (sub) request.sub = sub;
 
         // Collect claim values of the user.
-        const claims = this.collectClaims(response.subject!, response.claims);
+        const claims = new ClaimCollector(this.spi, uir.subject!, uir.claims).collect();
         if (claims && Object.keys(claims).length > 0) request.setClaims(claims);
 
-        // Generate a JSON or a JWT containing user information by calling
-        // Authlete /api/auth/userinfo/issue API.
-        return await this.apiCaller.userInfoIssue(request);
-    }
-
-
-    private collectClaims(subject: string, claimNames?: string[]): { [key: string]: any } | null
-    {
-        // If no claim is required.
-        if (isEmpty(claimNames)) return null;
-
-        // Let the implementation of UserInfoRequestHandlerSpi prepare
-        // claims of the user who is identified by the subject.
-        this.spi.prepareUserClaims(subject, claimNames!);
-
-        // Claim values.
-        const claims: { [key: string]: any } = {};
-
-        // For each requested claim.
-        claimNames!.forEach((claimName) => {
-            // Skip if the claim name is empty.
-            if (claimName.length === 0) return;
-
-            // Split the claim name into the name part and the tag part.
-            const [ name, tag ] = claimName.split('#', 2);
-
-            // Skip if the name part is empty.
-            if (name.length === 0) return;
-
-            // Get the claim value of the claim.
-            const value = this.spi.getUserClaim(name, tag);
-
-            // Skip if the claim value was not obtained.
-            if (value === null) return;
-
-            // Just for an edge case where claimName ends with '#'.
-            if (isUndefined(tag)) claimName = name;
-
-            // Add the pair of the claim name and the claim value.
-            claims[claimName] = value;
-        });
-
-        // Return the collected claims or null.
-        return Object.keys(claims).length > 0 ? claims : null;
+        // Call Authlete /api/auth/userinfo/issue API.
+        return await this.api.userInfoIssue(request);
     }
 }
 

@@ -12,59 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Property } from '../dto/property.ts';
 import { AuthorizationDecisionHandlerSpi } from './authorization_decision_handler_spi.ts';
+import { AuthorizationRequestHandlerSpiAdapter } from './authorization_request_handler_spi_adapter.ts';
 
 
 /**
  * Empty implementation of `AuthorizationDecisionHandlerSpi` interface.
  */
-export class AuthorizationDecisionHandlerSpiAdapter implements AuthorizationDecisionHandlerSpi
+export class AuthorizationDecisionHandlerSpiAdapter
+    extends AuthorizationRequestHandlerSpiAdapter implements AuthorizationDecisionHandlerSpi
 {
     public isClientAuthorized(): boolean
     {
         return false;
-    }
-
-
-    public getUserAuthenticatedAt(): number
-    {
-        return 0;
-    }
-
-
-    public getUserSubject(): string | null
-    {
-        return null;
-    }
-
-
-    public getAcr(): string | null
-    {
-        return null;
-    }
-
-
-    public getUserClaim(claimName: string, languageTag?: string): object | null
-    {
-        return null;
-    }
-
-
-    public getProperties(): Property[] | null
-    {
-        return null;
-    }
-
-
-    public getScopes(): string[] | null
-    {
-        return null;
-    }
-
-
-    public getSub(): string | null
-    {
-        return null;
     }
 }

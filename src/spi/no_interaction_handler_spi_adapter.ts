@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { UserClaimProvider } from "./user_claim_provider.ts";
+import { AuthorizationRequestHandlerSpiAdapter } from './authorization_request_handler_spi_adapter.ts';
+import { NoInteractionHandlerSpi } from './no_interaction_handler_spi.ts';
 
 
 /**
- * Service Provider Interface to work with `UserInfoRequestHandler`.
- *
- * An implementation of this interface must be given to the constructor
- * of `UserInfoRequestHandler` class.
+ * Empty implementation of `AuthorizationRequestHandlerSpi` interface.
  */
-export interface UserInfoRequestHandlerSpi extends UserClaimProvider
+export class NoInteractionHandlerSpiAdapter extends AuthorizationRequestHandlerSpiAdapter implements NoInteractionHandlerSpi
 {
-    getSub(): string | null;
+    public isUserAuthenticated(): boolean
+    {
+        return false;
+    }
 }

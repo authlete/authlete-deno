@@ -14,10 +14,10 @@
 
 import { RevocationRequest } from '../dto/revocation_request.ts';
 import { RevocationResponse } from '../dto/revocation_response.ts';
-import { normalizeParameters, unknownAction } from '../web/authlete_api_caller.ts';
 import { BasicCredentials } from '../web/basic_credentials.ts';
 import { badRequest, internalServerError, javascript, unauthorized } from '../web/response_util.ts';
-import { BaseHandler } from './base_handler.ts';
+import { BaseApiRequestHandler } from './base_api_request_handler.ts';
+import { normalizeParameters, unknownAction } from './base_handler.ts';
 import Action = RevocationResponse.Action;
 
 
@@ -28,8 +28,7 @@ const CHALLENGE = 'Basic realm="revocation"';
 
 
 /**
- * Handler for token revocation requests
- * ([RFC 7009](https://tools.ietf.org/html/rfc7009)).
+ * Handler for token revocation requests ([RFC 7009](https://tools.ietf.org/html/rfc7009)).
  *
  * In an implementation of revocation endpoint, call `handle()` method
  * and use the response as the response from the endpoint to the client
@@ -37,19 +36,29 @@ const CHALLENGE = 'Basic realm="revocation"';
  * API, receives a response from the API, and dispatches processing
  * according to the `action` parameter in the response.
  */
-export class RevocationRequestHandler extends BaseHandler<RevocationRequestHandler.Params>
+export class RevocationRequestHandler extends BaseApiRequestHandler<RevocationRequestHandler.Params>
 {
-    protected async doHandle(params: RevocationRequestHandler.Params)
+    /**
+     * Handle a revocation request ([RFC 7009](https://tools.ietf.org/html/rfc7009)).
+     * This method calls Authlete `/api/auth/revocation` API.
+     *
+     * @param params
+     *         Request parameters of a revocation request.
+     *
+     * @returns An HTTP response that should be returned from the revocation
+     *          endpoint implementation to the client application.
+     */
+    public async handle(params: RevocationRequestHandler.Params)
     {
         // Call Authlete /api/auth/revocation API.
-        const response = await this.callRevocation(params);
+        const response = await this.callRevocationApi(params);
 
         // Dispatch according to the action.
         switch (response.action)
         {
             case Action.INVALID_CLIENT:
                 // 401 Unauthorized.
-                return unauthorized(response.responseContent!, CHALLENGE);
+                return unauthorized(CHALLENGE, response.responseContent!);
 
             case Action.INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error.
@@ -65,27 +74,31 @@ export class RevocationRequestHandler extends BaseHandler<RevocationRequestHandl
 
             default:
                 // This never happens.
-                throw unknownAction('/api/auth/revocation');
+                return unknownAction('/api/auth/revocation');
         }
     }
 
 
-    private async callRevocation(params: RevocationRequestHandler.Params)
+    private async callRevocationApi(params: RevocationRequestHandler.Params)
     {
         // Create a request for Authlete /api/auth/token API.
         const request = new RevocationRequest();
 
-        // The 'parameters' parameter.
+        // 'parameters' parameter.
         request.parameters = normalizeParameters(params.parameters);
 
-        // The credentials of the client application extracted from
+        // Extract the credentials of the client application from
         // 'Authorization' header.
         const credentials = BasicCredentials.parse(params.authorization);
+
+        // client ID.
         if (credentials && credentials.userId) request.clientId = credentials.userId;
+
+        // Client Secret.
         if (credentials && credentials.password) request.clientSecret = credentials.password;
 
         // Call Authlete /api/auth/revocation API.
-        return await this.apiCaller.callRevocation(request);
+        return await this.api.revocation(request);
     }
 }
 

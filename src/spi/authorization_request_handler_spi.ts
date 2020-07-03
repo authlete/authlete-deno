@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Response } from 'https://deno.land/std/http/server.ts';
-import { AuthorizationResponse } from '../dto/authorization_response.ts';
 import { Property } from '../dto/property.ts';
+import { UserClaimProvider } from './user_claim_provider.ts';
 
 
 /**
@@ -23,30 +22,11 @@ import { Property } from '../dto/property.ts';
  * An implementation of this interface must be given to the constructor
  * of `AuthorizationRequestHandler` class.
  */
-export interface AuthorizationRequestHandlerSpi
+export interface AuthorizationRequestHandlerSpi extends UserClaimProvider
 {
     /**
-     * Check whether an end-user has already logged in or not.
-     *
-     * This method is called only when an authorization request comes
-     * with `prompt=none`. Therefore, if you have no mind to support
-     * `prompt=none`, always return `false`. See [3.1.2.1. Authentication
-     * Request](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest)
-     * in [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
-     * for details about `prompt=none`.
-     *
-     * Below is an example implementation using [Apache Shiro](http://shiro.apache.org/).
-     *
-     * @returns `true` if an end-user has already logged in. Otherwise,
-     *          `false`. When `false` is returned, the client application
-     *          will receive `error=login_required`.
-     */
-    isUserAuthenticated(): boolean;
-
-
-    /**
-     * Get the time when the current end-user was authenticated in
-     * milliseconds since Unix epoch (1970-01-01).
+     * Get the time when the current end-user was authenticated in seconds
+     * since Unix epoch (1970-01-01).
      *
      * The value is used to check whether the elapsed time since the
      * last authentication has exceeded the maximum authentication age
@@ -90,6 +70,21 @@ export interface AuthorizationRequestHandlerSpi
 
 
     /**
+     * Get the value of the `"sub"` claim to be used in the ID token.
+     *
+     * If doing a pairwise subject derivation, this method should check
+     * the registration of the current Client to see if it has a PAIRWISE
+     * subject identifier type. If so, it returns the calculated string
+     * of that subject. If not, it returns `null` and the value of
+     * `getUserSubject()` is used by the API instead.
+     *
+     * @returns The value of the "sub" claim to be used in the ID token,
+     *          or `null` if no such subject exists.
+     */
+    getSub(): string | null;
+
+
+    /**
      * Get the authentication context class reference (ACR) that was
      * satisfied when the current end-user was authenticated.
      *
@@ -112,31 +107,6 @@ export interface AuthorizationRequestHandlerSpi
      *          was satisfied when the current end-user was authenticated.
      */
     getAcr(): string | null;
-
-
-    /**
-     * Generate an authorization page (HTML) to ask an end-user whether to
-     * accept or deny an authorization request by a client application.
-     *
-     * Key information that should be displayed in an authorization page is
-     * stored in the `info` object. For example, the name of the client
-     * application can be obtained by calling `info.client.clientName`.
-     * Likewise, requested scopes can be obtained as an array of `Scope`
-     * objects by calling `info.scopes`.
-     *
-     * In an authorization page, an end-user will finally decide either
-     * to grant authorization to the client application or to reject the
-     * authorization request. The authorization server should receive
-     * the decision and call `AuthorizationDecisionHandler.handle` method.
-     *
-     * @param info
-     *         A response from Authlete `/api/auth/authorization` API.
-     *         Key information that should be displayed in an authorization
-     *         page is stored in the object.
-     *
-     * @returns A response to show an authorization page.
-     */
-    generateAuthorizationPage(info: AuthorizationResponse): Promise<Response>;
 
 
     /**
@@ -232,19 +202,4 @@ export interface AuthorizationRequestHandlerSpi
      *          scopes requested by the client application are replaced.
      */
     getScopes(): string[] | null;
-
-
-    /**
-     * Get the value of the `"sub"` claim to be used in the ID token.
-     *
-     * If doing a pairwise subject derivation, this method should check
-     * the registration of the current Client to see if it has a PAIRWISE
-     * subject identifier type. If so, it returns the calculated string
-     * of that subject. If not, it returns `null` and the value of
-     * `getUserSubject()` is used by the API instead.
-     *
-     * @returns The value of the "sub" claim to be used in the ID token,
-     *          or `null` if no such subject exists.
-     */
-    getSub(): string | null;
 }
