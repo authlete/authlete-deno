@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
  * A class that represents an element in `authorization_details` which
  * is defined in _"OAuth 2.0 Rich Authorization Requests"_.

@@ -63,8 +63,11 @@ export * from './src/dto/user_info_issue_response.ts';
 
 // handler
 export * from './src/handler/authorization_decision_handler.ts';
+export * from './src/handler/authorization_request_base_handler.ts';
 export * from './src/handler/authorization_request_error_handler.ts';
+export * from './src/handler/base_api_request_handler.ts';
 export * from './src/handler/base_handler.ts';
+export * from './src/handler/claim_collector.ts';
 export * from './src/handler/configuration_request_handler.ts';
 export * from './src/handler/introspection_request_handler.ts';
 export * from './src/handler/jwks_request_handler.ts';

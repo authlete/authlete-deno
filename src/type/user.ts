@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
  * An interface that represents a resource owner (in the context of
  * [OAuth 2.0](https://tools.ietf.org/html/rfc6749)) or an end user (in

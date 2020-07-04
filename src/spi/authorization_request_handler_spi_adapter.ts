@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { Property } from '../dto/property.ts';
 import { AuthorizationRequestHandlerSpi } from './authorization_request_handler_spi.ts';
 import { UserClaimProviderAdapter } from './user_claim_provider_adapter.ts';

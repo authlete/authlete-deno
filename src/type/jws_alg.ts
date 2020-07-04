@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { BaseExtendedEnum } from './base_extended_enum.ts';
 import { HashAlg } from './hash_alg.ts';
 

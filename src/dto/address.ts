@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
  * Address claim that represents a physical mailing address. For more
  * details, see [OpenID Connect Core 1.0, 5.1.1. Address Claim](

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
  * A regular expression to parse `Authorization` header.
  */
@@ -64,18 +65,13 @@ export class BasicCredentials
      */
     public static parse(input: string | null)
     {
-        if (input === null)
-        {
-            return null;
-        }
+        // Return null if the input is empty.
+        if (!input) return null;
 
         const result = PATTERN.exec(input);
 
-        if (result === null)
-        {
-            // The value did not match the regex.
-            return null;
-        }
+        // Return null if the value did not match the regex.
+        if (result === null) return null;
 
         // "userid:password" encoded in Base64.
         const encoded = result[1];

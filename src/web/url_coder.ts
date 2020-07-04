@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
  * Convert the given object to a string formatted in `'application/x-www-form-urlencoded'`
  *
@@ -25,7 +26,7 @@ export function formUrlEncode(parameters: { [key: string]: string }): string
 
     // For each parameter key.
     Object.keys(parameters).forEach((key) => {
-        // If the key is an empty string (''), just ignore.
+        // Skip if the key is an empty string ('').
         if (key.length === 0) return;
 
         // Encode the key.
