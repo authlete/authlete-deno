@@ -44,37 +44,37 @@ export class UserInfoIssueRequest
     /**
      * Set the `claims` property.
      *
-     * The service implementation is required to retrieve claims of the
-     * subject (= information about the end-user) from its database and
-     * format them in JSON format.
+     * A value passed to this method as `value` parameter must be a JavaScript
+     * value, usually an object or array, into which claims of the subject
+     * (= information about the end-user) are put.
      *
-     * For example, if `given_name` claim, `family_name` claim and `email`
-     * claim are requested, the service implementation should generate
-     * a JSON object like the following:
+     * Also, note that the value of `value` parameter must be a value
+     * that can be converted to a JSON string value by `JSON.stringify()`.
      *
-     * ```json
+     * The below is an example value of `value` parameter if `given_name`
+     * claim, `family_name` claim and `email` claim are requested:
+     *
+     * ```ts
      * {
-     *   "given_name": "Hideki",
-     *   "family_name": "Ikeda",
-     *   "email": "hideki.ikeda@example.com"
+     *     given_name: "Hideki",
+     *     family_name: "Ikeda",
+     *     email: "hideki.ikeda@example.com"
      * }
      * ```
      *
-     * and set its String representation by this method.
-     *
      * See [OpenID Connect Core 1.0, 5.1. Standard Claims](
      * http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims)
-     * for further details about the format.
+     * for more details.
      *
-     * @param claims
+     * @param value
      *         The claims of the subject. Keys are claim names.
      */
-    public setClaims(claims: { [key: string]: any }): void
+    public setClaims(value: any): void
     {
         try
         {
             // Store the claim object as a JSON string.
-            this.claims = JSON.stringify(claims);
+            this.claims = JSON.stringify(value);
         }
         catch(e)
         {

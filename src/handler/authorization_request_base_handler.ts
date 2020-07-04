@@ -18,13 +18,13 @@ import { AuthorizationFailResponse } from '../dto/authorization_fail_response.ts
 import { AuthorizationIssueRequest } from '../dto/authorization_issue_request.ts';
 import { AuthorizationIssueResponse } from '../dto/authorization_issue_response.ts';
 import { Property } from '../dto/property.ts';
+import { isNotEmpty } from '../util/util.ts';
 import { badRequest, internalServerError, location, okHtml } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 import { unknownAction } from './base_handler.ts';
 import AfrAction = AuthorizationFailResponse.Action;
 import AirAction = AuthorizationIssueResponse.Action;
 import Reason = AuthorizationFailRequest.Reason;
-import { isNotEmpty } from '../util/util.ts';
 
 
 /**

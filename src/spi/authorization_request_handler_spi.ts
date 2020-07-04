@@ -79,7 +79,7 @@ export interface AuthorizationRequestHandlerSpi extends UserClaimProvider
      * of that subject. If not, it returns `null` and the value of
      * `getUserSubject()` is used by the API instead.
      *
-     * @returns The value of the "sub" claim to be used in the ID token,
+     * @returns The value of the `"sub"` claim to be used in the ID token,
      *          or `null` if no such subject exists.
      */
     getSub(): string | null;

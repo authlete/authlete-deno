@@ -32,7 +32,8 @@ import Reason = AuthorizationFailRequest.Reason;
  * Authlete `/api/auth/authorization/issue` API or `/api/auth/authorization/fail`
  * API accordingly.
  */
-export class AuthorizationDecisionHandler extends AuthorizationRequestBaseHandler<AuthorizationDecisionHandler.Params>
+export class AuthorizationDecisionHandler
+    extends AuthorizationRequestBaseHandler<AuthorizationDecisionHandler.Params>
 {
     /**
      * The SPI class for this handler.

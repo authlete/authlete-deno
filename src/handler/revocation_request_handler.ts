@@ -52,7 +52,7 @@ export class RevocationRequestHandler extends BaseApiRequestHandler<RevocationRe
     public async handle(params: RevocationRequestHandler.Params)
     {
         // Call Authlete /api/auth/revocation API.
-        const response = await this.callRevocationApi(params);
+        const response = await this.callRevocation(params);
 
         // Dispatch according to the action.
         switch (response.action)
@@ -80,7 +80,7 @@ export class RevocationRequestHandler extends BaseApiRequestHandler<RevocationRe
     }
 
 
-    private async callRevocationApi(params: RevocationRequestHandler.Params)
+    private async callRevocation(params: RevocationRequestHandler.Params)
     {
         // Create a request for Authlete /api/auth/token API.
         const request = new RevocationRequest();

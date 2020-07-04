@@ -22,7 +22,7 @@ import { UserClaimProvider } from "./user_claim_provider.ts";
  */
 export class UserClaimProviderAdapter implements UserClaimProvider
 {
-    public getUserClaimValue(subject: string, claimName: string, languageTag?: string)
+    public getUserClaimValue(subject: string, claimName: string, languageTag?: string): any
     {
         return null;
     }

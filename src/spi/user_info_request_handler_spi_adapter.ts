@@ -20,7 +20,8 @@ import { UserClaimProviderAdapter } from './user_claim_provider_adapter.ts';
 /**
  * Empty implementation of `UserInfoRequestHandlerSpi` interface.
  */
-export class UserInfoRequestHandlerSpiAdapter extends UserClaimProviderAdapter implements UserInfoRequestHandlerSpi
+export class UserInfoRequestHandlerSpiAdapter
+    extends UserClaimProviderAdapter implements UserInfoRequestHandlerSpi
 {
     public getSub(): string | null
     {

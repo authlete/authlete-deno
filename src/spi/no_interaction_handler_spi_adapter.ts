@@ -20,7 +20,8 @@ import { NoInteractionHandlerSpi } from './no_interaction_handler_spi.ts';
 /**
  * Empty implementation of `AuthorizationRequestHandlerSpi` interface.
  */
-export class NoInteractionHandlerSpiAdapter extends AuthorizationRequestHandlerSpiAdapter implements NoInteractionHandlerSpi
+export class NoInteractionHandlerSpiAdapter
+    extends AuthorizationRequestHandlerSpiAdapter implements NoInteractionHandlerSpi
 {
     public isUserAuthenticated(): boolean
     {

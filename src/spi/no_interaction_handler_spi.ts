@@ -34,8 +34,6 @@ export interface NoInteractionHandlerSpi extends AuthorizationRequestHandlerSpi
      * in [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
      * for details about `prompt=none`.
      *
-     * Below is an example implementation using [Apache Shiro](http://shiro.apache.org/).
-     *
      * @returns `true` if an end-user has already logged in. Otherwise,
      *          `false`. When `false` is returned, the client application
      *          will receive `error=login_required`.
