@@ -18,7 +18,7 @@ import { AuthorizationFailResponse } from '../dto/authorization_fail_response.ts
 import { AuthorizationIssueRequest } from '../dto/authorization_issue_request.ts';
 import { AuthorizationIssueResponse } from '../dto/authorization_issue_response.ts';
 import { Property } from '../dto/property.ts';
-import { isNotEmpty } from '../util/util.ts';
+import { isNotEmpty, stringfyJson } from '../util/util.ts';
 import { badRequest, internalServerError, location, okHtml } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 import { unknownAction } from './base_handler.ts';
@@ -136,7 +136,8 @@ export abstract class AuthorizationRequestBaseHandler<ArgType>
         if (acr) request.acr = acr;
 
         // The claims of the end-user.
-        if (isNotEmpty(claims)) request.setClaims(claims!);
+        const stringClaims = stringfyJson(claims);
+        if (isNotEmpty(stringClaims)) request.claims = stringClaims!;
 
         // Extra properties to associate with an access token and/or
         // an authorization code.

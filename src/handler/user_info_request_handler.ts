@@ -19,7 +19,7 @@ import { UserInfoIssueResponse } from '../dto/user_info_issue_response.ts';
 import { UserInfoRequest } from '../dto/user_info_request.ts';
 import { UserInfoResponse } from '../dto/user_info_response.ts';
 import { UserInfoRequestHandlerSpi } from '../spi/user_info_request_handler_spi.ts';
-import { isEmpty, isNotEmpty } from '../util/util.ts';
+import { isEmpty, isNotEmpty, stringfyJson } from '../util/util.ts';
 import { bearerError, ContentType, ok, Status } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 import { unknownAction } from './base_handler.ts';
@@ -193,9 +193,10 @@ export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoReques
         const sub = this.spi.getSub();
         if (sub) request.sub = sub;
 
-        // Collect claim values of the user.
+        // The claims of the end-user.
         const claims = new ClaimCollector(this.spi, uir.subject!, uir.claims).collect();
-        if (isNotEmpty(claims)) request.setClaims(claims!);
+        const stringClaims = stringfyJson(claims);
+        if (isNotEmpty(stringClaims)) request.claims = stringClaims!;
 
         // Call Authlete /api/auth/userinfo/issue API.
         return await this.api.userInfoIssue(request);

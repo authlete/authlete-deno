@@ -56,7 +56,28 @@ export class AuthorizationIssueRequest
 
 
     /**
-     * Claims in JSON format.
+     * The claims of the end-user (= pieces of information about the
+     * end-user) in JSON format.
+     *
+     * The authorization server implementation is required to retrieve
+     * claims of the subject (= information about the end-user) from its
+     * database and format them in JSON format.
+     *
+     * For example, if `given_name` claim, `family_name` claim and `email`
+     * claim are requested, the authorization server implementation should
+     * generate a JSON object like the following and set this `claims`
+     * property to its string representation.
+     *
+     * ```json
+     * {
+     *   "given_name": "Takahiko",
+     *   "family_name": "Kawasaki",
+     *   "email": "takahiko.kawasaki@example.com"
+     * }
+     * ```
+     *
+     * For more details, see [OpenID Connect Core 1.0, 5.1. Standard Claims](
+     * http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims).
      */
     public claims?: string;
 
@@ -78,46 +99,4 @@ export class AuthorizationIssueRequest
      * request.
      */
     public scopes?: string[];
-
-
-    /**
-     * Set the `claims` property.
-     *
-     * A value passed to this method as `value` parameter must be a JavaScript
-     * value, usually an object or array, into which claims of the subject
-     * (= information about the end-user) are put.
-     *
-     * Also, note that the value of `value` parameter must be a value
-     * that can be converted to a JSON string value by `JSON.stringify()`.
-     *
-     * The below is an example value of `value` parameter if `given_name`
-     * claim, `family_name` claim and `email` claim are requested:
-     *
-     * ```ts
-     * {
-     *     given_name: "Hideki",
-     *     family_name: "Ikeda",
-     *     email: "hideki.ikeda@example.com"
-     * }
-     * ```
-     *
-     * See [OpenID Connect Core 1.0, 5.1. Standard Claims](
-     * http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims)
-     * for more details.
-     *
-     * @param value
-     *         The claims of the subject. Keys are claim names.
-     */
-    public setClaims(value: any): void
-    {
-        try
-        {
-            // Store the claim object as a JSON string.
-            this.claims = JSON.stringify(value);
-        }
-        catch(e)
-        {
-            // Do nothing if the conversion fails.
-        }
-    }
 }

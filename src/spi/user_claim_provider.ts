@@ -23,10 +23,10 @@ export interface UserClaimProvider
      * Get the value of a claim of the user. This method may be called
      * multiple times.
      *
-     * @param string subject
+     * @param subject
      *     The subject (= unique identifier) of a user.
      *
-     * @param string claimName
+     * @param claimName
      *     A claim name such as `"name"` and `"family_name"`. Standard claim
      *     names are listed in [5.1. Standard Claims](
      *     https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims) of
@@ -35,7 +35,7 @@ export interface UserClaimProvider
      *     in `StandardClaims` class. Note that the value of this argument
      *     (`claimName`) does NOT contain a language tag.
      *
-     * @param string languageTag
+     * @param languageTag
      *     A language tag such as `"en"` and `"ja"`. Implementations of
      *     this method should take this into consideration if possible.
      *     See [5.2. Claims Languages and Scripts](

@@ -87,18 +87,23 @@ export function isNotEmpty(value: undefined | null | string | object)
 
 
 /**
- * Parse the given JSON string into a plain object. `null` is returned
- * if failed to parse it.
+ * Convert a JavaScript value to a JSON string. `null` is returned if
+ * failed to stringfy the value.
  *
- * @json A JSON string.
+ * Note: this method is a wrapper method for `JSON.stringify()`.
+ *
+ * @params value
+ *          A value, typically an object or array, to be converted.
+ *
+ * @returns A string the given value is converted to.
  */
-export function parseJson(json: string | null): any
+export function stringfyJson(value: any): string | null
 {
-    if (json === null) return null;
+    if (isUndefinedOrNull(value)) return null;
 
     try
     {
-        return JSON.parse(json);
+        return JSON.stringify(value);
     }
     catch(e)
     {
