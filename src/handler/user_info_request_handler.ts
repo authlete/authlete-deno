@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { AuthleteApi } from '../api/authlete_api.ts';
 import { UserInfoIssueRequest } from '../dto/user_info_issue_request.ts';
 import { UserInfoIssueResponse } from '../dto/user_info_issue_response.ts';
 import { UserInfoRequest } from '../dto/user_info_request.ts';
 import { UserInfoResponse } from '../dto/user_info_response.ts';
 import { UserInfoRequestHandlerSpi } from '../spi/user_info_request_handler_spi.ts';
-import { isEmpty } from '../util/util.ts';
+import { isEmpty, isNotEmpty } from '../util/util.ts';
 import { bearerError, ContentType, ok, Status } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 import { unknownAction } from './base_handler.ts';
@@ -59,7 +60,7 @@ export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoReques
      * The constructor.
      *
      * @param api
-     *         An Authlete API client.
+     *         An implementation of `AuthleteApi` interface.
      *
      * @param spi
      *         An implementation of `TokenRequestHandler` interface.
@@ -129,10 +130,10 @@ export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoReques
         // Create a request for Authlete /api/auth/userinfo API.
         const request = new UserInfoRequest();
 
-        // Access token.
+        // The access token.
         request.token = params.accessToken;
 
-        // Client Certificate.
+        // The client certificate.
         const clientCertificate = params.clientCertificate;
         if (clientCertificate) request.clientCertificate = clientCertificate;
 
@@ -171,7 +172,6 @@ export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoReques
 
             case UiirAction.JWT:
                 // 200 OK.
-                // TODO
                 return ok(response.responseContent, ContentType.JWT);
 
             default:
@@ -186,7 +186,7 @@ export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoReques
         // Create a request for Authlete /api/auth/userinfo/issue API.
         const request = new UserInfoIssueRequest();
 
-        // Access token.
+        // The access token.
         request.token = uir.token;
 
         // The value of the 'sub' claim (optional).
@@ -195,7 +195,7 @@ export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoReques
 
         // Collect claim values of the user.
         const claims = new ClaimCollector(this.spi, uir.subject!, uir.claims).collect();
-        if (claims && Object.keys(claims).length > 0) request.setClaims(claims);
+        if (isNotEmpty(claims)) request.setClaims(claims!);
 
         // Call Authlete /api/auth/userinfo/issue API.
         return await this.api.userInfoIssue(request);

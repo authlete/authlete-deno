@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { noContent, ok } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 
@@ -46,7 +47,7 @@ export class JwksRequestHandler extends BaseApiRequestHandler<boolean>
         // Call Authlete /api/service/configuration API.
         // The API returns a JSON that complies with OpenID Connect
         // Discovery 1.0.
-        const json: string | null = await this.api.getServiceJwks(pretty);
+        const json = await this.api.getServiceJwks(pretty);
 
         // If the fetched JSON string is empty, return a response
         // of '204 No Content'.

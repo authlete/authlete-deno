@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { AuthleteApi } from '../api/authlete_api.ts';
 import { AuthorizationFailRequest } from '../dto/authorization_fail_request.ts';
 import { AuthorizationResponse } from '../dto/authorization_response.ts';
 import { AuthorizationDecisionHandlerSpi } from '../spi/authorization_decision_handler_spi.ts';
 import { isEmpty } from '../util/util.ts';
-import { BaseAuthorizationRequestHandler } from './base_authorization_request_handler.ts';
+import { AuthorizationRequestBaseHandler } from './authorization_request_base_handler.ts';
 import { ClaimCollector } from './claim_collector.ts';
 import Reason = AuthorizationFailRequest.Reason;
 
@@ -31,7 +32,7 @@ import Reason = AuthorizationFailRequest.Reason;
  * Authlete `/api/auth/authorization/issue` API or `/api/auth/authorization/fail`
  * API accordingly.
  */
-export class AuthorizationDecisionHandler extends BaseAuthorizationRequestHandler<AuthorizationDecisionHandler.Params>
+export class AuthorizationDecisionHandler extends AuthorizationRequestBaseHandler<AuthorizationDecisionHandler.Params>
 {
     /**
      * The SPI class for this handler.
@@ -43,7 +44,7 @@ export class AuthorizationDecisionHandler extends BaseAuthorizationRequestHandle
      * The constructor.
      *
      * @param api
-     *         An Authlete API client.
+     *         An implementation of `AuthleteApi` interface.
      *
      * @param spi
      *         An implementation of `AuthorizationDecisionRequestHandlerSpi`
@@ -57,6 +58,15 @@ export class AuthorizationDecisionHandler extends BaseAuthorizationRequestHandle
     }
 
 
+    /**
+     * Handle an end-user's decision on an authorization request.
+     *
+     * @param params
+     *         Parameters for this handler.
+     *
+     * @returns An HTTP response that should be returned to the user
+     *          agent.
+     */
     public async handle(params: AuthorizationDecisionHandler.Params)
     {
         // If the end-user did not grant authorization to the client
@@ -87,7 +97,7 @@ export class AuthorizationDecisionHandler extends BaseAuthorizationRequestHandle
 
     private async authorize(params: AuthorizationDecisionHandler.Params, subject: string)
     {
-        // A ticket issued by /api/auth/authorization API.
+        // The ticket issued by /api/auth/authorization API.
         const ticket = params.ticket;
 
         // The time when the end-user was authenticated.
@@ -102,7 +112,7 @@ export class AuthorizationDecisionHandler extends BaseAuthorizationRequestHandle
 
         // The claims of the end-user.
         const claims = new ClaimCollector(
-            this.spi, subject!, params.claimNames, params.claimLocales).collect();
+            this.spi, subject, params.claimNames, params.claimLocales).collect();
 
         // Extra properties to associate with an access token and/or
         // an authorization code.
@@ -116,7 +126,7 @@ export class AuthorizationDecisionHandler extends BaseAuthorizationRequestHandle
 
         // Call Authlete '/auth/authorization/issue' API.
         return await this.authorizationIssue(
-            ticket, subject!, authTime, sub, acr, claims, properties, scopes);
+            ticket, subject, authTime, sub, acr, claims, properties, scopes);
     }
 }
 

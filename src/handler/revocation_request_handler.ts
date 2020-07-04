@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { RevocationRequest } from '../dto/revocation_request.ts';
 import { RevocationResponse } from '../dto/revocation_response.ts';
 import { BasicCredentials } from '../web/basic_credentials.ts';
@@ -84,17 +85,17 @@ export class RevocationRequestHandler extends BaseApiRequestHandler<RevocationRe
         // Create a request for Authlete /api/auth/token API.
         const request = new RevocationRequest();
 
-        // 'parameters' parameter.
+        // The 'parameters' parameter.
         request.parameters = normalizeParameters(params.parameters);
 
         // Extract the credentials of the client application from
         // 'Authorization' header.
         const credentials = BasicCredentials.parse(params.authorization);
 
-        // client ID.
+        // The client ID.
         if (credentials && credentials.userId) request.clientId = credentials.userId;
 
-        // Client Secret.
+        // The client secret.
         if (credentials && credentials.password) request.clientSecret = credentials.password;
 
         // Call Authlete /api/auth/revocation API.

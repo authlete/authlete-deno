@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { Response } from 'https://deno.land/std/http/server.ts';
 import { AuthleteApi } from '../api/authlete_api.ts';
 import { TokenFailRequest } from '../dto/token_fail_request.ts';
@@ -60,10 +61,10 @@ export class TokenRequestHandler extends BaseApiRequestHandler<TokenRequestHandl
      * The constructor.
      *
      * @param api
-     *         An Authlete API client.
+     *         An implementation of `AuthleteApi` interface.
      *
      * @param spi
-     *         An implementation of `TokenRequestHandler` interface.
+     *         An implementation of `TokenRequestHandlerSpi` interface.
      */
     public constructor(api: AuthleteApi, spi: TokenRequestHandlerSpi)
     {
@@ -124,17 +125,17 @@ export class TokenRequestHandler extends BaseApiRequestHandler<TokenRequestHandl
         // Create a request for Authlete /api/auth/token API.
         const request = new TokenRequest();
 
-        // 'parameters' parameter.
+        // The 'parameters' parameter.
         request.parameters = normalizeParameters(params.parameters);
 
         // Extract the credentials of the client application from
         // 'Authorization' header.
         const credentials = BasicCredentials.parse(params.authorization);
 
-        // client ID.
+        // The client ID.
         if (credentials && credentials.userId) request.clientId = credentials.userId;
 
-        // Client Secret.
+        // The client secret.
         if (credentials && credentials.password) request.clientSecret = credentials.password;
 
         // Extra properties to associate with an access token.

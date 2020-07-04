@@ -1,5 +1,26 @@
+// Copyright (C) 2020 Authlete, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+
 import { UserClaimProvider } from "../spi/user_claim_provider.ts";
-import { isEmpty, isNotEmpty, isUndefined } from "../util/util.ts";
+import { isEmpty, isNotEmpty } from "../util/util.ts";
+
+
+/**
+ * Separator between a claim name and a language tag.
+ */
+export const CLAIM_SEPARATOR = '#';
 
 
 /**
@@ -68,7 +89,8 @@ export class ClaimCollector
      *         Claim locales. This should be the value of the `claims_locales`
      *         request parameter.
      */
-    public constructor(claimProvider: UserClaimProvider, subject: string, claimNames?: string[], claimLocales?: string[])
+    public constructor(
+        claimProvider: UserClaimProvider, subject: string, claimNames?: string[], claimLocales?: string[])
     {
         this.claimProvider = claimProvider;
         this.subject       = subject;
@@ -94,7 +116,7 @@ export class ClaimCollector
             if (claimName.length === 0) return;
 
             // Split the claim name into the name part and the tag part.
-            const [ name, tag ] = claimName.split('#', 2);
+            const [ name, tag ] = claimName.split(CLAIM_SEPARATOR, 2);
 
             // Skip if the name part is empty.
             if (name.length === 0) return;
@@ -105,8 +127,8 @@ export class ClaimCollector
             // Skip if the claim value was not obtained.
             if (value === null) return;
 
-            // Just for an edge case where claimName ends with '#'.
-            const key = isUndefined(tag)? name : claimName;
+            // Just for an edge case where 'claimName' ends with '#'.
+            const key = claimName.endsWith(CLAIM_SEPARATOR) ? name : claimName;
 
             // Add the pair of the claim name and the claim value.
             claims[key] = value;

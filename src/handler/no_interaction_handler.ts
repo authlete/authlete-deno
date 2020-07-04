@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { AuthleteApi } from '../api/authlete_api.ts';
 import { AuthorizationFailRequest } from '../dto/authorization_fail_request.ts';
 import { AuthorizationResponse } from '../dto/authorization_response.ts';
 import { NoInteractionHandlerSpi } from '../spi/no_interaction_handler_spi.ts';
 import { isEmpty } from '../util/util.ts';
-import { BaseAuthorizationRequestHandler } from './base_authorization_request_handler.ts';
+import { AuthorizationRequestBaseHandler } from './authorization_request_base_handler.ts';
 import { invalidAction } from './base_handler.ts';
 import { ClaimCollector } from './claim_collector.ts';
+import Action = AuthorizationResponse.Action;
 import Reason = AuthorizationFailRequest.Reason;
 
 
@@ -32,7 +34,8 @@ import Reason = AuthorizationFailRequest.Reason;
  * is `NO_INTERACTION`, the authorization request needs to be processed
  * without user interaction. This class is a handler for the case.
  */
-export class NoInteractionHandler extends BaseAuthorizationRequestHandler<AuthorizationResponse>
+export class NoInteractionHandler
+    extends AuthorizationRequestBaseHandler<AuthorizationResponse>
 {
     /**
      * The SPI class for this handler.
@@ -76,10 +79,10 @@ export class NoInteractionHandler extends BaseAuthorizationRequestHandler<Author
         // If the value of the "action" parameter in the
         // response from Authlete /api/auth/authorization API
         // is not "NO_INTERACTION".
-        if (response.action != AuthorizationResponse.Action.NO_INTERACTION)
+        if (response.action !== Action.NO_INTERACTION)
         {
             // This handler does not handle other cases than NO_INTERACTION.
-            return invalidAction(AuthorizationResponse.Action[response.action]);
+            return invalidAction(Action[response.action]);
         }
 
         // Check 1. End-User Authentication
@@ -197,12 +200,12 @@ export class NoInteractionHandler extends BaseAuthorizationRequestHandler<Author
     private async issue(
         response: AuthorizationResponse, subject: string, authTime: number, acr: string | null)
     {
-        // A ticket issued by Authlete '/auth/authorization' API.
+        // The ticket issued by Authlete '/auth/authorization' API.
         const ticket = response.ticket;
 
-        // Get the value of the "sub" claim. This is optional.
-        // When 'sub' is null, the value of 'subject' will be
-        // used as the value of the "sub" claim.
+        // Get the value of the "sub" claim. This is optional. When 'sub'
+        // is null, the value of 'subject' will be used as the value of
+        // the "sub" claim.
         const sub = this.spi.getSub();
 
         // Collect claim values.

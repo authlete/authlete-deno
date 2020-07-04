@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { ok } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 
@@ -51,6 +52,18 @@ import { BaseApiRequestHandler } from './base_api_request_handler.ts';
  */
 export class ConfigurationRequestHandler extends BaseApiRequestHandler<boolean>
 {
+    /**
+     * Handle a request to a configuration endpoint. This method calls
+     * Authlete `/api/service/configuration` API.
+     *
+     * @param pretty
+     *         `true` to format the output JSON in a more human-readable
+     *         way.
+     *
+     * @returns An HTTP response that should be returned from the
+     *          configuration endpoint implementation to the client
+     *          application.
+     */
     public async handle(pretty: boolean)
     {
         // Call Authlete /api/service/configuration API.

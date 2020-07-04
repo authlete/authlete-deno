@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { StandardIntrospectionRequest } from '../dto/standard_introspection_request.ts';
 import { StandardIntrospectionResponse } from '../dto/standard_introspection_response.ts';
 import { badRequest, internalServerError, ok } from '../web/response_util.ts';
@@ -75,7 +76,7 @@ export class IntrospectionRequestHandler
         // Create a request for Authlete /api/auth/introspection/standard API.
         const request = new StandardIntrospectionRequest();
 
-        // 'parameters' parameter.
+        // The 'parameters' parameter.
         request.parameters = normalizeParameters(parameters);
 
         // Call Authlete /api/auth/introspection/standard API.

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { Response } from 'https://deno.land/std/http/server.ts';
 import { isObject } from '../util/util.ts';
 import { internalServerError } from '../web/response_util.ts';
 import { formUrlEncode } from '../web/url_coder.ts';
-
 
 
 /**
@@ -48,9 +48,8 @@ export function normalizeParameters(parameters: string | { [key: string]: string
 
 
 /**
- * Create a WebApplicationException instance to indicate that the value
- * of `action` parameter contained in a response from an Authlete API
- * is unknown.
+ * Create a `Response` instance that indicates the value of `action`
+ * parameter contained in a response from an Authlete API is unknown.
  */
 export function unknownAction(path: string)
 {
@@ -60,9 +59,8 @@ export function unknownAction(path: string)
 
 
 /**
- * Create a WebApplicationException instance to indicate that the value
- * of `action` parameter contained in a response from an Authlete API
- * is unknown.
+ * Create a `Response` instance that indicates the value of `action`
+ * parameter contained in a response from an Authlete API is invalid.
  */
 export function invalidAction(action: string)
 {
@@ -77,12 +75,11 @@ export function invalidAction(action: string)
 export abstract class BaseHandler<ArgType>
 {
     /**
-     * Handle the process of this handler.
-     *
      * This method is responsible for processing the main task of this
-     * handler. A subclass extending this class must implement this
-     * method. Also, this method must return a promise containing a Deno's
-     * standard `Response` object (defined in https://deno.land/std/http/server.ts).
+     * handler. This method must return a promise containing an instance
+     * of Deno's standard `Response` class (defined in https://deno.land/std/http/server.ts).
+     *
+     * A subclass extending this class must implement this method.
      *
      * @param args
      *         The arguments for this method. The type of the arguments

@@ -12,14 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { AuthorizationResponse } from '../dto/authorization_response.ts';
 import { badRequest, internalServerError, location, okHtml } from '../web/response_util.ts';
 import { BaseHandler, invalidAction, unknownAction } from './base_handler.ts';
 import Action = AuthorizationResponse.Action;
 
 
+/**
+ * Handler for error cases of authorization requests.
+ *
+ * A response from Authlete `/api/auth/authorization` API contains
+ * an `action` response parameter. When the value of the response parameter
+ * is neither `NO_INTERACTION` nor `INTERACTION`, the authorization request
+ * should be handled as an error case. This class is a handler for such
+ * error cases.
+ */
 export class AuthorizationRequestErrorHandler extends BaseHandler<AuthorizationResponse>
 {
+    /**
+     * Handle an error case of an authorization request.
+     *
+     * NOTE: Don't call this method when the value of the `action`
+     * parameter of the `response` is neither `NO_INTERACTION` nor
+     * `INTERACTION`.
+     *
+     * @param response
+     *         A response from Authlete `/api/auth/authorization` API.
+     *
+     * @returns An error response that should be returned to the client
+     *          application from the authorization endpoint.
+     */
     public async handle(response: AuthorizationResponse)
     {
         // Dispatch according to the action.

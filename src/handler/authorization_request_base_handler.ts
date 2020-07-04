@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { AuthorizationFailRequest } from '../dto/authorization_fail_request.ts';
 import { AuthorizationFailResponse } from '../dto/authorization_fail_response.ts';
 import { AuthorizationIssueRequest } from '../dto/authorization_issue_request.ts';
@@ -23,13 +24,14 @@ import { unknownAction } from './base_handler.ts';
 import AfrAction = AuthorizationFailResponse.Action;
 import AirAction = AuthorizationIssueResponse.Action;
 import Reason = AuthorizationFailRequest.Reason;
+import { isNotEmpty } from '../util/util.ts';
 
 
 /**
  * The base class for request handlers that are used in the implementation
  * of an authorization endpoint.
  */
-export abstract class BaseAuthorizationRequestHandler<ArgType>
+export abstract class AuthorizationRequestBaseHandler<ArgType>
     extends BaseApiRequestHandler<ArgType>
 {
     /**
@@ -72,8 +74,9 @@ export abstract class BaseAuthorizationRequestHandler<ArgType>
      *          authorization endpoint implementation to the user agent.
      */
     protected async authorizationIssue(
-        ticket: string, subject: string, authTime: number, acr: string | null, sub: string | null,
-        claims: { [key: string]: any } | null, properties: Property[] | null, scopes: string[] | null)
+        ticket: string, subject: string, authTime: number, acr: string | null,
+        sub: string | null, claims: { [key: string]: any } | null,
+        properties: Property[] | null, scopes: string[] | null)
     {
         // Create a request.
         const request = this.createAuthorizationIssueRequest(
@@ -133,7 +136,7 @@ export abstract class BaseAuthorizationRequestHandler<ArgType>
         if (acr) request.acr = acr;
 
         // The claims of the end-user.
-        if (claims && Object.keys(claims).length > 0) request.setClaims(claims);
+        if (isNotEmpty(claims)) request.setClaims(claims!);
 
         // Extra properties to associate with an access token and/or
         // an authorization code.

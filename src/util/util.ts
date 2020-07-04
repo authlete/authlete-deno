@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
  * Check if the given value is `undefined`.
  */
 export function isUndefined(value: any)
 {
-    return typeof(value) === 'undefined';
+    return typeof value === 'undefined';
 }
 
 
@@ -40,29 +41,48 @@ export function isUndefinedOrNull(value: any)
 
 
 /**
- * Check if the given value is empty.
+ * Check if the given value is an object.
  */
-export function isEmpty(value: undefined | null | string | any[])
+export function isString(value: any): value is string
 {
-    return isUndefinedOrNull(value) || value!.length === 0;
-}
-
-
-/**
- * Check if the given value is not empty.
- */
-export function isNotEmpty(value: undefined | null | string | any[])
-{
-    return !isEmpty(value);
+    return typeof value === 'string';
 }
 
 
 /**
  * Check if the given value is an object.
  */
-export function isObject(value: any)
+export function isObject(value: any): value is Object
 {
     return Object.prototype.toString.call(value) === '[object Object]';
+}
+
+
+/**
+ * Check if the given value is empty.
+ */
+export function isEmpty(value: undefined | null | string | object)
+{
+    // Check if the value is undefined or null.
+    if (isUndefinedOrNull(value)) return true;
+
+    // If the value is a string, check its length.
+    if (isString(value)) return value.length === 0;
+
+    // If the value is an array, check its length.
+    if (Array.isArray(value)) return value.length === 0;
+
+    // If the value is an object, check the number of the keys.
+    if (isObject(value)) return Object.keys(value).length === 0;
+}
+
+
+/**
+ * Check if the given value is not empty.
+ */
+export function isNotEmpty(value: undefined | null | string | object)
+{
+    return !isEmpty(value);
 }
 
 
@@ -74,10 +94,7 @@ export function isObject(value: any)
  */
 export function parseJson(json: string | null): any
 {
-    if (json === null)
-    {
-        return null;
-    }
+    if (json === null) return null;
 
     try
     {
