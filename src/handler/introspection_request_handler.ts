@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { StandardIntrospectionRequest } from '../dto/standard_introspection_request.ts';
 import { StandardIntrospectionResponse } from '../dto/standard_introspection_response.ts';
-import { normalizeParameters, unknownAction } from '../web/authlete_api_caller.ts';
-import { badRequest, internalServerError, ok } from '../web/response_util.ts';
-import { BaseHandler } from './base_handler.ts';
+import { badRequest, internalServerError, okJson } from '../web/response_util.ts';
+import { BaseApiRequestHandler } from './base_api_request_handler.ts';
+import { normalizeParameters, unknownAction } from './base_handler.ts';
 import Action = StandardIntrospectionResponse.Action;
 
 
@@ -30,9 +31,20 @@ import Action = StandardIntrospectionResponse.Action;
  * API, receives a response from the API, and dispatches processing according
  * to the `action` parameter in the response.
  */
-export class IntrospectionRequestHandler extends BaseHandler<IntrospectionRequestHandler.parametersType>
+export class IntrospectionRequestHandler
+    extends BaseApiRequestHandler<IntrospectionRequestHandler.parametersType>
 {
-    protected async doHandle(parameters: IntrospectionRequestHandler.parametersType)
+    /**
+     * Handle an introspection request. This method calls Authlete
+     * `/api/auth/introspection/standard` API.
+     *
+     * @param parameters
+     *         Request parameters of an introspection request.
+     *
+     * @returns An HTTP response that should be returned from the introspection
+     *          endpoint implementation to the client application.
+     */
+    public async handle(parameters: IntrospectionRequestHandler.parametersType)
     {
         // Call Authlete /api/auth/introspection/standard API.
         const response = await this.callStandardIntrospection(parameters);
@@ -50,11 +62,11 @@ export class IntrospectionRequestHandler extends BaseHandler<IntrospectionReques
 
             case Action.OK:
                 // 200 OK.
-                return ok(response.responseContent);
+                return okJson(response.responseContent);
 
             default:
                 // This never happens.
-                throw unknownAction('/api/auth/introspection/standard');
+                return unknownAction('/api/auth/introspection/standard');
         }
     }
 
@@ -68,7 +80,7 @@ export class IntrospectionRequestHandler extends BaseHandler<IntrospectionReques
         request.parameters = normalizeParameters(parameters);
 
         // Call Authlete /api/auth/introspection/standard API.
-        return await this.apiCaller.callStandardIntrospection(request);
+        return await this.api.standardIntrospection(request);
     }
 }
 

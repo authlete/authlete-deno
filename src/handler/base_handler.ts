@@ -12,30 +12,61 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { Response } from 'https://deno.land/std/http/server.ts';
-import { AuthleteApi } from '../api/authlete_api.ts';
-import { AuthleteApiCaller } from '../web/authlete_api_caller.ts';
-import { ContentType, internalServerError } from '../web/response_util.ts';
-import { WebApplicationException } from '../web/web_application_exception.ts';
+import { isObject } from '../util/util.ts';
+import { internalServerError } from '../web/response_util.ts';
+import { formUrlEncode } from '../web/url_coder.ts';
 
 
 /**
- * Create a WebApplicationException instance that contains a response
- * of `'500 Internal Server Error'`.
+ * Normalize the given parameter as `parameters` parameter for
+ * some Authlete APIs such as `/api/auth/authorization` API and
+ * `/api/auth/token` API.
  */
-function unexpected(message: string, error: Error): WebApplicationException
+export function normalizeParameters(
+    parameters: string | { [key: string]: string } | null): string
 {
-    if (error && error.message)
+    if (parameters === null)
     {
-        // Append the message of the error.
-        message += ': ' + error.message;
+        // Authlete returns different error codes for null and an empty
+        // string. 'null' is regarded as a caller's error. An empty string
+        // is regarded as a client application's error.
+        return '';
     }
 
-    // A response of '500 Internal Server Error'.
-    const response = internalServerError(message, ContentType.TEXT_HTML_UTF8);
+    // If the 'parameters' is an Object ({ [key:string]: string }).
+    if (isObject(parameters))
+    {
+        // Convert the object to a form-url-encoded string.
+        return formUrlEncode(parameters as { [key: string]: string });
+    }
 
-    // Throw an exception having the response.
-    return new WebApplicationException(response, error);
+    // The 'parameters' is a string. In this case, just return the original
+    // value.
+    return parameters as string;
+}
+
+
+/**
+ * Create a `Response` instance that indicates the value of `action`
+ * parameter contained in a response from an Authlete API is unknown.
+ */
+export function unknownAction(path: string)
+{
+    // 500 Internal Server Error.
+    return internalServerError(`Authlete ${path} API returned an unknown action`);
+}
+
+
+/**
+ * Create a `Response` instance that indicates the value of `action`
+ * parameter contained in a response from an Authlete API is invalid.
+ */
+export function invalidAction(action: string)
+{
+    // 500 Internal Server Error.
+    return internalServerError(`${action} is an invalid action.`);
 }
 
 
@@ -45,30 +76,11 @@ function unexpected(message: string, error: Error): WebApplicationException
 export abstract class BaseHandler<ArgType>
 {
     /**
-     * The Authlete API caller
-     */
-    protected apiCaller: AuthleteApiCaller;
-
-
-    /**
-     * The constructor.
+     * This method is responsible for processing the main task of this
+     * handler. This method must return a promise containing an instance
+     * of Deno's standard `Response` class (defined in https://deno.land/std/http/server.ts).
      *
-     * @param api
-     *         An Authlete API client.
-     */
-    public constructor(api: AuthleteApi)
-    {
-        // Create an Authlete API caller.
-        this.apiCaller = new AuthleteApiCaller(api);
-    }
-
-
-    /**
-     * Handle the process of this handler. The major part of the process
-     * is delegated to `doHandle` method, which must be implemented by
-     * a subclass that extends this class. This method returns a promise
-     * containing a Deno's standard `Response` object (defined in
-     * 'https://deno.land/std/http/server.ts').
+     * A subclass extending this class must implement this method.
      *
      * @param args
      *         The arguments for this method. The type of the arguments
@@ -77,34 +89,5 @@ export abstract class BaseHandler<ArgType>
      *
      * @returns A promise containing a `Response` object.
      */
-    public async handle(args: ArgType): Promise<Response>
-    {
-        try
-        {
-            // Process the given parameters.
-            return await this.doHandle(args);
-        }
-        catch (e)
-        {
-            // If it's a WebApplicationException, rethrow the error.
-            // Otherwise, wrap it with WebApplicationException class and
-            // throw it.
-            throw e instanceof WebApplicationException ?
-                e : unexpected(`Unexpected error in ${this.constructor.name}`, e);
-        }
-    }
-
-
-    /**
-     * This method is responsible for processing the main task of this
-     * handler. A subclass extending this class must implement this
-     * method. Also, this method must return a promise containing a Deno's
-     * standard `Response` object (defined in 'https://deno.land/std/http/server.ts').
-     *
-     * @param args
-     *         The arguments passed to `handle` method.
-     *
-     * @returns A promise containing a `Response` object.
-     */
-    protected abstract async doHandle(args: ArgType): Promise<Response>
+    public abstract async handle(args: ArgType): Promise<Response>
 }

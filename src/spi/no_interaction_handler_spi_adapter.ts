@@ -13,26 +13,18 @@
 // limitations under the License.
 
 
-import { BaseExtendedEnum } from './base_extended_enum.ts';
+import { AuthorizationRequestHandlerSpiAdapter } from './authorization_request_handler_spi_adapter.ts';
+import { NoInteractionHandlerSpi } from './no_interaction_handler_spi.ts';
 
 
 /**
- * Service profile.
+ * Empty implementation of `AuthorizationRequestHandlerSpi` interface.
  */
-export class ServiceProfile extends BaseExtendedEnum
+export class NoInteractionHandlerSpiAdapter
+    extends AuthorizationRequestHandlerSpiAdapter implements NoInteractionHandlerSpi
 {
-    /**
-     * [Financial-grade API](https://openid.net/wg/fapi/).
-     *
-     * `fapi` (1)
-     */
-    public static readonly FAPI = new ServiceProfile(1, 'fapi');
-
-
-    /**
-     * [Open Banking](https://www.openbanking.org.uk/).
-     *
-     * `openbanking` (2)
-     */
-    public static readonly OPEN_BANKING = new ServiceProfile(2, 'openbanking');
+    public isUserAuthenticated(): boolean
+    {
+        return false;
+    }
 }

@@ -13,26 +13,31 @@
 // limitations under the License.
 
 
-import { BaseExtendedEnum } from './base_extended_enum.ts';
+import { AuthleteApi } from '../api/authlete_api.ts';
+import { BaseHandler } from './base_handler.ts';
 
 
 /**
- * Service profile.
+ * The base class for a handler class that calls Authlete APIs.
  */
-export class ServiceProfile extends BaseExtendedEnum
+export abstract class BaseApiRequestHandler<ArgType> extends BaseHandler<ArgType>
 {
     /**
-     * [Financial-grade API](https://openid.net/wg/fapi/).
-     *
-     * `fapi` (1)
+     * The implementation of `AuthleteApi` interface.
      */
-    public static readonly FAPI = new ServiceProfile(1, 'fapi');
+    protected api: AuthleteApi;
 
 
     /**
-     * [Open Banking](https://www.openbanking.org.uk/).
+     * The constructor.
      *
-     * `openbanking` (2)
+     * @param api
+     *         An implementation of `AuthleteApi` interface.
      */
-    public static readonly OPEN_BANKING = new ServiceProfile(2, 'openbanking');
+    public constructor(api: AuthleteApi)
+    {
+        super();
+
+        this.api = api;
+    }
 }

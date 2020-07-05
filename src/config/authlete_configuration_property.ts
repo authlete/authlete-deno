@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { readFileStr } from 'https://deno.land/std/fs/read_file_str.ts';
 import { AuthleteConfiguration } from './authlete_configuration.ts';
 

@@ -12,23 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Response } from 'https://deno.land/std/http/server.ts';
-import { AuthorizationResponse } from '../dto/authorization_response.ts';
+
 import { Property } from '../dto/property.ts';
 import { AuthorizationRequestHandlerSpi } from './authorization_request_handler_spi.ts';
+import { UserClaimProviderAdapter } from './user_claim_provider_adapter.ts';
 
 
 /**
  * Empty implementation of `AuthorizationRequestHandlerSpi` interface.
  */
-export class AuthorizationRequestHandlerSpiAdapter implements AuthorizationRequestHandlerSpi
+export class AuthorizationRequestHandlerSpiAdapter
+    extends UserClaimProviderAdapter implements AuthorizationRequestHandlerSpi
 {
-    public isUserAuthenticated(): boolean
-    {
-        return false;
-    }
-
-
     public getUserAuthenticatedAt(): number
     {
         return 0;
@@ -44,12 +39,6 @@ export class AuthorizationRequestHandlerSpiAdapter implements AuthorizationReque
     public getAcr(): string | null
     {
         return null;
-    }
-
-
-    public async generateAuthorizationPage(info: AuthorizationResponse): Promise<Response>
-    {
-        throw Error('Implement generateAuthorizationPage().');
     }
 
 

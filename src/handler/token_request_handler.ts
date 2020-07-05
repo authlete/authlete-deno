@@ -12,19 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { Response } from 'https://deno.land/std/http/server.ts';
 import { AuthleteApi } from '../api/authlete_api.ts';
 import { TokenFailRequest } from '../dto/token_fail_request.ts';
+import { TokenFailResponse } from '../dto/token_fail_response.ts';
 import { TokenIssueRequest } from '../dto/token_issue_request.ts';
+import { TokenIssueResponse } from '../dto/token_issue_response.ts';
 import { TokenRequest } from '../dto/token_request.ts';
 import { TokenResponse } from '../dto/token_response.ts';
 import { TokenRequestHandlerSpi } from '../spi/token_request_handler_spi.ts';
-import { normalizeParameters, unknownAction } from '../web/authlete_api_caller.ts';
 import { BasicCredentials } from '../web/basic_credentials.ts';
-import { badRequest, internalServerError, ok, unauthorized } from '../web/response_util.ts';
-import { BaseHandler } from './base_handler.ts';
+import { badRequest, internalServerError, okJson, unauthorized } from '../web/response_util.ts';
+import { BaseApiRequestHandler } from './base_api_request_handler.ts';
+import { normalizeParameters, unknownAction } from './base_handler.ts';
 import Action = TokenResponse.Action;
 import Reason = TokenFailRequest.Reason;
+import TfrAction = TokenFailResponse.Action;
+import TirAction = TokenIssueResponse.Action;
 
 
 /**
@@ -44,7 +49,7 @@ const CHALLENGE = 'Basic realm="token"';
  * API, receives a response from the API, and dispatches processing
  * according to the `action` parameter in the response.
  */
-export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
+export class TokenRequestHandler extends BaseApiRequestHandler<TokenRequestHandler.Params>
 {
     /**
      * The SPI class for this handler.
@@ -56,10 +61,10 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
      * The constructor.
      *
      * @param api
-     *         An Authlete API client.
+     *         An implementation of `AuthleteApi` interface.
      *
      * @param spi
-     *         An implementation of  `TokenRequestHandlerSpi` interface.
+     *         An implementation of `TokenRequestHandlerSpi` interface.
      */
     public constructor(api: AuthleteApi, spi: TokenRequestHandlerSpi)
     {
@@ -69,7 +74,18 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
     }
 
 
-    protected async doHandle(params: TokenRequestHandler.Params)
+    /**
+     * Handle a token request to a token endpoint. This method calls
+     * Authlete `/api/auth/token` API and conditionally `/api/auth/token/issue`
+     * API or `/api/token/issue/fail` API.
+     *
+     * @param params
+     *         Parameters for this handler.
+     *
+     * @returns An HTTP response that should be returned from the token
+     *          endpoint implementation to the client application.
+     */
+    public async handle(params: TokenRequestHandler.Params)
     {
         // Call Authlete /api/auth/token API.
         const response = await this.callToken(params);
@@ -79,7 +95,7 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
         {
             case Action.INVALID_CLIENT:
                 // 401 Unauthorized.
-                return unauthorized(response.responseContent!, CHALLENGE);
+                return unauthorized(CHALLENGE, response.responseContent!);
 
             case Action.INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error.
@@ -95,11 +111,11 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
 
             case Action.OK:
                 // 200 OK.
-                return ok(response.responseContent!);
+                return okJson(response.responseContent!);
 
             default:
                 // This never happens.
-                throw unknownAction('/api/auth/token');
+                return unknownAction('/api/auth/token');
         }
     }
 
@@ -112,10 +128,14 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
         // The 'parameters' parameter.
         request.parameters = normalizeParameters(params.parameters);
 
-        // The credentials of the client application extracted from
+        // Extract the credentials of the client application from
         // 'Authorization' header.
         const credentials = BasicCredentials.parse(params.authorization);
+
+        // The client ID.
         if (credentials && credentials.userId) request.clientId = credentials.userId;
+
+        // The client secret.
         if (credentials && credentials.password) request.clientSecret = credentials.password;
 
         // Extra properties to associate with an access token.
@@ -123,7 +143,7 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
         if (properties) request.properties = properties;
 
         // Call Authlete /api/auth/token API.
-        return await this.apiCaller.callToken(request);
+        return await this.api.token(request);
     }
 
 
@@ -151,6 +171,29 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
 
     private async tokenIssue(ticket: string, subject: string)
     {
+        // Call Authlete /api/auth/token/issue API.
+        const response = await this.callTokenIssue(ticket, subject);
+
+        // Dispatch according to the action.
+        switch (response.action)
+        {
+            case TirAction.INTERNAL_SERVER_ERROR:
+                // 500 Internal Server Error.
+                return internalServerError(response.responseContent);
+
+            case TirAction.OK:
+                // 200 OK.
+                return okJson(response.responseContent);
+
+            default:
+                // This never happens.
+                return unknownAction('/api/auth/token/issue');
+        }
+    }
+
+
+    private async callTokenIssue(ticket: string, subject: string)
+    {
         // Create a request for Authlete /api/auth/token/issue API.
         const request = new TokenIssueRequest();
 
@@ -165,11 +208,34 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
         if (properties) request.properties = properties;
 
         // Call Authlete /api/auth/token/issue API.
-        return await this.apiCaller.tokenIssue(request);
+        return await this.api.tokenIssue(request);
     }
 
 
     private async tokenFail(ticket: string, reason: Reason)
+    {
+        // Call Authlete /api/auth/token/fail API.
+        const response = await this.callTokenFail(ticket, reason);
+
+        // Dispatch according to the action.
+        switch (response.action)
+        {
+            case TfrAction.INTERNAL_SERVER_ERROR:
+                // 500 Internal Server Error.
+                return internalServerError(response.responseContent);
+
+            case TfrAction.BAD_REQUEST:
+                // 400 Bad Request.
+                return badRequest(response.responseContent);
+
+            default:
+                // This never happens.
+                return unknownAction('/api/auth/token/fail');
+        }
+    }
+
+
+    private async callTokenFail(ticket: string, reason: Reason)
     {
         // Create a request for /api/auth/token/fail API.
         const request = new TokenFailRequest();
@@ -180,9 +246,8 @@ export class TokenRequestHandler extends BaseHandler<TokenRequestHandler.Params>
         // The reason of the failure.
         request.reason = reason;
 
-        // Create a response to the client application with the help of
-        // Authlete /api/auth/token/fail API.
-        return await this.apiCaller.tokenFail(request);
+        // Call Authlete /api/auth/token/fail API.
+        return await this.api.tokenFail(request);
     }
 }
 

@@ -13,26 +13,17 @@
 // limitations under the License.
 
 
-import { BaseExtendedEnum } from './base_extended_enum.ts';
+import { UserClaimProvider } from "./user_claim_provider.ts";
 
 
 /**
- * Service profile.
+ * Interface to get a claim value by specifying a user's subject,
+ * a claim name and optionally a language tag.
  */
-export class ServiceProfile extends BaseExtendedEnum
+export class UserClaimProviderAdapter implements UserClaimProvider
 {
-    /**
-     * [Financial-grade API](https://openid.net/wg/fapi/).
-     *
-     * `fapi` (1)
-     */
-    public static readonly FAPI = new ServiceProfile(1, 'fapi');
-
-
-    /**
-     * [Open Banking](https://www.openbanking.org.uk/).
-     *
-     * `openbanking` (2)
-     */
-    public static readonly OPEN_BANKING = new ServiceProfile(2, 'openbanking');
+    public getUserClaimValue(subject: string, claimName: string, languageTag?: string): any
+    {
+        return null;
+    }
 }

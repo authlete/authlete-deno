@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
 import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
 import { Property } from './property.ts';
@@ -55,7 +56,28 @@ export class AuthorizationIssueRequest
 
 
     /**
-     * Claims in JSON format.
+     * The claims of the end-user (= pieces of information about the
+     * end-user) in JSON format.
+     *
+     * The authorization server implementation is required to retrieve
+     * claims of the subject (= information about the end-user) from its
+     * database and format them in JSON format.
+     *
+     * For example, if `given_name` claim, `family_name` claim and `email`
+     * claim are requested, the authorization server implementation should
+     * generate a JSON object like the following and set this `claims`
+     * property to its string representation.
+     *
+     * ```json
+     * {
+     *   "given_name": "Takahiko",
+     *   "family_name": "Kawasaki",
+     *   "email": "takahiko.kawasaki@example.com"
+     * }
+     * ```
+     *
+     * For more details, see [OpenID Connect Core 1.0, 5.1. Standard Claims](
+     * http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims).
      */
     public claims?: string;
 
@@ -77,46 +99,4 @@ export class AuthorizationIssueRequest
      * request.
      */
     public scopes?: string[];
-
-
-    /**
-     * Set the `claims` property.
-     *
-     * The service implementation is required to retrieve claims of the
-     * subject (= information about the end-user) from its database and
-     * format them in JSON format.
-     *
-     * For example, if `given_name` claim, `family_name` claim and `email`
-     * claim are requested, the service implementation should generate
-     * a JSON object like the following:
-     *
-     * ```json
-     * {
-     *   "given_name": "Hideki",
-     *   "family_name": "Ikeda",
-     *   "email": "hideki.ikeda@example.com"
-     * }
-     * ```
-     *
-     * and set its String representation by this method.
-     *
-     * See [OpenID Connect Core 1.0, 5.1. Standard Claims](
-     * http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims)
-     * for further details about the format.
-     *
-     * @param claims
-     *         The claims of the subject. Keys are claim names.
-     */
-    public setClaims(claims: { [key: string]: any }): void
-    {
-        try
-        {
-            // Store the claim object as a JSON string.
-            this.claims = JSON.stringify(claims);
-        }
-        catch(e)
-        {
-            // Do nothing if the conversion fails.
-        }
-    }
 }

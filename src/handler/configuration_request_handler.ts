@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { ok } from '../web/response_util.ts';
-import { BaseHandler } from './base_handler.ts';
+
+import { okJson } from '../web/response_util.ts';
+import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 
 
 /**
@@ -49,16 +50,28 @@ import { BaseHandler } from './base_handler.ts';
  * Note that the default value of Issuer Identifier is not appropriate
  * for commercial use, so you should change it.
  */
-export class ConfigurationRequestHandler extends BaseHandler<boolean>
+export class ConfigurationRequestHandler extends BaseApiRequestHandler<boolean>
 {
-    protected async doHandle(pretty: boolean)
+    /**
+     * Handle a request to a configuration endpoint. This method calls
+     * Authlete `/api/service/configuration` API.
+     *
+     * @param pretty
+     *         `true` to format the output JSON in a more human-readable
+     *         way.
+     *
+     * @returns An HTTP response that should be returned from the
+     *          configuration endpoint implementation to the client
+     *          application.
+     */
+    public async handle(pretty: boolean)
     {
         // Call Authlete /api/service/configuration API.
         // The API returns a JSON that complies with OpenID Connect
         // Discovery 1.0.
-        const json = await this.apiCaller.callServiceConfiguration(pretty);
+        const json = await this.api.getServiceConfiguration(pretty);
 
-        // Response as 'application/json;charset=UTF-8' with '200 OK'.
-        return ok(json);
+        // Return '200 OK' with the JSON.
+        return okJson(json);
     }
 }

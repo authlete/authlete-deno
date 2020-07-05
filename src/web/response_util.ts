@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { Response } from 'https://deno.land/std/http/server.ts';
 
 
@@ -53,7 +54,7 @@ export class ContentType
     public static readonly APPLICATION_FORM_URLENCODED = 'application/x-www-form-urlencoded';
     public static readonly APPLICATION_JAVASCRIPT_UTF8 = 'application/javascript; charset=utf-8';
     public static readonly APPLICATION_JSON_UTF8       = 'application/json; charset=utf-8';
-    public static readonly JWT                         = 'application/jwt';
+    public static readonly APPLICATION_JWT             = 'application/jwt';
     public static readonly TEXT_HTML_UTF8              = 'text/html; charset=utf-8';
 }
 
@@ -81,7 +82,7 @@ export class Pragma
  * the given type. The `type` parameter defaults to `ContentType.APPLICATION_JSON_UTF8`
  * (= `application/javascript; charset=utf-8`).
  */
-export function ok(content: string, type = ContentType.APPLICATION_JSON_UTF8)
+export function ok(type: string, content: string)
 {
     return buildResponse(Status.OK, buildHeaders(type), content);
 }
@@ -89,11 +90,21 @@ export function ok(content: string, type = ContentType.APPLICATION_JSON_UTF8)
 
 /**
  * Create a response of `'200 OK'` with the given content formatted in
- * `'text/html; charset=UTF-8'`.
+ * `'application/json; charset=utf-8'`.
  */
-export function form(content: string)
+export function okJson(content: string)
 {
-    return buildResponse(Status.OK, buildHeaders(ContentType.TEXT_HTML_UTF8), content);
+    return ok(ContentType.APPLICATION_JSON_UTF8, content);
+}
+
+
+/**
+ * Create a response of `'200 OK'` with the given content formatted in
+ * `'text/html; charset=utf-8'`.
+ */
+export function okHtml(content: string)
+{
+    return ok(ContentType.TEXT_HTML_UTF8, content);
 }
 
 
@@ -101,15 +112,25 @@ export function form(content: string)
  * Create a response of `'200 OK'` with the given content formatted in
  * `'application/javascript; charset=utf-8'`.
  */
-export function javascript(content: string)
+export function okJavascript(content: string)
 {
-    return buildResponse(Status.OK, buildHeaders(ContentType.APPLICATION_JAVASCRIPT_UTF8), content);
+    return ok(ContentType.APPLICATION_JAVASCRIPT_UTF8, content);
+}
+
+
+/**
+ * Create a response of `'200 OK'` with the given content formatted in
+ * `'application/jwt'`.
+ */
+export function okJwt(content: string)
+{
+    return ok(ContentType.APPLICATION_JWT, content);
 }
 
 
 /**
  * Create a response of `'201 Created'` with the given content formatted
- * in `'application/json; charset=UTF-8'`.
+ * in `'application/json; charset=utf-8'`.
  */
 export function created(content: string)
 {
@@ -138,7 +159,7 @@ export function location(location: string)
 
 
 /**
- * Create a response of `'400 Bad Request'` formatted in `'application/json; charset=UTF-8'`.
+ * Create a response of `'400 Bad Request'` formatted in `'application/json; charset=utf-8'`.
  */
 export function badRequest(content: string)
 {
@@ -147,9 +168,9 @@ export function badRequest(content: string)
 
 
 /**
- * Create a response of `'401 Unauthorized'` formatted in `'application/json; charset=UTF-8'`.
+ * Create a response of `'401 Unauthorized'` formatted in `'application/json; charset=utf-8'`.
  */
-export function unauthorized(content: string, challenge: string)
+export function unauthorized(challenge: string, content?: string)
 {
     const headers = buildHeadersOfApplicationJsonUtf8();
     headers.set(Header.WWW_AUTHENTICATE, challenge);
@@ -158,7 +179,7 @@ export function unauthorized(content: string, challenge: string)
 
 
 /**
- * Create a response of `'403 Forbidden'` formatted in `'application/json; charset=UTF-8'`.
+ * Create a response of `'403 Forbidden'` formatted in `'application/json; charset=utf-8'`.
  */
 export function forbidden(content: string)
 {
@@ -167,7 +188,7 @@ export function forbidden(content: string)
 
 
 /**
- * Create a response of `'404 Not Found'` formatted in `'application/json; charset=UTF-8'`.
+ * Create a response of `'404 Not Found'` formatted in `'application/json; charset=utf-8'`.
  */
 export function notFound(content: string)
 {
@@ -176,10 +197,12 @@ export function notFound(content: string)
 
 
 /**
- * Create a response of `'500 Internal Server Error'` formatted in
- * `'application/json; charset=UTF-8'`.
+ * Create a response of `'500 Internal Server Error'` formatted in the
+ * given type. The `type` parameter defaults to `ContentType.APPLICATION_JSON_UTF8`
+ * (= `application/javascript; charset=utf-8`).
  */
-export function internalServerError(content: string, type: string = ContentType.APPLICATION_JSON_UTF8)
+export function internalServerError(
+    content: string, type: string = ContentType.APPLICATION_JSON_UTF8)
 {
     return buildResponse(Status.INTERNAL_SERVER_ERROR, buildHeaders(type), content);
 }
@@ -189,7 +212,7 @@ export function internalServerError(content: string, type: string = ContentType.
  * Create a response with the given status and `WWW-Authenticate` header
  * having the given challenge as its value.
  */
-export function bearerError(status: number, challenge: string)
+export function wwwAuthenticate(status: number, challenge: string)
 {
     const headers = buildHeaders();
     headers.set(Header.WWW_AUTHENTICATE, challenge);
