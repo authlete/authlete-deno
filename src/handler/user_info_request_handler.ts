@@ -20,7 +20,7 @@ import { UserInfoRequest } from '../dto/user_info_request.ts';
 import { UserInfoResponse } from '../dto/user_info_response.ts';
 import { UserInfoRequestHandlerSpi } from '../spi/user_info_request_handler_spi.ts';
 import { isEmpty, isNotEmpty, stringfyJson } from '../util/util.ts';
-import { bearerError, ContentType, ok, Status } from '../web/response_util.ts';
+import { okJson, okJwt, Status, wwwAuthenticate } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 import { unknownAction } from './base_handler.ts';
 import { ClaimCollector } from './claim_collector.ts';
@@ -89,7 +89,7 @@ export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoReques
         // not available.
         if (isEmpty(params.accessToken))
         {
-            return bearerError(Status.BAD_REQUEST, CHALLENGE_ON_MISSING_ACCESS_TOKEN);
+            return wwwAuthenticate(Status.BAD_REQUEST, CHALLENGE_ON_MISSING_ACCESS_TOKEN);
         }
 
         // Call Authlete /api/auth/userinfo API.
@@ -100,19 +100,19 @@ export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoReques
         {
             case UirAction.INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error.
-                return bearerError(Status.INTERNAL_SERVER_ERROR, response.responseContent!);
+                return wwwAuthenticate(Status.INTERNAL_SERVER_ERROR, response.responseContent!);
 
             case UirAction.BAD_REQUEST:
                 // 400 Bad Request.
-                return bearerError(Status.BAD_REQUEST, response.responseContent!);
+                return wwwAuthenticate(Status.BAD_REQUEST, response.responseContent!);
 
             case UirAction.UNAUTHORIZED:
                 // 401 Unauthorized.
-                return bearerError(Status.UNAUTHORIZED, response.responseContent!);
+                return wwwAuthenticate(Status.UNAUTHORIZED, response.responseContent!);
 
             case UirAction.FORBIDDEN:
                 // 403 Forbidden.
-                return bearerError(Status.FORBIDDEN, response.responseContent!);
+                return wwwAuthenticate(Status.FORBIDDEN, response.responseContent!);
 
             case UirAction.OK:
                 // Return the user information.
@@ -152,27 +152,27 @@ export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoReques
         {
             case UiirAction.INTERNAL_SERVER_ERROR:
                 // 500 Internal Server Error.
-                return bearerError(Status.INTERNAL_SERVER_ERROR, response.responseContent);
+                return wwwAuthenticate(Status.INTERNAL_SERVER_ERROR, response.responseContent);
 
             case UiirAction.BAD_REQUEST:
                 // 400 Bad Request.
-                return bearerError(Status.BAD_REQUEST, response.responseContent);
+                return wwwAuthenticate(Status.BAD_REQUEST, response.responseContent);
 
             case UiirAction.UNAUTHORIZED:
                 // 401 Unauthorized.
-                return bearerError(Status.UNAUTHORIZED, response.responseContent);
+                return wwwAuthenticate(Status.UNAUTHORIZED, response.responseContent);
 
             case UiirAction.FORBIDDEN:
                 // 403 Forbidden.
-                return bearerError(Status.FORBIDDEN, response.responseContent);
+                return wwwAuthenticate(Status.FORBIDDEN, response.responseContent);
 
             case UiirAction.JSON:
                 // 200 OK.
-                return ok(response.responseContent);
+                return okJson(response.responseContent);
 
             case UiirAction.JWT:
                 // 200 OK.
-                return ok(response.responseContent, ContentType.JWT);
+                return okJwt(response.responseContent);
 
             default:
                 // This never happens.

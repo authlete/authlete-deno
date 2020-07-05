@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-import { ok } from '../web/response_util.ts';
+import { okJson } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 
 
@@ -72,6 +72,6 @@ export class ConfigurationRequestHandler extends BaseApiRequestHandler<boolean>
         const json = await this.api.getServiceConfiguration(pretty);
 
         // Return '200 OK' with the JSON.
-        return ok(json);
+        return okJson(json);
     }
 }

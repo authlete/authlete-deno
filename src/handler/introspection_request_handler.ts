@@ -15,7 +15,7 @@
 
 import { StandardIntrospectionRequest } from '../dto/standard_introspection_request.ts';
 import { StandardIntrospectionResponse } from '../dto/standard_introspection_response.ts';
-import { badRequest, internalServerError, ok } from '../web/response_util.ts';
+import { badRequest, internalServerError, okJson } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 import { normalizeParameters, unknownAction } from './base_handler.ts';
 import Action = StandardIntrospectionResponse.Action;
@@ -62,7 +62,7 @@ export class IntrospectionRequestHandler
 
             case Action.OK:
                 // 200 OK.
-                return ok(response.responseContent);
+                return okJson(response.responseContent);
 
             default:
                 // This never happens.

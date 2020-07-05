@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-import { noContent, ok } from '../web/response_util.ts';
+import { noContent, okJson } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 
 
@@ -54,6 +54,6 @@ export class JwksRequestHandler extends BaseApiRequestHandler<boolean>
         if (!json) return noContent();
 
         // Return '200 OK' with the JSON.
-        return ok(json);
+        return okJson(json);
     }
 }

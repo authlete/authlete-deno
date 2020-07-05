@@ -16,7 +16,7 @@
 import { RevocationRequest } from '../dto/revocation_request.ts';
 import { RevocationResponse } from '../dto/revocation_response.ts';
 import { BasicCredentials } from '../web/basic_credentials.ts';
-import { badRequest, internalServerError, javascript, unauthorized } from '../web/response_util.ts';
+import { badRequest, internalServerError, okJavascript, unauthorized } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 import { normalizeParameters, unknownAction } from './base_handler.ts';
 import Action = RevocationResponse.Action;
@@ -71,7 +71,7 @@ export class RevocationRequestHandler extends BaseApiRequestHandler<RevocationRe
 
             case Action.OK:
                 // 200 OK.
-                return javascript(response.responseContent || '');
+                return okJavascript(response.responseContent || '');
 
             default:
                 // This never happens.

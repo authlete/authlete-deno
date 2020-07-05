@@ -23,7 +23,7 @@ import { TokenRequest } from '../dto/token_request.ts';
 import { TokenResponse } from '../dto/token_response.ts';
 import { TokenRequestHandlerSpi } from '../spi/token_request_handler_spi.ts';
 import { BasicCredentials } from '../web/basic_credentials.ts';
-import { badRequest, internalServerError, ok, unauthorized } from '../web/response_util.ts';
+import { badRequest, internalServerError, okJson, unauthorized } from '../web/response_util.ts';
 import { BaseApiRequestHandler } from './base_api_request_handler.ts';
 import { normalizeParameters, unknownAction } from './base_handler.ts';
 import Action = TokenResponse.Action;
@@ -111,7 +111,7 @@ export class TokenRequestHandler extends BaseApiRequestHandler<TokenRequestHandl
 
             case Action.OK:
                 // 200 OK.
-                return ok(response.responseContent!);
+                return okJson(response.responseContent!);
 
             default:
                 // This never happens.
@@ -183,7 +183,7 @@ export class TokenRequestHandler extends BaseApiRequestHandler<TokenRequestHandl
 
             case TirAction.OK:
                 // 200 OK.
-                return ok(response.responseContent);
+                return okJson(response.responseContent);
 
             default:
                 // This never happens.
