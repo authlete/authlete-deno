@@ -24,7 +24,8 @@ import { formUrlEncode } from '../web/url_coder.ts';
  * some Authlete APIs such as `/api/auth/authorization` API and
  * `/api/auth/token` API.
  */
-export function normalizeParameters(parameters: string | { [key: string]: string } | null): string
+export function normalizeParameters(
+    parameters: string | { [key: string]: string } | null): string
 {
     if (parameters === null)
     {

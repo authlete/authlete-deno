@@ -37,7 +37,8 @@ const CHALLENGE = 'Basic realm="revocation"';
  * API, receives a response from the API, and dispatches processing
  * according to the `action` parameter in the response.
  */
-export class RevocationRequestHandler extends BaseApiRequestHandler<RevocationRequestHandler.Params>
+export class RevocationRequestHandler
+    extends BaseApiRequestHandler<RevocationRequestHandler.Params>
 {
     /**
      * Handle a revocation request ([RFC 7009](https://tools.ietf.org/html/rfc7009)).

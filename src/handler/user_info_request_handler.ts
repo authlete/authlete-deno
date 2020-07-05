@@ -48,7 +48,8 @@ const CHALLENGE_ON_MISSING_ACCESS_TOKEN =
  * to the client application. `handle()` method calls Authlete `/api/auth/userinfo`
  * API and `/api/auth/userinfo/issue` API.
  */
-export class UserInfoRequestHandler extends BaseApiRequestHandler<UserInfoRequestHandler.Params>
+export class UserInfoRequestHandler
+    extends BaseApiRequestHandler<UserInfoRequestHandler.Params>
 {
     /**
      * The SPI class for this handler.
