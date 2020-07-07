@@ -1,4 +1,4 @@
-Authlete Common Library for Deno
+Authlete Library for Deno
 ================================
 
 Overview
