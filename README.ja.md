@@ -59,7 +59,7 @@ const api = AuthleteApiFactory.create(config);
 
 ```ts
 // サービス群を取得する。
-// 以下のコードは Authlete の '/service/get' API をコールする。
+// 以下のコードは Authlete の '/service/get/list' API をコールする。
 const response: ServiceListResponse = await api.getServiceList();
 
 // 各サービスの情報を出力。

@@ -62,7 +62,7 @@ const api = AuthleteApiFactory.create(config);
 
 ```ts
 // Get list of services.
-// This calls Authlete '/service/get' API.
+// This calls Authlete '/service/get/list' API.
 const response: ServiceListResponse = await api.getServiceList();
 
 // Output information about each service.
