@@ -34,7 +34,7 @@ Authlete Library for Deno
 **Step 1**: モジュールをインポート。
 
 ```ts
-import { AuthleteApiFactory } from 'https://github.com/authlete/authlete-deno/raw/master/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno/mod.ts';
 ```
 
 **Step 2**: `AuthleteApi` のインスタンスを初期化。
