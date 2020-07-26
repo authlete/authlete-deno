@@ -13,7 +13,6 @@
 // limitations under the License.
 
 
-import { readFileStr } from 'https://deno.land/std/fs/read_file_str.ts';
 import { AuthleteConfiguration } from './authlete_configuration.ts';
 
 
@@ -54,7 +53,7 @@ type properties = { [key: string]: any };
 async function loadProperty(propertyFileName: string): Promise<properties>
 {
     // Read the property file.
-    const file = await readFileStr(propertyFileName).catch(() => {
+    const file = await Deno.readTextFile(propertyFileName).catch(() => {
         // Failed to read the property file.
         throw new Error(`Failed to read ${propertyFileName}`);
     });
