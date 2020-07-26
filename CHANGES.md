@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+1.1.2 (2020-07-26)
+------------------
+
+- Replace `readFileStr()` with `Deno.readTextFile()` in `authlete_configuration_property.ts`
+since `readFileStr()` was removed by https://github.com/denoland/deno/pull/6848.
+
+
 1.1.1 (2020-07-05)
 ------------------
 

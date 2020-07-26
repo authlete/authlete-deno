@@ -1,6 +1,14 @@
 CHANGES (日本語)
 =======
 
+1.1.2 (2020-07-26)
+------------------
+
+- `authlete_configuration_property.ts` 内で利用していた `readFileStr()`
+が https://github.com/denoland/deno/pull/6848 により廃止されたため、
+`Deno.readTextFile()` で代替。
+
+
 1.1.1 (2020-07-05)
 ------------------
 
