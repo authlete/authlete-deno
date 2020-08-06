@@ -213,7 +213,7 @@ export class AccessTokenValidator
      *          `requiredSubject` was given), this method returns `true`.
      *          In other cases, this method returns `false`.
      */
-    public async validate(accessToken: string, requiredScopes?: string[], requiredSubject?: string)
+    public async validate(accessToken?: string, requiredScopes?: string[], requiredSubject?: string)
     {
         // Clear properties that may have been set by the previous
         // validate() call.
@@ -259,7 +259,7 @@ export class AccessTokenValidator
      * Call Authlete `/api/auth/introspection` API.
      */
     private async callIntrospectionApi(
-        accessToken: string, requiredScopes?: string[], requiredSubject?: string)
+        accessToken?: string, requiredScopes?: string[], requiredSubject?: string)
     {
         const request = new IntrospectionRequest();
 
