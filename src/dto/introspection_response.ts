@@ -15,6 +15,7 @@
 
 import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
 import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
+import { ApiResponse } from './api_response.ts';
 import { AuthzDetails } from "./authz_details.ts";
 import { Property } from "./property.ts";
 const { Type, Transform } = ct;
@@ -23,7 +24,7 @@ const { Type, Transform } = ct;
 /**
  * Response from Authlete `/auth/introspection` API.
  */
-export class IntrospectionResponse
+export class IntrospectionResponse extends ApiResponse
 {
     /**
      * The next action the service implementation should take.

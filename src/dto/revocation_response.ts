@@ -15,13 +15,14 @@
 
 import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
 import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
+import { ApiResponse } from './api_response.ts';
 const { Transform } = ct;
 
 
 /**
  * Response from Authlete `/auth/introspection` API.
  */
-export class RevocationResponse
+export class RevocationResponse extends ApiResponse
 {
     /**
      * The next action that the service implementation should take.
