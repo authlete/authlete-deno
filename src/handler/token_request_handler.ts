@@ -13,7 +13,6 @@
 // limitations under the License.
 
 
-import { Response } from 'https://deno.land/std/http/server.ts';
 import { AuthleteApi } from '../api/authlete_api.ts';
 import { TokenFailRequest } from '../dto/token_fail_request.ts';
 import { TokenFailResponse } from '../dto/token_fail_response.ts';
@@ -147,7 +146,7 @@ export class TokenRequestHandler extends BaseApiRequestHandler<TokenRequestHandl
     }
 
 
-    private async handlePassword(response: TokenResponse): Promise<Response>
+    private async handlePassword(response: TokenResponse)
     {
         // The credentials of the resource owner.
         const username = response.username || null;
