@@ -62,7 +62,6 @@ export class AuthorizationResponse extends ApiResponse
      * Request](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
      */
     @Transform((value: string[]) => fromJsonValue(value, Display), { toClassOnly: true })
-    @Transform(toJsonValue, { toPlainOnly: true })
     public display?: Display;
 
 
@@ -217,7 +216,6 @@ export class AuthorizationResponse extends ApiResponse
      * Request](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
      */
     @Transform((value: string[]) => fromJsonValue(value, Prompt), { toClassOnly: true })
-    @Transform(toJsonValue, { toPlainOnly: true })
     public prompts?: Prompt[];
 
 

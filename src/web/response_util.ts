@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-import { Response } from 'https://deno.land/std/http/server.ts';
+import { Response } from 'https://deno.land/std@0.64.0/http/server.ts';
 
 
 /**

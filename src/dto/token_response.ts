@@ -139,7 +139,6 @@ export class TokenResponse extends ApiResponse
      * The grant type of the token request.
      */
     @Transform((value: any) => fromJsonValue(value, GrantType), { toClassOnly: true })
-    @Transform(toJsonValue, { toPlainOnly: true })
     public grantType!: GrantType;
 
 
@@ -214,7 +213,6 @@ export class TokenResponse extends ApiResponse
      * request, this property is unset.
      */
     @Transform((value: any) => fromJsonValue(value, ClientAuthMethod), { toClassOnly: true })
-    @Transform(toJsonValue, { toPlainOnly: true })
     public clientAuthMethod?: ClientAuthMethod;
 
 

@@ -13,18 +13,23 @@
 // limitations under the License.
 
 
-import { Property } from "./property.ts";
+import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
+import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
+import { ApiResponse } from './api_response.ts';
 import { AuthzDetails } from "./authz_details.ts";
+import { Property } from "./property.ts";
+const { Type, Transform } = ct;
 
 
 /**
  * Response from Authlete `/auth/introspection` API.
  */
-export class IntrospectionResponse
+export class IntrospectionResponse extends ApiResponse
 {
     /**
      * The next action the service implementation should take.
      */
+    @Transform((value: any) => IntrospectionResponse.Action[value])
     public action!: IntrospectionResponse.Action;
 
 
@@ -92,6 +97,7 @@ export class IntrospectionResponse
     /**
      * Extra properties associated with the access token.
      */
+    @Type(() => Property)
     public properties?: Property[];
 
 
@@ -158,6 +164,7 @@ export class IntrospectionResponse
      * `authorization_details` request parameter which is defined in
      * _"OAuth 2.0 Rich Authorization Requests"_.
      */
+    @Type(() => AuthzDetails)
     public authorizationDetails?: AuthzDetails;
 }
 

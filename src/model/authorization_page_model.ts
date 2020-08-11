@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 import { AuthorizationResponse } from '../dto/authorization_response.ts';
 import { AuthzDetails } from '../dto/authz_details.ts';
 import { Client } from '../dto/client.ts';

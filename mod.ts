@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 // api
 export * from './src/api/authlete_api.ts';
 export * from './src/api/authlete_api_exception.ts';
@@ -118,6 +119,7 @@ export * from './src/type/user_code_charset.ts';
 export * from './src/util/util.ts';
 
 // web
+export * from './src/web/access_token_validator.ts';
 export * from './src/web/basic_credentials.ts';
 export * from './src/web/response_util.ts'
 export * from './src/web/url_coder.ts';
