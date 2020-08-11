@@ -23,8 +23,8 @@ import Action = IntrospectionResponse.Action;
 
 /**
  * Build an error response (`500 Internal Server Error`) that should be
- * returned to the client application when calling Authlete `/api/auth/introspection`
- * API failed.
+ * returned to the client application when an API call to Authlete
+ * `/api/auth/introspection` API failed.
  */
 function buildErrorResponseOnApiCallFailure(e: Error)
 {
@@ -46,8 +46,7 @@ function buildErrorResponseOnErrorAction(response: IntrospectionResponse)
     // The HTTP status code to be returned to the client application.
     let statusCode;
 
-    // The 'action' parameter in the response from Authlete /api/auth/introspection
-    // API denotes the next action that the API caller should take.
+    // Dispatch according to the action.
     switch (response.action)
     {
         case Action.INTERNAL_SERVER_ERROR:
@@ -96,8 +95,7 @@ export class AccessTokenValidator
      * or not. After a call of `validate()` method, this property holds
      * the same value returned from `validate()`.
      *
-     * On entry of <c>Validate()</c> method, this property is reset to
-     * `false`.
+     * On entry of `validate()` method, this property is reset to `false`.
      */
     public isValid: boolean = false;
 
@@ -248,7 +246,7 @@ export class AccessTokenValidator
                 // The access token is not valid, or an unexpected error
                 // occurred. An error response that the protected resource
                 // endpoint should return to the client application is
-                // set to the 'ErrorResponse' property.
+                // set to the 'errorResponse' property.
                 this.errorResponse = buildErrorResponseOnErrorAction(this.introspectionResult);
                 return this.isValid = false;
         }
