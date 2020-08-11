@@ -234,8 +234,7 @@ export class AccessTokenValidator
             return this.isValid = false;
         }
 
-        // The 'action' parameter in the response from /api/auth/introspection
-        // denotes the next action the API caller should take.
+        // Dispatch according to the action.
         switch (this.introspectionResult.action)
         {
             case Action.OK:
