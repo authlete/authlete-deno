@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+1.2.0 (2020-08-11)
+------------------
+
+- Add `AccessTokenValidator` class.
+
+- Fix some bugs in DTO classes.
+
+- Add version to imported dependencies.
+
+
 1.1.2 (2020-07-26)
 ------------------
 
