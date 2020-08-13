@@ -234,7 +234,8 @@ const api = new AuthleteApiFactory.create(config);
 ------------
 
 - [Authlete][Authlete] - Authlete ホームページ
-- [deno-fen-oauth-server][AuthleteDenoFenOauthServer] - 認可サーバー実装
+- [deno-fen-oauth-server][DenoFenOauthServer] - 認可サーバー実装
+- [deno-fen-resource-server][DenoFenResourceServer] - リソースサーバー実装
 
 コンタクト
 ----------
@@ -246,11 +247,12 @@ const api = new AuthleteApiFactory.create(config);
 | 広報 | pr@authlete.com      |
 | 技術 | support@authlete.com |
 
-[Authlete]:                   https://www.authlete.com/
-[AuthleteAPI]:                https://docs.authlete.com/
-[AuthleteDenoFenOauthServer]: https://github.com/authlete/deno-fen-oauth-server
-[AuthleteGettingStarted]:     https://www.authlete.com/developers/getting_started/
-[AuthleteOverview]:           https://www.authlete.com/documents/overview
-[Fen]:                        https://github.com/fen-land/deno-fen
-[OIDC]:                       https://openid.net/connect/
-[RFC6749]:                    https://tools.ietf.org/html/rfc6749
+[Authlete]:               https://www.authlete.com/
+[AuthleteAPI]:            https://docs.authlete.com/
+[AuthleteGettingStarted]: https://www.authlete.com/developers/getting_started/
+[AuthleteOverview]:       https://www.authlete.com/documents/overview
+[DenoFenOauthServer]:     https://github.com/authlete/deno-fen-oauth-server
+[DenoFenResourceServer]:  https://github.com/authlete/deno-fen-resource-server
+[Fen]:                    https://github.com/fen-land/deno-fen
+[OIDC]:                   https://openid.net/connect/
+[RFC6749]:                https://tools.ietf.org/html/rfc6749

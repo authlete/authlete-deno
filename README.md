@@ -240,7 +240,8 @@ See Also
 --------
 
 - [Authlete][Authlete] - Authlete Home Page
-- [deno-fen-oauth-server][AuthleteDenoFenOauthServer] - Authorization Server Implementation
+- [deno-fen-oauth-server][DenoFenOauthServer] - Authorization Server Implementation
+- [deno-fen-resource-server][DenoFenResourceServer] - Resource Server Implementation
 
 Contact
 -------
@@ -252,11 +253,12 @@ Contact
 | PR        | pr@authlete.com      |
 | Technical | support@authlete.com |
 
-[Authlete]:                   https://www.authlete.com/
-[AuthleteAPI]:                https://docs.authlete.com/
-[AuthleteDenoFenOauthServer]: https://github.com/authlete/deno-fen-oauth-server
-[AuthleteGettingStarted]:     https://www.authlete.com/developers/getting_started/
-[AuthleteOverview]:           https://www.authlete.com/documents/overview
-[Fen]:                        https://github.com/fen-land/deno-fen
-[OIDC]:                       https://openid.net/connect/
-[RFC6749]:                    https://tools.ietf.org/html/rfc6749
+[Authlete]:               https://www.authlete.com/
+[AuthleteAPI]:            https://docs.authlete.com/
+[AuthleteGettingStarted]: https://www.authlete.com/developers/getting_started/
+[AuthleteOverview]:       https://www.authlete.com/documents/overview
+[DenoFenOauthServer]:     https://github.com/authlete/deno-fen-oauth-server
+[DenoFenResourceServer]:  https://github.com/authlete/deno-fen-resource-server
+[Fen]:                    https://github.com/fen-land/deno-fen
+[OIDC]:                   https://openid.net/connect/
+[RFC6749]:                https://tools.ietf.org/html/rfc6749
