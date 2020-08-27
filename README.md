@@ -236,6 +236,21 @@ Methods in `AuthleteApi` interface can be divided into some categories.
 
   - `getServiceConfiguration(pretty: boolean)`
 
+How To Release
+--------
+
+#### 1. Update Documents
+
+Update `README.md`, `README.md.ja`, `CHANGE.md` and `CHANGE.md.ja`.
+
+#### 2. Publish Library
+
+Go to [Github Release page][GithubReleasePage] and release a new version
+(See [this page][GithubManagingRelease] for more details about releasing).
+
+Creating a new release automatically triggers a webhook which publishes
+the new version to [deno.land/x][DenoLandX].
+
 See Also
 --------
 
@@ -259,6 +274,9 @@ Contact
 [AuthleteOverview]:       https://www.authlete.com/documents/overview
 [DenoFenOauthServer]:     https://github.com/authlete/deno-fen-oauth-server
 [DenoFenResourceServer]:  https://github.com/authlete/deno-fen-resource-server
+[DenoLandX]:              https://deno.land/x
 [Fen]:                    https://github.com/fen-land/deno-fen
+[GithubManagingRelease]:  https://docs.github.com/en/github/administering-a-repository/managing-releases-in-a-repository
+[GithubReleasePage]:      https://github.com/authlete/authlete-deno/releases
 [OIDC]:                   https://openid.net/connect/
 [RFC6749]:                https://tools.ietf.org/html/rfc6749

@@ -230,6 +230,22 @@ const api = await AuthleteApiFactory.create(config);
 
   - `getServiceConfiguration(pretty: boolean)`
 
+リリース手順
+--------
+
+#### 1. ドキュメント更新
+
+`README.md` と `README.md.ja`、`CHANGE.md` と `CHANGE.md.ja` を適宜更新します。
+
+#### 2. ライブラリ公開
+
+[Github のリリースページ][GithubReleasePage] 上で新しいバージョンのライブラリを
+リリースします。（Github のリリース機能の詳細については、[こちらのページ][GithubManagingRelease]
+ご覧ください。）
+
+Github 上でリリースを行うことにより webhook がトリガーされ、自動的に新規バージョンのライブラリが
+[deno.land/x][DenoLandX] へと公開されます。
+
 その他の情報
 ------------
 
@@ -253,6 +269,9 @@ const api = await AuthleteApiFactory.create(config);
 [AuthleteOverview]:       https://www.authlete.com/documents/overview
 [DenoFenOauthServer]:     https://github.com/authlete/deno-fen-oauth-server
 [DenoFenResourceServer]:  https://github.com/authlete/deno-fen-resource-server
+[DenoLandX]:              https://deno.land/x
 [Fen]:                    https://github.com/fen-land/deno-fen
+[GithubManagingRelease]:  https://docs.github.com/en/github/administering-a-repository/managing-releases-in-a-repository
+[GithubReleasePage]:      https://github.com/authlete/authlete-deno/releases
 [OIDC]:                   https://openid.net/connect/
 [RFC6749]:                https://tools.ietf.org/html/rfc6749
