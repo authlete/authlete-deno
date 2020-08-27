@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+1.2.2 (2020-08-27)
+------------------
+
+- Remove unnecessary `import`s from some DTO classes.
+
+- Update readme.
+
+
 1.2.1 (2020-08-27)
 ------------------
 
