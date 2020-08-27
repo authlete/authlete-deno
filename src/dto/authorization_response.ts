@@ -15,7 +15,7 @@
 
 import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
 import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
-import { fromJsonValue, toJsonValue } from '../type/base_extended_enum.ts';
+import { fromJsonValue } from '../type/base_extended_enum.ts';
 import { Display } from '../type/display.ts';
 import { Prompt } from '../type/prompt.ts';
 import { ApiResponse } from './api_response.ts';
