@@ -107,7 +107,7 @@ how to get an instance of `AuthleteApiImpl` class.
 const config: AuthleteConfiguration = { ... };
 
 // Create an instance of AuthleteApiImpl class.
-const authleteApi: AuthleteApi = new AuthleteApiImpl(config);
+const api: AuthleteApi = new AuthleteApiImpl(config);
 ```
 
 **Option 2**: Use `create()` method of `AuthleteApiFactory` class.
@@ -117,14 +117,14 @@ const authleteApi: AuthleteApi = new AuthleteApiImpl(config);
 const config: AuthleteConfiguration = { ... };
 
 // Create an instance of AuthleteApiImpl class.
-const authleteApi = await AuthleteApiFactory.create(config);
+const api = await AuthleteApiFactory.create(config);
 ```
 
 **Option 3**: Use `getDefault()` method of `AuthleteApiFactory` class.
 
 ```ts
 // Get the default instance of AuthleteApiImpl class.
-const authleteApi = await AuthleteApiFactory.getDefault();
+const api = await AuthleteApiFactory.getDefault();
 ```
 
 _NOTE: When you call `getDefault()` method of `AuthleteApiFactory` class
@@ -152,7 +152,7 @@ const config: AuthleteConfiguration = {
 };
 
 // Create an AuthleteApi instance with it.
-const api = new AuthleteApiFactory.create(config);
+const api = await AuthleteApiFactory.create(config);
 ```
 
 **Option 2**: Use `AuthletePropertyConfiguration` class.
@@ -169,7 +169,7 @@ Here's a usage example.
 const config = await AuthletePropertyConfiguration.create();
 
 // Create an AuthleteApi instance with it.
-const api = new AuthleteApiFactory.create(config);
+const api = await AuthleteApiFactory.create(config);
 ```
 
 Valid keys in the property file (`authlete.json`) are as follows.

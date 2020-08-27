@@ -104,7 +104,7 @@ console.log(response);
 const config: AuthleteConfiguration = { ... };
 
 // AuthleteApiImpl クラスのインスタンスを作成。
-const authleteApi: AuthleteApi = new AuthleteApiImpl(config);
+const api: AuthleteApi = new AuthleteApiImpl(config);
 ```
 
 **方法 2**: `AuthleteApiFactory` クラスの `create()` メソッドを利用する。
@@ -114,14 +114,14 @@ const authleteApi: AuthleteApi = new AuthleteApiImpl(config);
 const config: AuthleteConfiguration = { ... };
 
 // AuthleteApiImpl クラスのインスタンスを作成。
-const authleteApi = await AuthleteApiFactory.create(config);
+const api = await AuthleteApiFactory.create(config);
 ```
 
 **方法 3**: `AuthleteApiFactory` クラスの `getDefault()` メソッドを利用する。
 
 ```ts
 // AuthleteApiImpl クラスのデフォルトインスタンスを取得。
-const authleteApi = await AuthleteApiFactory.getDefault();
+const api = await AuthleteApiFactory.getDefault();
 ```
 
 _注意: `AuthleteApiFactory` クラスの `getDefault()` メソッドが初めて呼び出されると、
@@ -147,7 +147,7 @@ const config: AuthleteConfiguration = {
 };
 
 // AuthleteApi のインスタンスを作成。
-const api = new AuthleteApiFactory.create(config);
+const api = await AuthleteApiFactory.create(config);
 ```
 
 **方法 2**: `AuthletePropertyConfiguration` クラスを利用する。
@@ -163,7 +163,7 @@ const api = new AuthleteApiFactory.create(config);
 const config = await AuthletePropertyConfiguration.create();
 
 // AuthleteApi のインスタンスを作成。
-const api = new AuthleteApiFactory.create(config);
+const api = await AuthleteApiFactory.create(config);
 ```
 
 設定ファイル (`authlete.json`) 内で有効なプロパティーキーとその意味は次のとおりです。
