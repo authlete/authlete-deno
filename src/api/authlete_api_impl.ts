@@ -218,8 +218,12 @@ async function fetchResponse(
     // Create the target url with the parameters.
     const url = createUrl(baseUrl, path, params);
 
+    // set timeout after 10s
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10);
+
     // Create options for the request.
-    const init = createRequestInit(method, credentials, requestBody);
+    const init = createRequestInit(method, credentials, controller.signal, requestBody);
 
     try
     {
@@ -230,6 +234,11 @@ async function fetchResponse(
     {
         // Failed to fetch the result. Throw an exception.
         throw createAuthleteApiException(e);
+    }
+    finally
+    {
+        // Clear the timeout.
+        clearTimeout(timeout);
     }
 }
 
@@ -255,7 +264,9 @@ function createUrl(baseUrl: string, path: string, params?: QueryParams)
 /**
  * Create a `RequestInit` object.
  */
-function createRequestInit(method: HttpMethod, credentials: BasicCredentials, requestBody?: any)
+function createRequestInit(
+    method: HttpMethod, credentials: BasicCredentials, signal: AbortSignal,
+    requestBody?: any)
 {
     // Options for a request.
     const init: RequestInit = {};
@@ -268,6 +279,9 @@ function createRequestInit(method: HttpMethod, credentials: BasicCredentials, re
         'Authorization': 'Basic ' + btoa(credentials.userId + ':' + credentials.password),
         'Accept': 'application/json'
     }
+
+    // Set up the signal for timeout.
+    init.signal = signal;
 
     // Set up additional parameters if necessary.
     if (requestBody)
