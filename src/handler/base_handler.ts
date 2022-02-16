@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-import { Response } from 'https://deno.land/std@0.64.0/http/server.ts';
+import { serve } from 'https://deno.land/std@0.125.0/http/server.ts';
 import { isObject } from '../util/util.ts';
 import { internalServerError } from '../web/response_util.ts';
 import { formUrlEncode } from '../web/url_coder.ts';
@@ -78,7 +78,7 @@ export abstract class BaseHandler<ArgType>
     /**
      * This method is responsible for processing the main task of this
      * handler. This method must return a promise containing an instance
-     * of Deno's standard `Response` class (defined in https://deno.land/std/http/server.ts).
+     * of Deno's standard `Response` class.
      *
      * A subclass extending this class must implement this method.
      *
@@ -89,5 +89,5 @@ export abstract class BaseHandler<ArgType>
      *
      * @returns A promise containing a `Response` object.
      */
-    public abstract async handle(args: ArgType): Promise<Response>
+    public abstract handle(args: ArgType): Promise<Response>
 }
