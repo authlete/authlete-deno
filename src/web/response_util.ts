@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-import { Response } from 'https://deno.land/std@0.64.0/http/server.ts';
+import { serve } from 'https://deno.land/std@0.125.0/http/server.ts';
 
 
 /**
@@ -225,7 +225,7 @@ export function wwwAuthenticate(status: number, challenge: string)
  */
 export function buildResponse(status: number, headers?: Headers, body?: string)
 {
-    return { status: status, headers: headers, body: body } as Response;
+    return new Response(body, { status: status, headers: headers });
 }
 
 

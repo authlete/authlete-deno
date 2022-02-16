@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-import { Response } from 'https://deno.land/std@0.64.0/http/server.ts';
+import { serve } from 'https://deno.land/std@0.125.0/http/server.ts';
 import { AuthleteApi } from '../api/authlete_api.ts';
 import { IntrospectionRequest } from '../dto/introspection_request.ts';
 import { IntrospectionResponse } from '../dto/introspection_response.ts';
