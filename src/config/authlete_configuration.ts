@@ -46,4 +46,9 @@ export interface AuthleteConfiguration
      * The service API secret.
      */
     serviceApiSecret?: string;
+
+    /**
+     * The request fetch timeout.
+     */
+    timeout?: number;
 }

@@ -89,7 +89,7 @@ export class NoInteractionHandler
         if (!this.checkAuthentication())
         {
             // A user must have logged in.
-            return await this.authorizationFail(response.ticket, Reason.NOT_LOGGED_IN);
+            return this.authorizationFail(response.ticket, Reason.NOT_LOGGED_IN);
         }
 
         // Get the time (in seconds) when the user was authenticated.
@@ -99,7 +99,7 @@ export class NoInteractionHandler
         if(!this.checkMaxAge(response, authTime))
         {
             // The maximum authentication age has elapsed.
-            return await this.authorizationFail(response.ticket, Reason.EXCEEDS_MAX_AGE);
+            return this.authorizationFail(response.ticket, Reason.EXCEEDS_MAX_AGE);
         }
 
         // The current subject, i.e. the unique ID assigned by
@@ -110,7 +110,7 @@ export class NoInteractionHandler
         if(!this.checkSubject(response, subject))
         {
             // The current user is different from the requested subject.
-            return await this.authorizationFail(response.ticket, Reason.DIFFERENT_SUBJECT);
+            return this.authorizationFail(response.ticket, Reason.DIFFERENT_SUBJECT);
         }
 
         // Get the ACR that was satisfied when the current user
@@ -121,11 +121,11 @@ export class NoInteractionHandler
         if(!this.checkAcr(response, acr))
         {
             // None of the requested ACRs is satisfied.
-            return await this.authorizationFail(response.ticket, Reason.ACR_NOT_SATISFIED);
+            return this.authorizationFail(response.ticket, Reason.ACR_NOT_SATISFIED);
         }
 
         // Issue tokens without user interaction.
-        return await this.issue(response, subject!, authTime, acr);
+        return this.issue(response, subject!, authTime, acr);
     }
 
 
@@ -223,7 +223,7 @@ export class NoInteractionHandler
         const scopes = this.spi.getScopes();
 
         // Call Authlete '/auth/authorization/issue' API.
-        return await this.authorizationIssue(
+        return this.authorizationIssue(
             ticket, subject, authTime, sub, acr, claims, properties, scopes);
     }
 }

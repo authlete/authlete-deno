@@ -74,7 +74,7 @@ export class AuthorizationDecisionHandler
         // application.
         if (!this.spi.isClientAuthorized())
         {
-            return await this.authorizationFail(params.ticket, Reason.DENIED);
+            return this.authorizationFail(params.ticket, Reason.DENIED);
         }
 
         // The subject (= unique identifier) of the end-user.
@@ -84,7 +84,7 @@ export class AuthorizationDecisionHandler
         // is not authenticated).
         if (isEmpty(subject))
         {
-            return await this.authorizationFail(params.ticket, Reason.NOT_AUTHENTICATED);
+            return this.authorizationFail(params.ticket, Reason.NOT_AUTHENTICATED);
         }
 
         // Authorize the authorization request.
@@ -92,7 +92,7 @@ export class AuthorizationDecisionHandler
         // an access token and/or an ID token. If the original authorization
         // request had response_type=none, no tokens will be contained
         // in the generated response, though.
-        return await this.authorize(params, subject!);
+        return this.authorize(params, subject!);
     }
 
 
@@ -126,7 +126,7 @@ export class AuthorizationDecisionHandler
         const scopes = this.spi.getScopes();
 
         // Call Authlete '/auth/authorization/issue' API.
-        return await this.authorizationIssue(
+        return this.authorizationIssue(
             ticket, subject, authTime, sub, acr, claims, properties, scopes);
     }
 }

@@ -142,7 +142,7 @@ export class TokenRequestHandler extends BaseApiRequestHandler<TokenRequestHandl
         if (properties) request.properties = properties;
 
         // Call Authlete /api/auth/token API.
-        return await this.api.token(request);
+        return this.api.token(request);
     }
 
 
@@ -207,7 +207,7 @@ export class TokenRequestHandler extends BaseApiRequestHandler<TokenRequestHandl
         if (properties) request.properties = properties;
 
         // Call Authlete /api/auth/token/issue API.
-        return await this.api.tokenIssue(request);
+        return this.api.tokenIssue(request);
     }
 
 
@@ -246,7 +246,7 @@ export class TokenRequestHandler extends BaseApiRequestHandler<TokenRequestHandl
         request.reason = reason;
 
         // Call Authlete /api/auth/token/fail API.
-        return await this.api.tokenFail(request);
+        return this.api.tokenFail(request);
     }
 }
 
