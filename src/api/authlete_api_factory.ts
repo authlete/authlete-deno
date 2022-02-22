@@ -96,7 +96,7 @@ export class AuthleteApiFactory
      *
      * When this method is first called, it creates a promise object
      * that loads configuration information from a property file named
-     * `authlete.json` (which must be located directly under the execution
+     * `authlete.json` (, which must be located directly under the execution
      * directory) and creates an instance of the standard implementation
      * class of `AuthleteApi` interface with the configuration. And then,
      * the promise object is cached in this class. This means that subsequent

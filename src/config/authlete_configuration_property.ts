@@ -133,9 +133,9 @@ function getInteger(value: any, defaultValue: number | undefined = undefined):
     // Parse the value as an integer value.
     const valueAsInteger = parseInt(value, 10);
 
-    // If the parsed value is 'NaN'. One of the situations that cause
-    // 'NaN' is when the value is set to a string that can't be parsed
-    // as a integer value (e.g. 'ABC').
+    // If the parsed value is 'NaN'. This will happen if the given value
+    // is set to a string that can't be parsed as a integer value (e.g.
+    // 'ABC').
     if (isNaN(valueAsInteger))
     {
         return defaultValue;
