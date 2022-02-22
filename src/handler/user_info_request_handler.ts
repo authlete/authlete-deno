@@ -117,7 +117,7 @@ export class UserInfoRequestHandler
 
             case UirAction.OK:
                 // Return the user information.
-                return await this.getUserInfo(response);
+                return this.getUserInfo(response);
 
             default:
                 // This never happens.
@@ -139,7 +139,7 @@ export class UserInfoRequestHandler
         if (clientCertificate) request.clientCertificate = clientCertificate;
 
         // Call Authlete /api/auth/userinfo API.
-        return await this.api.userInfo(request);
+        return this.api.userInfo(request);
     }
 
 
@@ -200,7 +200,7 @@ export class UserInfoRequestHandler
         if (isNotEmpty(stringClaims)) request.claims = stringClaims!;
 
         // Call Authlete /api/auth/userinfo/issue API.
-        return await this.api.userInfoIssue(request);
+        return this.api.userInfoIssue(request);
     }
 }
 

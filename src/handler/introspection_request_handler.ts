@@ -80,7 +80,7 @@ export class IntrospectionRequestHandler
         request.parameters = normalizeParameters(parameters);
 
         // Call Authlete /api/auth/introspection/standard API.
-        return await this.api.standardIntrospection(request);
+        return this.api.standardIntrospection(request);
     }
 }
 

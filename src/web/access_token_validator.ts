@@ -264,6 +264,6 @@ export class AccessTokenValidator
         request.scopes  = requiredScopes;
         request.subject = requiredSubject;
 
-        return await this.api.introspection(request);
+        return this.api.introspection(request);
     }
 }

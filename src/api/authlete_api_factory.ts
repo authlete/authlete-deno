@@ -54,8 +54,8 @@ async function createImplClass(config: AuthleteConfiguration, implInfo: ImplInfo
     // Dynamically import modules from the path in which the target
     // implementation class exists.
     const imported = await import(implInfo.path).catch((e) => {
-        throw `Failed to import from ${implInfo.path}: ${e}`;
-    })
+        throw new Error(`Failed to import from ${implInfo.path}: ${e}`);
+    });
 
     // Get the constructor of the target implementation class from the
     // imported modules.
@@ -64,7 +64,7 @@ async function createImplClass(config: AuthleteConfiguration, implInfo: ImplInfo
     // The target implementation class was not found the imported modules.
     if (!ctor)
     {
-        throw `The module ${implInfo.name} does not exist in the ${implInfo.path}.`;
+        throw new Error(`The module ${implInfo.name} does not exist in the ${implInfo.path}.`);
     }
 
     // Instantiate the target implementation class using the constructor
@@ -75,7 +75,7 @@ async function createImplClass(config: AuthleteConfiguration, implInfo: ImplInfo
     }
     catch(e)
     {
-        throw `Failed to instantiate the class (${implInfo.name}): ${e}`;
+        throw new Error(`Failed to instantiate the class (${implInfo.name}): ${e}.`);
     }
 }
 
@@ -86,36 +86,51 @@ async function createImplClass(config: AuthleteConfiguration, implInfo: ImplInfo
 export class AuthleteApiFactory
 {
     /**
-     * The default `AuthleteApi` instance.
+     * The promise object for creating the default `AuthleteApi` instance.
      */
-    private static defaultApi: AuthleteApi | null = null;
+    private static defaultApiPromise: Promise<AuthleteApi> | null = null;
 
 
     /**
-     * Get the default `AuthleteApi` instance.
+     * Get a promise object that returns the default `AuthleteApi` instance.
      *
-     * When this method is first accessed, it loads configuration information
-     * from a property file named `authlete.json` (which must be located
-     * directly under the execution directory) and creates an instance
-     * of the standard implementation class of `AuthleteApi` interface
-     * with the configuration.
-     *
-     * Note that the created instance is internally cached in this class
-     * and subsequent calls to this method return the cached instance.
+     * When this method is first called, it creates a promise object
+     * that loads configuration information from a property file named
+     * `authlete.json` (, which must be located directly under the execution
+     * directory) and creates an instance of the standard implementation
+     * class of `AuthleteApi` interface with the configuration. And then,
+     * the promise object is cached in this class. This means that subsequent
+     * calls to this method return the cached promise object.
      */
-    public static async getDefault()
+    public static async getDefault(): Promise<AuthleteApi>
     {
-        // If the instance has not been created yet.
-        if (!this.defaultApi)
+        // If we don't have a promise object that creates the default
+        // API instance.
+        if (!this.defaultApiPromise)
         {
-            // Get configuration from the property file (= 'authlete.json').
-            const config = await AuthletePropertyConfiguration.create();
+            // Create a promise object that creates the default API instance
+            // and then cache the promise object.
+            this.defaultApiPromise = this.createDefaultApi().catch((e) => {
+                // Reset the cache to null.
+                this.defaultApiPromise = null;
 
-            // Create an AuthleteApi instance with the configuration.
-            this.defaultApi = await this.create(config, STANDARD_IMPL_INFO);
+                // Failed to create the default API instance.
+                throw new Error(`Failed to create the default API instance: ${e}`);
+            });
         }
 
-        return this.defaultApi;
+        // Return the promise object.
+        return this.defaultApiPromise;
+    }
+
+
+    private static async createDefaultApi()
+    {
+        // Get configuration from the property file (= 'authlete.json').
+        const config = await AuthletePropertyConfiguration.create();
+
+        // Create an AuthleteApi instance with the configuration.
+        return this.create(config, STANDARD_IMPL_INFO);
     }
 
 
@@ -134,8 +149,9 @@ export class AuthleteApiFactory
      *         by this must have a constructor that only takes one argument
      *         of type `AuthleteConfiguration`.
      */
-    public static async create(config: AuthleteConfiguration, implInfo: ImplInfo = STANDARD_IMPL_INFO)
+    public static async create(config: AuthleteConfiguration, implInfo: ImplInfo = STANDARD_IMPL_INFO):
+        Promise<AuthleteApi>
     {
-        return await createImplClass(config, implInfo);
+        return createImplClass(config, implInfo);
     }
 }

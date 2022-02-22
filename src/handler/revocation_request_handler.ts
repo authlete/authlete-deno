@@ -100,7 +100,7 @@ export class RevocationRequestHandler
         if (credentials && credentials.password) request.clientSecret = credentials.password;
 
         // Call Authlete /api/auth/revocation API.
-        return await this.api.revocation(request);
+        return this.api.revocation(request);
     }
 }
 

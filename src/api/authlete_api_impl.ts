@@ -67,7 +67,7 @@ const SERVICE_GET_API_PATH            = '/service/get/{apiKey}';
 const SERVICE_GET_LIST_API_PATH       = '/service/get/list';
 const SERVICE_CREATE_API_PATH         = '/service/create';
 const SERVICE_UPDATE_API_PATH         = '/service/update';
-const SERVICE_DELETE_API_PATH         = '/api/service/delete/{apiKey}';
+const SERVICE_DELETE_API_PATH         = '/service/delete/{apiKey}';
 const SERVICE_JWKS_GET_API_PATH       = '/service/jwks/get';
 const SERVICE_CONFIGURATION_API_PATH  = '/service/configuration';
 const CLIENT_GET_API_PATH             = '/client/get/{clientId}';
@@ -98,30 +98,30 @@ type QueryParams = { [key: string]: string };
 /**
  * Get the base URL of Authlete API.
  */
-function getBaseUrl(configuration: AuthleteConfiguration)
+function getBaseUrl(config: AuthleteConfiguration)
 {
     // The base URL in the configuration file.
-    const baseUrl = configuration.baseUrl;
+    const baseUrl = config.baseUrl;
+
+    if (!baseUrl)
+    {
+        // The 'baseUrl' property was not set in the configuration.
+        throw new Error("The 'baseUrl' property was not set in the configuration.");
+    }
 
     // Validate the base URL.
     validateBaseUrl(baseUrl);
 
     // Normalize the bae URL if necessary.
-    return normalizeBaseUrl(baseUrl!);
+    return normalizeBaseUrl(baseUrl);
 }
 
 
 /**
  * Validate the given URL.
  */
-function validateBaseUrl(url?: string)
+function validateBaseUrl(url: string)
 {
-    if (!url)
-    {
-        // The base URL was found in the configuration.
-        throw new Error('The configuration does not have information about the base URL.');
-    }
-
     try
     {
         // Ensure that the base URL is a valid URL.
@@ -134,11 +134,9 @@ function validateBaseUrl(url?: string)
             // Malformed URL.
             throw new Error('Malformed base URL.');
         }
-        else
-        {
-            // Unknown error.
-            throw e;
-        }
+
+        // Unknown error.
+        throw e;
     }
 }
 
@@ -175,6 +173,24 @@ function getServiceCredentials(config: AuthleteConfiguration)
 
 
 /**
+ * Get the base URL of Authlete API.
+ */
+ function getTimeout(config: AuthleteConfiguration)
+ {
+    // The timeout in the configuration file.
+    const timeout = config.timeout;
+
+    if (!timeout)
+    {
+        // The 'timeout' property was not set in the configuration.
+        throw new Error("The 'timeout' property was not set in the configuration.");
+    }
+
+    return timeout;
+ }
+
+
+/**
  * Call an API with the given parameters.
  *
  * When the API response is successful, this method converts the body
@@ -190,11 +206,12 @@ function getServiceCredentials(config: AuthleteConfiguration)
  */
 async function doCallApi<TResponse>(
     baseUrl: string, path: string, method: HttpMethod, credentials: BasicCredentials,
-    params?: QueryParams, requestBody?: any, clazz?: ResponseClass<TResponse>
+    timeout: number, params?: QueryParams, requestBody?: any, clazz?: ResponseClass<TResponse>
 ): Promise<TResponse | string>
 {
     // Fetch an HTTP response from the target API.
-    const response = await fetchResponse(baseUrl, path, method, credentials, params, requestBody);
+    const response = await fetchResponse(
+        baseUrl, path, method, credentials, timeout, params, requestBody);
 
     // If the response was not successful.
     if (!response.ok)
@@ -204,7 +221,7 @@ async function doCallApi<TResponse>(
     }
 
     // Build a response.
-    return await createResponse(response, clazz);
+    return createResponse(response, clazz);
 }
 
 
@@ -213,13 +230,17 @@ async function doCallApi<TResponse>(
  */
 async function fetchResponse(
     baseUrl: string, path: string, method: HttpMethod, credentials: BasicCredentials,
-    params?: QueryParams, requestBody?: any)
+    timeout: number, params?: QueryParams, requestBody?: any)
 {
     // Create the target url with the parameters.
     const url = createUrl(baseUrl, path, params);
 
+    // Set timeout.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
     // Create options for the request.
-    const init = createRequestInit(method, credentials, requestBody);
+    const init = createRequestInit(method, credentials, controller.signal, requestBody);
 
     try
     {
@@ -230,6 +251,11 @@ async function fetchResponse(
     {
         // Failed to fetch the result. Throw an exception.
         throw createAuthleteApiException(e);
+    }
+    finally
+    {
+        // Clear the timeout.
+        clearTimeout(timeoutId);
     }
 }
 
@@ -255,7 +281,9 @@ function createUrl(baseUrl: string, path: string, params?: QueryParams)
 /**
  * Create a `RequestInit` object.
  */
-function createRequestInit(method: HttpMethod, credentials: BasicCredentials, requestBody?: any)
+function createRequestInit(
+    method: HttpMethod, credentials: BasicCredentials, signal: AbortSignal,
+    requestBody?: any)
 {
     // Options for a request.
     const init: RequestInit = {};
@@ -268,6 +296,9 @@ function createRequestInit(method: HttpMethod, credentials: BasicCredentials, re
         'Authorization': 'Basic ' + btoa(credentials.userId + ':' + credentials.password),
         'Accept': 'application/json'
     }
+
+    // Set up the signal for timeout.
+    init.signal = signal;
 
     // Set up additional parameters if necessary.
     if (requestBody)
@@ -328,7 +359,8 @@ async function createAuthleteApiExceptionWithResponseInfo(response: Response)
         // HTTP status message.
         response.statusText,
 
-        // The response body.
+        // The response body (undefined is returned if reading the response
+        // body fails).
         await response.text().catch(() => undefined),
 
         // The response headers.
@@ -399,16 +431,23 @@ export class AuthleteApiImpl implements AuthleteApi
 
 
     /**
+     * The fetch timeout.
+     */
+    private timeout: number;
+
+
+    /**
      * The constructor.
      *
-     * @param configuration
+     * @param config
      *         Configuration for a new instance of this class.
      */
-    public constructor(configuration: AuthleteConfiguration)
+    public constructor(config: AuthleteConfiguration)
     {
-        this.baseUrl                 = getBaseUrl(configuration);
-        this.serviceOwnerCredentials = getServiceOwnerCredentials(configuration);
-        this.serviceCredentials      = getServiceCredentials(configuration);
+        this.baseUrl                 = getBaseUrl(config);
+        this.serviceOwnerCredentials = getServiceOwnerCredentials(config);
+        this.serviceCredentials      = getServiceCredentials(config);
+        this.timeout                 = getTimeout(config);
     }
 
 
@@ -420,7 +459,8 @@ export class AuthleteApiImpl implements AuthleteApi
         requestBody?: any, clazz?: ResponseClass<TResponse>)
     {
         // Fetch an HTTP response from the target API.
-        return await doCallApi(this.baseUrl, path, method, credentials, params, requestBody, clazz);
+        return doCallApi(
+            this.baseUrl, path, method, credentials, this.timeout, params, requestBody, clazz);
     }
 
 
@@ -430,25 +470,27 @@ export class AuthleteApiImpl implements AuthleteApi
     private async callGetApi<TResponse>(
         path: string, credentials: any, params?: QueryParams, clazz?: ResponseClass<TResponse>)
     {
-        return await this.callApi(path, HttpMethod.GET, credentials, params, undefined, clazz);
+        return this.callApi(path, HttpMethod.GET, credentials, params, undefined, clazz);
     }
 
 
     /**
      * Call an Authlete API with HTTP `GET` method and the service owner credentials.
      */
-    private async callServiceOwnerGetApi<TResponse>(path: string, params?: QueryParams, clazz?: ResponseClass<TResponse>)
+    private async callServiceOwnerGetApi<TResponse>(
+        path: string, params?: QueryParams, clazz?: ResponseClass<TResponse>)
     {
-        return await this.callGetApi(path, this.serviceOwnerCredentials, params, clazz);
+        return this.callGetApi(path, this.serviceOwnerCredentials, params, clazz);
     }
 
 
     /**
      * Call an Authlete API with HTTP `GET` method and the service credentials.
      */
-    private async callServiceGetApi<TResponse>(path: string, params?: QueryParams, clazz?: ResponseClass<TResponse>)
+    private async callServiceGetApi<TResponse>(
+        path: string, params?: QueryParams, clazz?: ResponseClass<TResponse>)
     {
-        return await this.callGetApi(path, this.serviceCredentials, params, clazz);
+        return this.callGetApi(path, this.serviceCredentials, params, clazz);
     }
 
 
@@ -458,7 +500,7 @@ export class AuthleteApiImpl implements AuthleteApi
     private async callPostApi<TResponse>(
         path: string, credentials: BasicCredentials, requestBody: any, clazz?: ResponseClass<TResponse>)
     {
-        return await this.callApi(path, HttpMethod.POST, credentials, undefined, requestBody, clazz);
+        return this.callApi(path, HttpMethod.POST, credentials, undefined, requestBody, clazz);
     }
 
 
@@ -468,7 +510,7 @@ export class AuthleteApiImpl implements AuthleteApi
     private async callServiceOwnerPostApi<TResponse>(
         path: string, requestBody: any, clazz?: ResponseClass<TResponse>)
     {
-        return await this.callPostApi(path, this.serviceOwnerCredentials, requestBody, clazz);
+        return this.callPostApi(path, this.serviceOwnerCredentials, requestBody, clazz);
     }
 
 
@@ -478,7 +520,7 @@ export class AuthleteApiImpl implements AuthleteApi
     private async callServicePostApi<TResponse>(
         path: string, requestBody: any, clazz?: ResponseClass<TResponse>)
     {
-        return await this.callPostApi(path, this.serviceCredentials, requestBody, clazz);
+        return this.callPostApi(path, this.serviceCredentials, requestBody, clazz);
     }
 
 
@@ -487,7 +529,7 @@ export class AuthleteApiImpl implements AuthleteApi
      */
     private async callDeleteApi(path: string, credentials: BasicCredentials)
     {
-        await this.callApi(path, HttpMethod.DELETE, credentials);
+        return <Promise<void>>this.callApi(path, HttpMethod.DELETE, credentials);
     }
 
 
@@ -496,7 +538,7 @@ export class AuthleteApiImpl implements AuthleteApi
      */
     private async callServiceOwnerDeleteApi(path: string)
     {
-        await this.callDeleteApi(path, this.serviceOwnerCredentials);
+        return this.callDeleteApi(path, this.serviceOwnerCredentials);
     }
 
 
@@ -505,158 +547,162 @@ export class AuthleteApiImpl implements AuthleteApi
      */
     private async callServiceDeleteApi(path: string)
     {
-        await this.callDeleteApi(path, this.serviceCredentials);
+        return this.callDeleteApi(path, this.serviceCredentials);
     }
 
 
     public async authorization(request: AuthorizationRequest)
     {
-        return <AuthorizationResponse>
-            await this.callServicePostApi(AUTHORIZATION_API_PATH, request, AuthorizationResponse);
+        return <Promise<AuthorizationResponse>>
+            this.callServicePostApi(AUTHORIZATION_API_PATH, request, AuthorizationResponse);
     }
 
 
     public async authorizationIssue(request: AuthorizationIssueRequest)
     {
-        return <AuthorizationIssueResponse>
-            await this.callServicePostApi(AUTHORIZATION_ISSUE_API_PATH, request, AuthorizationIssueResponse);
+        return <Promise<AuthorizationIssueResponse>>
+            this.callServicePostApi(AUTHORIZATION_ISSUE_API_PATH, request, AuthorizationIssueResponse);
     }
 
 
     public async authorizationFail(request: AuthorizationFailRequest)
     {
-        return <AuthorizationFailResponse>
-            await this.callServicePostApi(AUTHORIZATION_FAIL_API_PATH, request, AuthorizationFailResponse);
+        return <Promise<AuthorizationFailResponse>>
+            this.callServicePostApi(AUTHORIZATION_FAIL_API_PATH, request, AuthorizationFailResponse);
     }
 
 
     public async token(request: TokenRequest)
     {
-        return <TokenResponse>await this.callServicePostApi(TOKEN_API_PATH, request, TokenResponse);
+        return <Promise<TokenResponse>>
+            this.callServicePostApi(TOKEN_API_PATH, request, TokenResponse);
     }
 
 
     public async tokenIssue(request: TokenIssueRequest)
     {
-        return <TokenIssueResponse>
-            await this.callServicePostApi(TOKEN_ISSUE_API_PATH, request, TokenIssueResponse);
+        return <Promise<TokenIssueResponse>>
+            this.callServicePostApi(TOKEN_ISSUE_API_PATH, request, TokenIssueResponse);
     }
 
 
     public async tokenFail(request: TokenFailRequest)
     {
-        return <TokenFailResponse>await this.callServicePostApi(TOKEN_FAIL_API_PATH, request, TokenFailResponse);
+        return <Promise<TokenFailResponse>>
+            this.callServicePostApi(TOKEN_FAIL_API_PATH, request, TokenFailResponse);
     }
 
 
     public async revocation(request: RevocationRequest)
     {
-        return <RevocationResponse>
-            await this.callServicePostApi(REVOCATION_API_PATH, request, RevocationResponse);
+        return <Promise<RevocationResponse>>
+            this.callServicePostApi(REVOCATION_API_PATH, request, RevocationResponse);
     }
 
 
     public async userInfo(request: UserInfoRequest)
     {
-        return <UserInfoResponse>
-            await this.callServicePostApi(USER_INFO_API_PATH, request, UserInfoResponse);
+        return <Promise<UserInfoResponse>>
+            this.callServicePostApi(USER_INFO_API_PATH, request, UserInfoResponse);
     }
 
 
     public async userInfoIssue(request: UserInfoIssueRequest)
     {
-        return <UserInfoIssueResponse>
-            await this.callServicePostApi(USER_INFO_ISSUE_API_PATH, request, UserInfoIssueResponse);
+        return <Promise<UserInfoIssueResponse>>
+            this.callServicePostApi(USER_INFO_ISSUE_API_PATH, request, UserInfoIssueResponse);
     }
 
 
     public async introspection(request: IntrospectionRequest)
     {
-        return <IntrospectionResponse>
-            await this.callServicePostApi(INTROSPECTION_API_PATH, request, IntrospectionResponse);
+        return <Promise<IntrospectionResponse>>
+            this.callServicePostApi(INTROSPECTION_API_PATH, request, IntrospectionResponse);
     }
 
 
     public async standardIntrospection(request: StandardIntrospectionRequest)
     {
-        return <StandardIntrospectionResponse>
-            await this.callServicePostApi(INTROSPECTION_STANDARD_API_PATH, request, StandardIntrospectionResponse);
+        return <Promise<StandardIntrospectionResponse>>
+            this.callServicePostApi(INTROSPECTION_STANDARD_API_PATH, request, StandardIntrospectionResponse);
     }
 
 
     public async getService(apiKey: number)
     {
-        return <Service>await this.callServiceOwnerGetApi(
+        return <Promise<Service>>this.callServiceOwnerGetApi(
             SERVICE_GET_API_PATH.replace('{apiKey}', apiKey.toString()), undefined, Service);
     }
 
 
     public async getServiceJwks(pretty: boolean = false, includePrivateKeys: boolean = false)
     {
-        return (<string>await this.callServiceGetApi(
-            SERVICE_JWKS_GET_API_PATH, { pretty: `${pretty}`, includePrivateKeys: `${includePrivateKeys}` })) || null;
+        const jwks = <string>await this.callServiceGetApi(
+            SERVICE_JWKS_GET_API_PATH, { pretty: `${pretty}`, includePrivateKeys: `${includePrivateKeys}` });
+
+        return jwks || null;
     }
 
 
     public async getServiceConfiguration(pretty: boolean = false)
     {
-        return <string>await this.callServiceGetApi(SERVICE_CONFIGURATION_API_PATH, { pretty: `${pretty}` });
+        return <Promise<string>>this.callServiceGetApi(SERVICE_CONFIGURATION_API_PATH, { pretty: `${pretty}` });
     }
 
 
     public async getServiceList(start?: number, end?: number)
     {
-        return <ServiceListResponse>await this.callServiceOwnerGetApi(
+        return <Promise<ServiceListResponse>>this.callServiceOwnerGetApi(
             SERVICE_GET_LIST_API_PATH, buildQueryParamsForServiceGetListApi(start, end), ServiceListResponse);
     }
 
 
     public async createService(service: Service)
     {
-        return <Service>await this.callServiceOwnerPostApi(SERVICE_CREATE_API_PATH, service, Service);
+        return <Promise<Service>>this.callServiceOwnerPostApi(SERVICE_CREATE_API_PATH, service, Service);
     }
 
 
     public async updateService(service: Service)
     {
-        return <Service>await this.callServiceOwnerPostApi(SERVICE_UPDATE_API_PATH, service, Service);
+        return <Promise<Service>>this.callServiceOwnerPostApi(SERVICE_UPDATE_API_PATH, service, Service);
     }
 
 
     public async deleteService(apiKey: number)
     {
-        await this.callServiceOwnerDeleteApi(SERVICE_DELETE_API_PATH.replace('{apiKey}', apiKey.toString()));
+        return this.callServiceOwnerDeleteApi(SERVICE_DELETE_API_PATH.replace('{apiKey}', apiKey.toString()));
     }
 
 
     public async getClient(clientId: number)
     {
-        return <Client>await this.callServiceGetApi(
+        return <Promise<Client>>this.callServiceGetApi(
             CLIENT_GET_API_PATH.replace('{apiKey}', clientId.toString()), undefined, Client);
     }
 
 
     public async getClientList(developer?: string, start?: number, end?: number)
     {
-        return <ClientListResponse>await this.callServiceGetApi(
+        return <Promise<ClientListResponse>>this.callServiceGetApi(
             CLIENT_GET_LIST_API_PATH, buildQueryParamsForClientGetListApi(developer, start, end), ClientListResponse);
     }
 
 
     public async createClient(client: Client)
     {
-        return <Client>await this.callServicePostApi(CLIENT_CREATE_API_PATH, client, Client);
+        return <Promise<Client>>this.callServicePostApi(CLIENT_CREATE_API_PATH, client, Client);
     }
 
 
     public async updateClient(client: Client)
     {
-        return <Client>await this.callServicePostApi(CLIENT_UPDATE_API_PATH, client, Client);
+        return <Promise<Client>>this.callServicePostApi(CLIENT_UPDATE_API_PATH, client, Client);
     }
 
 
     public async deleteClient(clientId: number)
     {
-        await this.callServiceDeleteApi(CLIENT_DELETE_API_PATH.replace('{clientId}', clientId.toString()));
+        return this.callServiceDeleteApi(CLIENT_DELETE_API_PATH.replace('{clientId}', clientId.toString()));
     }
 }
