@@ -37,7 +37,7 @@ Quick Usage
 **Step 1**: Import modules.
 
 ```ts
-import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.3/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.4/mod.ts';
 ```
 
 **Step 2**: Configure and create an `AuthleteApi` instance.
@@ -49,11 +49,12 @@ const config = {
     serviceOwnerApiKey:    'YOUR_SERVICE_OWNER_API_KEY',
     serviceOwnerApiSecret: 'YOUR_SERVICE_OWNER_API_SECRET',
     serviceApiKey:         'YOUR_SERVICE_API_KEY',
-    serviceApiSecret:      'YOUR_SERVICE_API_SECRET'
+    serviceApiSecret:      'YOUR_SERVICE_API_SECRET',
+    timeout:               10000
 };
 
 // Create an AuthleteApi instance with it.
-const api = AuthleteApiFactory.create(config);
+const api = await AuthleteApiFactory.create(config);
 ```
 
 **Step 3**: Invoke methods of the instance to access Authlete APIs.
@@ -127,12 +128,12 @@ const api = await AuthleteApiFactory.create(config);
 const api = await AuthleteApiFactory.getDefault();
 ```
 
-_NOTE: When you call `getDefault()` method of `AuthleteApiFactory` class
-first, it reads the configuration information from `authlete.json` in
+_NOTE: When you first call `getDefault()` method of `AuthleteApiFactory`
+class, it reads the configuration information from `authlete.json` in
 the execution directory using `AuthletePropertyConfiguration` class and
-then instantiate `AuthleteApiImpl` class with it. The method caches the
-created instance in `AuthleteApiFactory` class. This means subsequent
-calls to the method just returns the cached instance._
+then instantiates `AuthleteApiImpl` class with it and internally caches the
+created instance. Therefore, subsequent calls to the method just returns
+the cached instance._
 
 #### AuthleteConfiguration
 
@@ -148,7 +149,8 @@ const config: AuthleteConfiguration = {
     serviceOwnerApiKey:    '...',
     serviceOwnerApiSecret: '...',
     serviceApiKey:         '...',
-    serviceApiSecret:      '...'
+    serviceApiSecret:      '...',
+    timeout:               ...
 };
 
 // Create an AuthleteApi instance with it.
@@ -181,6 +183,7 @@ Valid keys in the property file (`authlete.json`) are as follows.
 | `serviceApiSecret`      | API secret of a service                                           |
 | `serviceOwnerApiKey`    | API key of your account                                           |
 | `serviceOwnerApiSecret` | API secret of your account                                        |
+| `timeout`               | API request timeout in milliseconds                               |
 
 #### AuthleteApi Method Categories
 

@@ -34,7 +34,7 @@ Authlete Library for Deno
 **Step 1**: モジュールをインポート。
 
 ```ts
-import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.3/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.4/mod.ts';
 ```
 
 **Step 2**: `AuthleteApi` のインスタンスを初期化。
@@ -46,11 +46,12 @@ const config = {
     serviceOwnerApiKey:    'YOUR_SERVICE_OWNER_API_KEY',
     serviceOwnerApiSecret: 'YOUR_SERVICE_OWNER_API_SECRET',
     serviceApiKey:         'YOUR_SERVICE_API_KEY',
-    serviceApiSecret:      'YOUR_SERVICE_API_SECRET'
+    serviceApiSecret:      'YOUR_SERVICE_API_SECRET',
+    timeout:               10000
 };
 
 // AuthleteApi のインスタンスを作成。
-const api = AuthleteApiFactory.create(config);
+const api = await AuthleteApiFactory.create(config);
 ```
 
 **Step 3**: AuthleteApi のメソッドを呼び出して Authlete API にアクセス。
@@ -126,9 +127,8 @@ const api = await AuthleteApiFactory.getDefault();
 
 _注意: `AuthleteApiFactory` クラスの `getDefault()` メソッドが初めて呼び出されると、
 実行ディレクトリ直下にある設定ファイル (`authlete.json`) がロードされ、その設定内容を用いて
-`AuthleteApiImpl` クラスがインスタンス化されます。作成されたインスタンスは
-`AuthleteApiFactory` クラス内にキャッシュされるため、当該メソッドに対する以降のメソッドコールは、
-そのキャッシュを返却するのみとなります。_
+`AuthleteApiImpl` クラスがインスタンス化されます。作成されたインスタンスは内部的にキャッシュされるため、
+当該メソッドに対する以降のメソッドコールは、そのキャッシュを返却するのみとなります。_
 
 #### AuthleteConfiguration
 
@@ -143,7 +143,8 @@ const config: AuthleteConfiguration = {
     serviceOwnerApiKey:    '...',
     serviceOwnerApiSecret: '...',
     serviceApiKey:         '...',
-    serviceApiSecret:      '...'
+    serviceApiSecret:      '...',
+    timeout:               ...
 };
 
 // AuthleteApi のインスタンスを作成。
@@ -174,7 +175,8 @@ const api = await AuthleteApiFactory.create(config);
 | `serviceApiKey`         | サービスの API キー                |
 | `serviceApiSecret`      | サービスの API シークレット         |
 | `serviceOwnerApiKey`    | あなたのアカウントの API キー       |
-| `serviceOwnerApiSecret` | あなたのアカウントの API シークレット|
+| `serviceOwnerApiSecret` | あなたのアカウントの API シークレット |
+| `timeout`               | API リクエストのタイムアウト値（ミリ秒） |
 
 #### AuthleteApi メソッドのカテゴリー
 

@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+1.2.4 (2022-02-22)
+------------------
+
+- Add support for API request timeout.
+
+- Fix a bug in `getDefault()` in `AuthleteApiFactory` class.
+
+- Some other bug fixes and refactorings.
+
+
 1.2.3 (2022-02-16)
 ------------------
 
