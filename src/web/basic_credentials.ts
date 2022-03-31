@@ -13,6 +13,9 @@
 // limitations under the License.
 
 
+import { isEmpty } from '../util/util.ts';
+
+
 /**
  * A regular expression to parse `Authorization` header.
  */
@@ -27,13 +30,13 @@ export class BasicCredentials
     /**
      * The ID of a user.
      */
-    public userId: string | null = null;
+    public userId?: string;
 
 
     /**
      * The password of a user.
      */
-    public password: string | null = null;
+    public password?: string;
 
 
     /**
@@ -45,7 +48,7 @@ export class BasicCredentials
      * @param password
      *         The password of a user.
      */
-    constructor(userId: string | null, password: string | null)
+    constructor(userId?: string, password?: string)
     {
         this.userId   = userId;
         this.password = password;
@@ -61,12 +64,12 @@ export class BasicCredentials
      *         or `"_{Base64-Encoded-UserID-and-Password}_"`.
      *
      * @returns If `input` was successfully parsed, parsed credentials
-     *          is returned. Otherwise, null is returned.
+     *          is returned. Otherwise, `null` is returned.
      */
-    public static parse(input: string | null)
+    public static parse(input: string | null): BasicCredentials | null
     {
         // Return null if the input is empty.
-        if (!input) return null;
+        if (isEmpty(input)) return null;
 
         const result = PATTERN.exec(input);
 
@@ -83,6 +86,6 @@ export class BasicCredentials
         const credentials = decoded.split(':', 2);
 
         // Create an instance of this class.
-        return new BasicCredentials(credentials[0], credentials[1] || null);
+        return new BasicCredentials(credentials[0], credentials[1]);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020−2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
 import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
+import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
 import { AuthleteConfiguration } from '../config/authlete_configuration.ts';
 import { AuthorizationFailRequest } from '../dto/authorization_fail_request.ts';
 import { AuthorizationFailResponse } from '../dto/authorization_fail_response.ts';
@@ -46,6 +46,8 @@ import { isNotUndefined } from '../util/util.ts';
 import { BasicCredentials } from '../web/basic_credentials.ts';
 import { AuthleteApi } from './authlete_api.ts';
 import { AuthleteApiException } from './authlete_api_exception.ts';
+
+
 const { classToPlain, plainToClass } = ct;
 
 
@@ -158,7 +160,7 @@ function normalizeBaseUrl(url: string)
  */
 function getServiceOwnerCredentials(config: AuthleteConfiguration)
 {
-    return new BasicCredentials(config.serviceOwnerApiKey || null, config.serviceOwnerApiSecret || null);
+    return new BasicCredentials(config.serviceOwnerApiKey, config.serviceOwnerApiSecret);
 }
 
 
@@ -168,7 +170,7 @@ function getServiceOwnerCredentials(config: AuthleteConfiguration)
  */
 function getServiceCredentials(config: AuthleteConfiguration)
 {
-    return new BasicCredentials(config.serviceApiKey || null, config.serviceApiSecret || null);
+    return new BasicCredentials(config.serviceApiKey, config.serviceApiSecret);
 }
 
 
@@ -333,8 +335,8 @@ async function createResponse<TResponse>(
 
     if (clazz)
     {
-        // If the target class (= 'clazz') is provided, parse the
-        // text as JSON and convert it to an instance of the class.
+        // If the target class (= 'clazz') is provided, parse the text
+        // as JSON and convert it to an instance of the class.
         return plainToClass(clazz, JSON.parse(responseBody)) as TResponse
     }
 
@@ -381,12 +383,12 @@ function createAuthleteApiException(error: Error)
 /**
  * Create a request for `/service/get/list` API.
  */
-function buildQueryParamsForServiceGetListApi(start?: number, end?: number)
+function buildQueryParamsForServiceGetListApi(start?: number, end?: number): QueryParams
 {
     const request: QueryParams = {};
 
-    if (isNotUndefined(start)) request['start'] = start!.toString();
-    if (isNotUndefined(end)) request['end'] = end!.toString();
+    if (isNotUndefined(start)) request['start'] = start.toString();
+    if (isNotUndefined(end)) request['end'] = end.toString();
 
     return request;
 }
@@ -395,13 +397,14 @@ function buildQueryParamsForServiceGetListApi(start?: number, end?: number)
 /**
  * Create a request for `/client/get/list` API.
  */
-function buildQueryParamsForClientGetListApi(developer?: string, start?: number, end?: number)
+function buildQueryParamsForClientGetListApi(
+    developer?: string, start?: number, end?: number): QueryParams
 {
     const request: QueryParams = {};
 
-    if (isNotUndefined(start)) request['start'] = start!.toString();
-    if (isNotUndefined(end)) request['end'] = end!.toString();
-    if (isNotUndefined(developer)) request['developer'] = developer!;
+    if (isNotUndefined(start)) request['start'] = start.toString();
+    if (isNotUndefined(end)) request['end'] = end.toString();
+    if (isNotUndefined(developer)) request['developer'] = developer;
 
     return request;
 }
@@ -703,6 +706,6 @@ export class AuthleteApiImpl implements AuthleteApi
 
     public async deleteClient(clientId: number)
     {
-        return this.callServiceDeleteApi(CLIENT_DELETE_API_PATH.replace('{clientId}', clientId.toString()));
+        await this.callServiceDeleteApi(CLIENT_DELETE_API_PATH.replace('{clientId}', clientId.toString()));
     }
 }

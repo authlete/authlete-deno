@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020-2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ export interface NoInteractionHandlerSpi extends AuthorizationRequestHandlerSpi
      * in [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
      * for details about `prompt=none`.
      *
-     * @returns `true` if an end-user has already logged in. Otherwise,
-     *          `false`. When `false` is returned, the client application
-     *          will receive `error=login_required`.
+     * @returns `true` if an end-user has already logged in or `false`
+     *          if not logged in. When `false` is returned, the client
+     *          application will receive `error=login_required`.
      */
     isUserAuthenticated(): boolean;
 }

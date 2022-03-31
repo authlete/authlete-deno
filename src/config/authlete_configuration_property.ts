@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020−2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
+import { isUndefined } from '../util/util.ts';
 import { AuthleteConfiguration } from './authlete_configuration.ts';
-import { isUndefined } from "../util/util.ts";
 
 
 /**
@@ -172,7 +172,7 @@ export class AuthletePropertyConfiguration implements AuthleteConfiguration
      * If failed to read the property file or failed to parse it as JSON,
      * error is thrown.
      */
-    public static async create()
+    public static async create(): Promise<AuthletePropertyConfiguration>
     {
         // Load the property file.
         const props = await loadProperty(PROPERTY_FILE_NAME);

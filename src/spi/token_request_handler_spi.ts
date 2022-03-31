@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020-2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,12 +43,12 @@ export interface TokenRequestHandlerSpi
      * @param password
      *         The value of `password` parameter in the token request.
      *
-     * @returns
-     *         The subject (= unique identifier) of the authenticated
-     *         end-user. If the pair of `username` and `password` is
-     *         invalid, `null` should be returned.
+     * @returns The subject (= unique identifier) of the authenticated
+     *          end-user. If the pair of `username` and `password` is
+     *          invalid, `null` should be returned from the promise.
      */
-    authenticateUser(username: string | null, password: string | null): string | null;
+    authenticateUser(
+        username: string | null, password: string | null): string | null;
 
 
     /**

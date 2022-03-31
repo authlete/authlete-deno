@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020-2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,7 +65,8 @@ export interface AuthorizationRequestHandlerSpi extends UserClaimProvider
      * in [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
      * for details about `prompt=none`.
      *
-     * @returns The subject (= unique identifier) of the current end-user.
+     * @returns The subject (= unique identifier) of the current end-user
+     *          or `null`.
      */
     getUserSubject(): string | null;
 
