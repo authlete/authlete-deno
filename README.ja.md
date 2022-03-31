@@ -34,7 +34,7 @@ Authlete Library for Deno
 **Step 1**: モジュールをインポート。
 
 ```ts
-import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.4/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.5/mod.ts';
 ```
 
 **Step 2**: `AuthleteApi` のインスタンスを初期化。
@@ -43,6 +43,7 @@ import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.4/mod
 // configuration 用のオブジェクトを作成。
 // 注意: 以下のクレデンシャルは自身のものに置き換えること。
 const config = {
+    baseUrl:               'https://api.authlete.com/api',
     serviceOwnerApiKey:    'YOUR_SERVICE_OWNER_API_KEY',
     serviceOwnerApiSecret: 'YOUR_SERVICE_OWNER_API_SECRET',
     serviceApiKey:         'YOUR_SERVICE_API_KEY',
@@ -169,14 +170,14 @@ const api = await AuthleteApiFactory.create(config);
 
 設定ファイル (`authlete.json`) 内で有効なプロパティーキーとその意味は次のとおりです。
 
-| プロパティーキー         | 説明                              |
-|:------------------------|:---------------------------------|
-| `baseUrl`               | Authlete サーバーの URL           |
-| `serviceApiKey`         | サービスの API キー                |
-| `serviceApiSecret`      | サービスの API シークレット         |
-| `serviceOwnerApiKey`    | あなたのアカウントの API キー       |
-| `serviceOwnerApiSecret` | あなたのアカウントの API シークレット |
-| `timeout`               | API リクエストのタイムアウト値（ミリ秒） |
+| プロパティーキー         | 説明                                                                   |
+|:------------------------|:----------------------------------------------------------------------|
+| `baseUrl`               | Authlete サーバーの URL。デフォルト値は `https://api.authlete.com/api`。|
+| `serviceApiKey`         | サービスの API キー。                                                  |
+| `serviceApiSecret`      | サービスの API シークレット。                                           |
+| `serviceOwnerApiKey`    | あなたのアカウントの API キー。                                         |
+| `serviceOwnerApiSecret` | あなたのアカウントの API シークレット。                                  |
+| `timeout`               | API リクエストのタイムアウト値（ミリ秒）。デフォルト値は `5000`。          |
 
 #### AuthleteApi メソッドのカテゴリー
 
@@ -252,8 +253,9 @@ Github 上でリリースを行うことにより webhook がトリガーされ�
 ------------
 
 - [Authlete][Authlete] - Authlete ホームページ
-- [deno-fen-oauth-server][DenoFenOauthServer] - 認可サーバー実装
-- [deno-fen-resource-server][DenoFenResourceServer] - リソースサーバー実装
+- [authlete-deno-oak][AuthleteDenoOak] - oak 用 Authlete Deno ライブラリ
+- [deno-oak-oauth-server][DenoOakOauthServer] - 認可サーバー実装
+- [deno-oak-resource-server][DenoOakResourceServer] - リソースサーバー実装
 
 コンタクト
 ----------
@@ -267,13 +269,14 @@ Github 上でリリースを行うことにより webhook がトリガーされ�
 
 [Authlete]:               https://www.authlete.com/
 [AuthleteAPI]:            https://docs.authlete.com/
+[AuthleteDenoOak]:        https://github.com/authlete/authlete-deno-oak
 [AuthleteGettingStarted]: https://www.authlete.com/developers/getting_started/
 [AuthleteOverview]:       https://www.authlete.com/documents/overview
-[DenoFenOauthServer]:     https://github.com/authlete/deno-fen-oauth-server
-[DenoFenResourceServer]:  https://github.com/authlete/deno-fen-resource-server
 [DenoLandX]:              https://deno.land/x
-[Fen]:                    https://github.com/fen-land/deno-fen
+[DenoOakOauthServer]:     https://github.com/authlete/deno-oak-oauth-server
+[DenoOakResourceServer]:  https://github.com/authlete/deno-oak-resource-server
 [GithubManagingRelease]:  https://docs.github.com/en/github/administering-a-repository/managing-releases-in-a-repository
 [GithubReleasePage]:      https://github.com/authlete/authlete-deno/releases
+[Oak]:                    https://github.com/oakserver/oak
 [OIDC]:                   https://openid.net/connect/
 [RFC6749]:                https://tools.ietf.org/html/rfc6749

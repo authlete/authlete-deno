@@ -37,7 +37,7 @@ Quick Usage
 **Step 1**: Import modules.
 
 ```ts
-import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.4/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.5/mod.ts';
 ```
 
 **Step 2**: Configure and create an `AuthleteApi` instance.
@@ -46,6 +46,7 @@ import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.4/mod
 // Create a configuration object.
 // NOTE: Replace the following credentials with yours.
 const config = {
+    baseUrl:               'https://api.authlete.com/api',
     serviceOwnerApiKey:    'YOUR_SERVICE_OWNER_API_KEY',
     serviceOwnerApiSecret: 'YOUR_SERVICE_OWNER_API_SECRET',
     serviceApiKey:         'YOUR_SERVICE_API_KEY',
@@ -176,14 +177,14 @@ const api = await AuthleteApiFactory.create(config);
 
 Valid keys in the property file (`authlete.json`) are as follows.
 
-| Property Key            | Description                                                       |
-|:------------------------|:------------------------------------------------------------------|
-| `baseUrl`               | URL of Authlete server (Defaults to https://api.authlete.com/api) |
-| `serviceApiKey`         | API key of a service                                              |
-| `serviceApiSecret`      | API secret of a service                                           |
-| `serviceOwnerApiKey`    | API key of your account                                           |
-| `serviceOwnerApiSecret` | API secret of your account                                        |
-| `timeout`               | API request timeout in milliseconds                               |
+| Property Key            | Description                                                         |
+|:------------------------|:--------------------------------------------------------------------|
+| `baseUrl`               | URL of Authlete server. Defaults to `https://api.authlete.com/api`. |
+| `serviceApiKey`         | API key of a service.                                               |
+| `serviceApiSecret`      | API secret of a service.                                            |
+| `serviceOwnerApiKey`    | API key of your account.                                            |
+| `serviceOwnerApiSecret` | API secret of your account.                                         |
+| `timeout`               | API request timeout in milliseconds. Defaults to `5000`.            |
 
 #### AuthleteApi Method Categories
 
@@ -258,8 +259,9 @@ See Also
 --------
 
 - [Authlete][Authlete] - Authlete Home Page
-- [deno-fen-oauth-server][DenoFenOauthServer] - Authorization Server Implementation
-- [deno-fen-resource-server][DenoFenResourceServer] - Resource Server Implementation
+- [authlete-deno-oak][AuthleteDenoOak] - Authlete Deno Library for oak
+- [deno-oak-oauth-server][DenoOakOauthServer] - Authorization Server Implementation
+- [deno-oak-resource-server][DenoOakResourceServer] - Resource Server Implementation
 
 Contact
 -------
@@ -273,13 +275,14 @@ Contact
 
 [Authlete]:               https://www.authlete.com/
 [AuthleteAPI]:            https://docs.authlete.com/
+[AuthleteDenoOak]:        https://github.com/authlete/authlete-deno-oak
 [AuthleteGettingStarted]: https://www.authlete.com/developers/getting_started/
 [AuthleteOverview]:       https://www.authlete.com/documents/overview
-[DenoFenOauthServer]:     https://github.com/authlete/deno-fen-oauth-server
-[DenoFenResourceServer]:  https://github.com/authlete/deno-fen-resource-server
 [DenoLandX]:              https://deno.land/x
-[Fen]:                    https://github.com/fen-land/deno-fen
+[DenoOakOauthServer]:     https://github.com/authlete/deno-oak-oauth-server
+[DenoOakResourceServer]:  https://github.com/authlete/deno-oak-resource-server
 [GithubManagingRelease]:  https://docs.github.com/en/github/administering-a-repository/managing-releases-in-a-repository
 [GithubReleasePage]:      https://github.com/authlete/authlete-deno/releases
+[Oak]:                    https://github.com/oakserver/oak
 [OIDC]:                   https://openid.net/connect/
 [RFC6749]:                https://tools.ietf.org/html/rfc6749

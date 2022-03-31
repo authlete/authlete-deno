@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+1.2.5 (2022-03-31)
+------------------
+
+- Remove handler classes (`handler/*.ts`).
+
+- Some refactorings for utility classes/methods.
+
+
 1.2.4 (2022-02-22)
 ------------------
 
