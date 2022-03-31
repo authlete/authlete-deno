@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020-2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-import { UserInfoRequestHandlerSpi } from './user_info_request_handler_spi.ts';
 import { UserClaimProviderAdapter } from './user_claim_provider_adapter.ts';
+import { UserInfoRequestHandlerSpi } from './user_info_request_handler_spi.ts';
 
 
 /**

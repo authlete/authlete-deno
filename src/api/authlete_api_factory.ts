@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020−2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
 // limitations under the License.
 
 
-import { AuthleteConfiguration } from "../config/authlete_configuration.ts";
-import { AuthletePropertyConfiguration } from "../config/authlete_configuration_property.ts";
-import { AuthleteApi } from "./authlete_api.ts";
+import { AuthleteConfiguration } from '../config/authlete_configuration.ts';
+import { AuthletePropertyConfiguration } from '../config/authlete_configuration_property.ts';
+import { AuthleteApi } from './authlete_api.ts';
 
 
 /**
@@ -49,7 +49,8 @@ export const STANDARD_IMPL_INFO = {
  * Create an instance of the implementation class (that implements
  * `AuthleteApi` interface) with the configuration.
  */
-async function createImplClass(config: AuthleteConfiguration, implInfo: ImplInfo): Promise<AuthleteApi>
+async function createImplClass(
+    config: AuthleteConfiguration, implInfo: ImplInfo): Promise<AuthleteApi>
 {
     // Dynamically import modules from the path in which the target
     // implementation class exists.
@@ -124,7 +125,7 @@ export class AuthleteApiFactory
     }
 
 
-    private static async createDefaultApi()
+    private static async createDefaultApi(): Promise<AuthleteApi>
     {
         // Get configuration from the property file (= 'authlete.json').
         const config = await AuthletePropertyConfiguration.create();
@@ -149,8 +150,8 @@ export class AuthleteApiFactory
      *         by this must have a constructor that only takes one argument
      *         of type `AuthleteConfiguration`.
      */
-    public static async create(config: AuthleteConfiguration, implInfo: ImplInfo = STANDARD_IMPL_INFO):
-        Promise<AuthleteApi>
+    public static async create(
+        config: AuthleteConfiguration, implInfo: ImplInfo = STANDARD_IMPL_INFO): Promise<AuthleteApi>
     {
         return createImplClass(config, implInfo);
     }

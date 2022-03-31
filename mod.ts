@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020-2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,22 +60,7 @@ export * from './src/dto/token_response.ts';
 export * from './src/dto/user_info_issue_request.ts';
 export * from './src/dto/user_info_issue_response.ts';
 export * from './src/dto/user_info_request.ts';
-export * from './src/dto/user_info_issue_response.ts';
-
-// handler
-export * from './src/handler/authorization_decision_handler.ts';
-export * from './src/handler/authorization_request_base_handler.ts';
-export * from './src/handler/authorization_request_error_handler.ts';
-export * from './src/handler/base_api_request_handler.ts';
-export * from './src/handler/base_handler.ts';
-export * from './src/handler/claim_collector.ts';
-export * from './src/handler/configuration_request_handler.ts';
-export * from './src/handler/introspection_request_handler.ts';
-export * from './src/handler/jwks_request_handler.ts';
-export * from './src/handler/no_interaction_handler.ts';
-export * from './src/handler/revocation_request_handler.ts';
-export * from './src/handler/token_request_handler.ts';
-export * from './src/handler/user_info_request_handler.ts';
+export * from './src/dto/user_info_response.ts';
 
 // model
 export * from './src/model/authorization_page_model.ts';
@@ -119,7 +104,4 @@ export * from './src/type/user_code_charset.ts';
 export * from './src/util/util.ts';
 
 // web
-export * from './src/web/access_token_validator.ts';
 export * from './src/web/basic_credentials.ts';
-export * from './src/web/response_util.ts'
-export * from './src/web/url_coder.ts';
