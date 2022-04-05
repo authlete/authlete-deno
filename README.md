@@ -16,6 +16,11 @@ Source Code
 
   `https://github.com/authlete/authlete-deno`
 
+Deno Land
+---------
+
+  `https://deno.land/x/authlete_deno`
+
 Prerequisites
 -------------
 
@@ -37,7 +42,7 @@ Quick Usage
 **Step 1**: Import modules.
 
 ```ts
-import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.5/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.6/mod.ts';
 ```
 
 **Step 2**: Configure and create an `AuthleteApi` instance.
