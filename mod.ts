@@ -65,20 +65,6 @@ export * from './src/dto/user_info_response.ts';
 // model
 export * from './src/model/authorization_page_model.ts';
 
-// spi
-export * from './src/spi/authorization_decision_handler_spi.ts';
-export * from './src/spi/authorization_decision_handler_spi_adapter.ts';
-export * from './src/spi/authorization_request_handler_spi.ts';
-export * from './src/spi/authorization_request_handler_spi_adapter.ts';
-export * from './src/spi/no_interaction_handler_spi.ts';
-export * from './src/spi/no_interaction_handler_spi_adapter.ts';
-export * from './src/spi/token_request_handler_spi.ts';
-export * from './src/spi/token_request_handler_spi_adapter.ts';
-export * from './src/spi/user_claim_provider.ts';
-export * from './src/spi/user_claim_provider_adapter.ts';
-export * from './src/spi/user_info_request_handler_spi.ts';
-export * from './src/spi/user_info_request_handler_spi_adapter.ts';
-
 // type
 export * from './src/type/application_type.ts';
 export * from './src/type/claim_type.ts';
