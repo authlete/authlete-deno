@@ -20,6 +20,7 @@ import { ClientAuthMethod } from '../type/client_auth_method.ts';
 import { GrantType } from '../type/grant_type.ts';
 import { ApiResponse } from './api_response.ts';
 import { AuthzDetails } from './authz_details.ts';
+import { Pair } from './pair.ts';
 import { Property } from './property.ts';
 const { Type, Transform } = ct;
 
@@ -161,13 +162,13 @@ export class TokenResponse extends ApiResponse
      * The flag which indicates whether the client ID alias was used
      * when the token request was made.
      */
-    public clientIdAliasUsed?: boolean;
+    public clientIdAliasUsed!: boolean;
 
 
     /**
      * The subject (= resource owner's ID) of the access token.
      *
-     * Even if an access token has been issued by the call of `/api/auth/token`
+     * Even if an access token has been issued by the call of `/auth/token`
      * API, this property is unset if the flow of the token request was
      * [Client Credentials Flow](http://tools.ietf.org/html/rfc6749#section-4.4)
      * (`grant_type=client_credentials`) because it means the access
@@ -239,13 +240,27 @@ export class TokenResponse extends ApiResponse
      * _"OAuth 2.0 Rich Authorization Requests"_.
      *
      * When the value of the `action` property is `TokenResponse.Action.PASSWORD`,
-     * this method returns an array that represents the `authorization_details`
+     * this property an array that represents the `authorization_details`
      * request parameter included in the token request. In other successful
      * cases, this property holds the authorization details associated
      * with the issued access token.
      */
     @Type(() => AuthzDetails)
     public authorizationDetails?: AuthzDetails;
+
+
+    /**
+     * Arbitrary attributes associated with the service.
+     */
+    @Type(() => Pair)
+    public serviceAttributes?: Pair[];
+
+
+    /**
+     * Arbitrary attributes associated with the client.
+     */
+    @Type(() => Pair)
+    public clientAttributes?: Pair[];
 }
 
 

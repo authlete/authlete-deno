@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020-2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import { JWSAlg } from '../type/jws_alg.ts';
 import { ResponseType } from '../type/response_type.ts';
 import { SubjectType } from '../type/subject_type.ts';
 import { ClientExtension } from './client_extension.ts';
+import { Pair } from './pair.ts';
 import { TaggedValue } from './tagged_value.ts';
 const { Type, Transform } = ct;
 
@@ -47,7 +48,7 @@ export class Client
      * property has a value in a request to Authlete `/client/create`
      * API or `/client/update` API, it is ignored.
      */
-    public number?: number;
+    public number!: number;
 
 
     /**
@@ -56,7 +57,7 @@ export class Client
      * property has a value in a request to Authlete `/client/create`
      * API or `/client/update` API, it is ignored.
      */
-    public serviceNumber?: number;
+    public serviceNumber!: number;
 
 
     /**
@@ -72,7 +73,7 @@ export class Client
      * property has a value in a request to Authlete `/client/create`
      * API or `/client/update` API, it is ignored.
      */
-    public clientId?: number;
+    public clientId!: number;
 
 
     /**
@@ -91,7 +92,7 @@ export class Client
      * client ID alias feature does not work even if this client's
      * `clientIdAliasEnabled` property is `true`.
      */
-    public clientIdAliasEnabled?: boolean;
+    public clientIdAliasEnabled!: boolean;
 
 
     /**
@@ -627,7 +628,7 @@ export class Client
      * Dynamic Client Registration 1.0, 2. Client Metadata](
      * http://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata).
      */
-    public defaultMaxAge?: number;
+    public defaultMaxAge!: number;
 
 
     /**
@@ -650,7 +651,7 @@ export class Client
      * Dynamic Client Registration 1.0, 2. Client Metadata](
      * http://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata).
      */
-    public authTimeRequired?: boolean;
+    public authTimeRequired!: boolean;
 
 
     /**
@@ -695,14 +696,14 @@ export class Client
      * The time at which this client was created. The value is represented
      * as milliseconds since the UNIX epoch (1970-01-01).
      */
-    public createdAt?: number;
+    public createdAt!: number;
 
 
     /**
      * The time at which this client was last modified. The value is
      * represented as milliseconds since the UNIX epoch (1970-01-01).
      */
-    public modifiedAt?: number;
+    public modifiedAt!: number;
 
 
     /**
@@ -771,7 +772,7 @@ export class Client
      * The flag which indicates whether this client use TLS client
      * certificate bound access tokens.
      */
-    public tlsClientCertificateBoundAccessTokens?: boolean;
+    public tlsClientCertificateBoundAccessTokens!: boolean;
 
 
     /**
@@ -890,14 +891,14 @@ export class Client
      * This property corresponds to the `backchannel_user_code_parameter
      * metadata`.
      */
-    public bcUserCodeRequired?: boolean;
+    public bcUserCodeRequired!: boolean;
 
 
     /**
      * The flag which indicates whether this client has been registered
      * dynamically.
      */
-    public dynamicallyRegistered?: boolean;
+    public dynamicallyRegistered!: boolean;
 
 
     /**
@@ -907,12 +908,184 @@ export class Client
 
 
     /**
-     * The data types that this client may use as values of the `type`
-     * field in `authorization_details`.
+     * Authorization details types that this client may use as values
+     * of the `type` field in `authorization_details`.
      *
-     * This property corresponds to the `authorization_data_types`
-     * metadata. See _"OAuth 2.0 Rich Authorization Requests"_ (RAR)
-     * for details.
+     * This property corresponds to the `authorization_details_types`
+     * metadata. See "OAuth 2.0 Rich Authorization Requests" (RAR) for
+     * details.
+     *
+     * Note that the property name was renamed from `authorizationDataTypes`
+     * to `authorizationDetailsTypes` to align with the change made by
+     * the 5th draft of the RAR specification. The data types that this
+     * client may use as values of the `type` field in `authorization_details`.
      */
-    public authorizationDataTypes?: string[];
+    public authorizationDetailsTypes?: string[];
+
+
+    /**
+     * The flag indicating whether this client is required to use the
+     * pushed authorization request endpoint.
+     *
+     * This property corresponds to the `require_pushed_authorization_requests`
+     * client metadata defined in "OAuth 2.0 Pushed Authorization Requests".
+     */
+    public parRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether authorization requests from this client
+     * are always required to utilize a request object by using either
+     * `request` or `request_uri` request parameter.
+     *
+     * If this flag is `true` and the service's `isTraditionalRequestObjectProcessingApplied`
+     * is `false`, authorization requests from this client are processed
+     * as if `require_signed_request_object` client metadata of this client
+     * is `true`. The metadata is defined in JAR (JWT Secured Authorization
+     * Request).
+     */
+    public requestObjectRequired!: boolean;
+
+
+    /**
+     * Attributes.
+     */
+    @Type(() => Pair)
+    public attributes?: Pair[];
+
+
+    /**
+     * The custom client metadata in JSON format.
+     *
+     * Standard specifications define client metadata as necessary.
+     * The following are such examples.
+     *
+     * - [OpenID Connect Dynamic Client Registration 1.0](https://openid.net/specs/openid-connect-registration-1_0.html)
+     * - [RFC 7591 OAuth 2.0 Dynamic Client Registration Protocol](https://www.rfc-editor.org/rfc/rfc7591.html)
+     * - [RFC 8705 OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens](https://www.rfc-editor.org/rfc/rfc8705.html)
+     * - [OpenID Connect Client-Initiated Backchannel Authentication Flow - Core 1.0<](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html)
+     * - [The OAuth 2.0 Authorization Framework: JWT Secured Authorization Request (JAR)](https://datatracker.ietf.org/doc/draft-ietf-oauth-jwsreq/)
+     * - [Financial-grade API: JWT Secured Authorization Response Mode for OAuth 2.0 (JARM)](https://openid.net/specs/openid-financial-api-jarm.html)
+     * - [OAuth 2.0 Pushed Authorization Requests (PAR)](https://datatracker.ietf.org/doc/draft-ietf-oauth-par/)
+     * - [OAuth 2.0 Rich Authorization Requests (RAR)](https://datatracker.ietf.org/doc/draft-ietf-oauth-rar/)
+     *
+     * Standard client metadata included in Client Registration Request
+     * and Client Update Request (cf. [OIDC DynReg](https://openid.net/specs/openid-connect-registration-1_0.html),
+     * [RFC 7591](https://www.rfc-editor.org/rfc/rfc7591.html) and [RFC
+     * 7592](https://www.rfc-editor.org/rfc/rfc7592.html)) are, if supported
+     * by Authlete, set to corresponding properties of the client application.
+     * For example, the value of the `client_name` client metadata in
+     * Client Registration/Update Request is set to the `clientName` property.
+     * On the other hand, unrecognized client metadata are discarded.
+     *
+     * By listing up custom client metadata in advance by using the
+     * `supportedCustomClientMetadata` property of `Service`, Authlete
+     * can recognize them and stores their values into the database.
+     * The stored custom client metadata values can be referenced by this
+     * method.
+     */
+    public customMetadata?: string;
+
+
+    /**
+     * The flag indicating whether encryption of request object is required
+     * when the request object is passed through the front channel.
+     *
+     * This flag does not affect the processing of request objects at the
+     * Pushed Authorization Request Endpoint, which is defined in [OAuth
+     * 2.0 Pushed Authorization Requests](https://datatracker.ietf.org/doc/draft-ietf-oauth-par/).
+     * Unecrypted request objects are accepted at the endpoint even if
+     * this flag is `true`.
+     *
+     * This flag does not indicate whether a request object is always
+     * required. There is a different flag, `requestObjectRequired`, for
+     * the purpose. See the description of `isRequestObjectRequired` for
+     * details.
+     *
+     * Even if this flag is `false`, encryption of request object is
+     * required if the `Service.frontChannelRequestObjectEncryptionRequired`
+     * flag is `true`.
+     */
+    public frontChannelRequestObjectEncryptionRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether the JWE `alg` of encrypted request
+     * object must match the `request_object_encryption_alg` client metadata.
+     *
+     * The `request_object_encryption_alg` client metadata itself is defined
+     * in [OpenID Connect Dynamic Client Registration 1.0](https://openid.net/specs/openid-connect-registration-1_0.html)
+     * as follows.
+     *
+     * > `request_object_encryption_alg`
+     *
+     * > OPTIONAL. JWE [JWE] `alg` algorithm [JWA] the RP is declaring that
+     * it may use for encrypting Request Objects sent to the OP. This
+     * parameter SHOULD be included when symmetric encryption will be
+     * used, since this signals to the OP that a `client_secret` value
+     * needs to be returned from which the symmetric key will be derived,
+     * that might not otherwise be returned. The RP MAY still use other
+     * supported encryption algorithms or send unencrypted Request Objects,
+     * even when this parameter is present. If both signing and encryption
+     * are requested, the Request Object will be signed then encrypted,
+     * with the result being a Nested JWT, as defined in [JWT]. The default,
+     * if omitted, is that the RP is not declaring whether it might encrypt
+     * any Request Objects.
+     *
+     * The point here is _"The RP MAY still use other supported encryption
+     * algorithms or send unencrypted Request Objects, even when this parameter
+     * is present."_
+     *
+     * The property that represents the client metadata is `requestEncryptionAlg`.
+     * See the description of r`equestEncryptionAlg` for details.
+     *
+     * Even if this flag is `false`, the match is required if the
+     * `Service.requestObjectEncryptionAlgMatchRequired` flag is `true`.
+     */
+    public requestObjectEncryptionAlgMatchRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether the JWE `enc` of encrypted request
+     * object must match the `request_object_encryption_enc` client metadata.
+     *
+     * The `request_object_encryption_enc` client metadata itself is defined
+     * in [OpenID Connect Dynamic Client Registration 1.0](https://openid.net/specs/openid-connect-registration-1_0.html)
+     * as follows.
+     *
+     * > `request_object_encryption_enc`
+     *
+     * > OPTIONAL. JWE `enc` algorithm [JWA] the RP is declaring that it may
+     * use for encrypting Request Objects sent to the OP. If `request_object_encryption_alg`
+     * is specified, the default for this value is `A128CBC-HS256`. When
+     * `request_object_encryption_enc` is included, `request_object_encryption_alg`
+     * MUST also be provided.
+     *
+     * The property that represents the client metadata is `requestEncryptionEnc`.
+     * See the description of `requestEncryptionEnc` for details.
+     *
+     * Even if this flag is `false`, the match is required if the `Service.requestObjectEncryptionEncMatchRequired`
+     * flag is `true`.
+     */
+    public requestObjectEncryptionEncMatchRequired!: boolean;
+
+
+    /**
+     * The digest algorithm that this client requests the server to use
+     * when it computes digest values of [external attachments](https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html#name-external-attachments),
+     * which may be referenced from within ID tokens or userinfo responses
+     * (or any place that can have the `verified_claims` claim).
+     *
+     * Possible values are listed in the [Hash Algorithm Registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg)
+     * of IANA (Internet Assigned Numbers Authority), but the server does
+     * not necessarily support all the values there. When this property
+     * is omitted, `sha-256` is used as the default algorithm.
+     *
+     * This property corresponds to the `digest_algorithm` client metadata
+     * which was defined by the third implementer's draft of [OpenID Connect
+     * for Identity Assurance 1.0](https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html)</a>&quot;.
+     *
+     * This property is recognized by Authlete 2.3 and newer versions.
+     */
+    public digestAlgorithm?: string;
 }

@@ -22,10 +22,26 @@ import { AuthorizationIssueRequest } from '../dto/authorization_issue_request.ts
 import { AuthorizationIssueResponse } from '../dto/authorization_issue_response.ts';
 import { AuthorizationRequest } from '../dto/authorization_request.ts';
 import { AuthorizationResponse } from '../dto/authorization_response.ts';
-import { Client } from '../dto/client.ts';
+import { BackchannelAuthenticationCompleteRequest } from '../dto/backchannel_authentication_complete_request.ts';
+import { BackchannelAuthenticationCompleteResponse } from '../dto/backchannel_authentication_complete_response.ts';
+import { BackchannelAuthenticationFailRequest } from '../dto/backchannel_authentication_fail_request.ts';
+import { BackchannelAuthenticationFailResponse } from '../dto/backchannel_authentication_fail_response.ts';
+import { BackchannelAuthenticationIssueRequest } from '../dto/backchannel_authentication_issue_request.ts';
+import { BackchannelAuthenticationIssueResponse } from '../dto/backchannel_authentication_issue_response.ts';
+import { BackchannelAuthenticationRequest } from '../dto/backchannel_authentication_request.ts';
+import { BackchannelAuthenticationResponse } from '../dto/backchannel_authentication_response.ts';
 import { ClientListResponse } from '../dto/client_list_response.ts';
+import { Client } from '../dto/client.ts';
+import { DeviceAuthorizationRequest } from '../dto/device_authorization_request.ts';
+import { DeviceAuthorizationResponse } from '../dto/device_authorization_response.ts';
+import { DeviceCompleteRequest } from '../dto/device_complete_request.ts';
+import { DeviceCompleteResponse } from '../dto/device_complete_response.ts';
+import { DeviceVerificationRequest } from '../dto/device_verification_request.ts';
+import { DeviceVerificationResponse } from '../dto/device_verification_response.ts';
 import { IntrospectionRequest } from '../dto/introspection_request.ts';
 import { IntrospectionResponse } from '../dto/introspection_response.ts';
+import { PushedAuthReqRequest } from '../dto/pushed_auth_req_request.ts';
+import { PushedAuthReqResponse } from '../dto/pushed_auth_req_response.ts';
 import { RevocationRequest } from '../dto/revocation_request.ts';
 import { RevocationResponse } from '../dto/revocation_response.ts';
 import { Service } from '../dto/service.ts';
@@ -46,37 +62,43 @@ import { isNotUndefined } from '../util/util.ts';
 import { BasicCredentials } from '../web/basic_credentials.ts';
 import { AuthleteApi } from './authlete_api.ts';
 import { AuthleteApiException } from './authlete_api_exception.ts';
-
-
 const { classToPlain, plainToClass } = ct;
 
 
 /**
  * API Path.
  */
-const AUTHORIZATION_API_PATH          = '/auth/authorization';
-const AUTHORIZATION_ISSUE_API_PATH    = '/auth/authorization/issue';
-const AUTHORIZATION_FAIL_API_PATH     = '/auth/authorization/fail';
-const TOKEN_API_PATH                  = '/auth/token';
-const TOKEN_ISSUE_API_PATH            = '/auth/token/issue';
-const TOKEN_FAIL_API_PATH             = '/auth/token/fail';
-const REVOCATION_API_PATH             = '/auth/revocation';
-const USER_INFO_API_PATH              = '/auth/userinfo';
-const USER_INFO_ISSUE_API_PATH        = '/auth/userinfo/issue';
-const INTROSPECTION_API_PATH          = '/auth/introspection';
-const INTROSPECTION_STANDARD_API_PATH = '/auth/introspection/standard';
-const SERVICE_GET_API_PATH            = '/service/get/{apiKey}';
-const SERVICE_GET_LIST_API_PATH       = '/service/get/list';
-const SERVICE_CREATE_API_PATH         = '/service/create';
-const SERVICE_UPDATE_API_PATH         = '/service/update';
-const SERVICE_DELETE_API_PATH         = '/service/delete/{apiKey}';
-const SERVICE_JWKS_GET_API_PATH       = '/service/jwks/get';
-const SERVICE_CONFIGURATION_API_PATH  = '/service/configuration';
-const CLIENT_GET_API_PATH             = '/client/get/{clientId}';
-const CLIENT_GET_LIST_API_PATH        = '/client/get/list';
-const CLIENT_CREATE_API_PATH          = '/client/create';
-const CLIENT_UPDATE_API_PATH          = '/client/update';
-const CLIENT_DELETE_API_PATH          = '/client/delete/{clientId}';
+const AUTHORIZATION_API_PATH                       = '/auth/authorization';
+const AUTHORIZATION_ISSUE_API_PATH                 = '/auth/authorization/issue';
+const AUTHORIZATION_FAIL_API_PATH                  = '/auth/authorization/fail';
+const BACKCHANNEL_AUTHENTICATION_API_PATH          = '/backchannel/authentication';
+const BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH    = '/backchannel/authentication/issue';
+const BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH     = '/backchannel/authentication/fail';
+const BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH = '/backchannel/authentication/complete';
+const DEVICE_AUTHORIZATION_API_PATH                = '/device/authorization';
+const DEVICE_VERIFICATION_API_PATH                 = '/device/verification';
+const DEVICE_COMPLETE_API_PATH                     = '/device/complete';
+const TOKEN_API_PATH                               = '/auth/token';
+const TOKEN_ISSUE_API_PATH                         = '/auth/token/issue';
+const TOKEN_FAIL_API_PATH                          = '/auth/token/fail';
+const REVOCATION_API_PATH                          = '/auth/revocation';
+const USER_INFO_API_PATH                           = '/auth/userinfo';
+const USER_INFO_ISSUE_API_PATH                     = '/auth/userinfo/issue';
+const INTROSPECTION_API_PATH                       = '/auth/introspection';
+const INTROSPECTION_STANDARD_API_PATH              = '/auth/introspection/standard';
+const SERVICE_GET_API_PATH                         = '/service/get/{apiKey}';
+const SERVICE_GET_LIST_API_PATH                    = '/service/get/list';
+const SERVICE_CREATE_API_PATH                      = '/service/create';
+const SERVICE_UPDATE_API_PATH                      = '/service/update';
+const SERVICE_DELETE_API_PATH                      = '/service/delete/{apiKey}';
+const SERVICE_JWKS_GET_API_PATH                    = '/service/jwks/get';
+const SERVICE_CONFIGURATION_API_PATH               = '/service/configuration';
+const CLIENT_GET_API_PATH                          = '/client/get/{clientId}';
+const CLIENT_GET_LIST_API_PATH                     = '/client/get/list';
+const CLIENT_CREATE_API_PATH                       = '/client/create';
+const CLIENT_UPDATE_API_PATH                       = '/client/update';
+const CLIENT_DELETE_API_PATH                       = '/client/delete/{clientId}';
+const PUSHED_AUTH_REQ_API_PATH                     = '/pushed_auth_req';
 
 
 /**
@@ -707,5 +729,61 @@ export class AuthleteApiImpl implements AuthleteApi
     public async deleteClient(clientId: number)
     {
         await this.callServiceDeleteApi(CLIENT_DELETE_API_PATH.replace('{clientId}', clientId.toString()));
+    }
+
+
+    public backchannelAuthentication(request: BackchannelAuthenticationRequest)
+    {
+        return <Promise<BackchannelAuthenticationResponse>>
+            this.callServicePostApi(BACKCHANNEL_AUTHENTICATION_API_PATH, request, BackchannelAuthenticationResponse);
+    }
+
+
+    public backchannelAuthenticationIssue(request: BackchannelAuthenticationIssueRequest)
+    {
+        return <Promise<BackchannelAuthenticationIssueResponse>>
+            this.callServicePostApi(BACKCHANNEL_AUTHENTICATION_ISSUE_API_PATH, request, BackchannelAuthenticationIssueResponse);
+    }
+
+
+    public backchannelAuthenticationFail(request: BackchannelAuthenticationFailRequest)
+    {
+        return <Promise<BackchannelAuthenticationFailResponse>>
+            this.callServicePostApi(BACKCHANNEL_AUTHENTICATION_FAIL_API_PATH, request, BackchannelAuthenticationFailResponse);
+    }
+
+
+    public backchannelAuthenticationComplete(request: BackchannelAuthenticationCompleteRequest)
+    {
+        return <Promise<BackchannelAuthenticationCompleteResponse>>
+            this.callServicePostApi(BACKCHANNEL_AUTHENTICATION_COMPLETE_API_PATH, request, BackchannelAuthenticationCompleteResponse);
+    }
+
+
+    public deviceAuthorization(request: DeviceAuthorizationRequest)
+    {
+        return <Promise<DeviceAuthorizationResponse>>
+            this.callServicePostApi(DEVICE_AUTHORIZATION_API_PATH, request, DeviceAuthorizationResponse);
+    }
+
+
+    public deviceVerification(request: DeviceVerificationRequest)
+    {
+        return <Promise<DeviceVerificationResponse>>
+            this.callServicePostApi(DEVICE_VERIFICATION_API_PATH, request, DeviceVerificationResponse);
+    }
+
+
+    public deviceComplete(request: DeviceCompleteRequest)
+    {
+        return <Promise<DeviceCompleteResponse>>
+            this.callServicePostApi(DEVICE_COMPLETE_API_PATH, request, DeviceCompleteResponse);
+    }
+
+
+    public pushedAuthorizationRequest(request: PushedAuthReqRequest)
+    {
+        return <Promise<PushedAuthReqResponse>>
+            this.callServicePostApi(PUSHED_AUTH_REQ_API_PATH, request, PushedAuthReqResponse);
     }
 }

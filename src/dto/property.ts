@@ -18,7 +18,7 @@
  *
  * This class is used mainly to represent an extra property that is
  * associated with an access token. Some Authlete APIs (such as
- * `/api/auth/token` API) accept an array of properties via `properties`
+ * `/auth/token` API) accept an array of properties via `properties`
  * request parameter and associate the properties with an access token.
  */
 export class Property
@@ -41,8 +41,7 @@ export class Property
      *
      * If a property is not hidden, the property will come along with
      * an access token. For example, if you set the `properties` request
-     * parameter as follows when you call Authlete `/api/auth/token`
-     * API,
+     * parameter as follows when you call Authlete `/auth/token` API,
      *
      * ```json
      * [
@@ -92,7 +91,7 @@ export class Property
      * The client application will never see the property in any response
      * from your authorization server. However, of course, the property
      * is still associated with the access token and it can be confirmed
-     * by calling Authlete `/api/auth/introspection` API (which is an
+     * by calling Authlete `/auth/introspection` API (which is an
      * API to get information about an access token). A response from
      * the API contains all properties associated with the given access
      * token regardless of whether they are hidden or visible. The
@@ -127,5 +126,5 @@ export class Property
      * }
      * ```
      */
-    public hidden?: boolean;
+    public hidden!: boolean;
 }

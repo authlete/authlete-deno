@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,42 +14,43 @@
 
 
 /**
- * Request to Authlete `/auth/revocation` API.
+ * Request to Authlete `/device/authorization` API.
  */
-export class RevocationRequest
+export class DeviceAuthorizationRequest
 {
     /**
-     * The value of `parameters` which are the request parameters
-     * that the OAuth 2.0 token revocation endpoint of the service
+     * The value of `parameters` which are the request parameters that
+     * the device authorization endpoint of the authorization server
      * implementation received from the client application.
      */
     public parameters?: string;
 
 
     /**
-     * The client ID extracted from `Authorization` header of the token
-     * revocation request from the client application.
+     * The client ID extracted from `Authorization` header of the device
+     * authorization request from the client application.
      */
     public clientId?: string;
 
 
     /**
      * The client secret extracted from `Authorization` header of the
-     * token revocation request from the client application.
+     * device authorization request from the client application.
      */
     public clientSecret?: string;
 
 
     /**
      * The client certificate used in the TLS connection between the
-     * client application and the revocation endpoint.
+     * client application and the device authorization endpoint of the
+     * authorization server.
      */
     public clientCertificate?: string;
 
 
     /**
-     * Get the client certificate path presented by the client during
-     * client authentication.
+     * The client certificate path presented by the client during client
+     * authentication.
      */
-    public clientCertificatePath?: string;
+    public clientCertificatePath?: string[];
 }

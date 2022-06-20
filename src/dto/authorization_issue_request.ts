@@ -46,7 +46,7 @@ export class AuthorizationIssueRequest
     /**
      * The time when the end-user was authenticated.
      */
-    public authTime?: number;
+    public authTime!: number;
 
 
     /**

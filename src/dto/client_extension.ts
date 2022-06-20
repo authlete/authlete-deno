@@ -34,7 +34,7 @@ export class ClientExtension
      * The flag to indicate whether _"Requestable Scopes per Client"_
      * is enabled or not.
      *
-     * If this method returns `true`, a special set of scopes (permissions)
+     * If this property is `true`, a special set of scopes (permissions)
      * is defined on the server side (the `requestableScopes` array
      * represents the special set) and scopes which this client application
      * can request are limited to the scopes listed in the set. In other
@@ -44,11 +44,11 @@ export class ClientExtension
      * authorization request. To be exact, other scopes can be listed
      * but will be ignored by the authorization server.
      *
-     * On the other hand, if this method returns `false`, the valid set
+     * On the other hand, if this property is `false`, the valid set
      * of scopes (permissions) that this client application can request
      * is equal to the whole scope set defined by the authorization server.
      */
-    public requestableScopesEnabled?: boolean;
+    public requestableScopesEnabled!: boolean;
 
 
     /**
@@ -76,7 +76,7 @@ export class ClientExtension
      * scope attribute `"access_token.duration"`, too. Authlete chooses
      * the minimum value among the candidates.
      */
-    public accessTokenDuration?: number;
+    public accessTokenDuration!: number;
 
 
     /**
@@ -94,5 +94,5 @@ export class ClientExtension
      * scope attribute `"refresh_token.duration"`, too. Authlete chooses
      * the minimum value among the candidates.
      */
-    public refreshTokenDuration?: number;
+    public refreshTokenDuration!: number;
 }

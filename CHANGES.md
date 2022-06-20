@@ -1,6 +1,20 @@
 CHANGES
 =======
 
+1.2.7 (2022-06-21)
+------------------
+
+- Add CIBA support.
+
+- Add Device Flow support
+
+- Add PAR (Pushed Authorization Request) support.
+
+- Add Hsk class.
+
+- Add parameters to some DTO classes.
+
+
 1.2.6 (2022-04-05)
 ------------------
 

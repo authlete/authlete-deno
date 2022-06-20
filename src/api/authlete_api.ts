@@ -19,10 +19,26 @@ import { AuthorizationIssueRequest } from '../dto/authorization_issue_request.ts
 import { AuthorizationIssueResponse } from '../dto/authorization_issue_response.ts';
 import { AuthorizationRequest } from '../dto/authorization_request.ts';
 import { AuthorizationResponse } from '../dto/authorization_response.ts';
+import { BackchannelAuthenticationCompleteRequest } from '../dto/backchannel_authentication_complete_request.ts';
+import { BackchannelAuthenticationCompleteResponse } from '../dto/backchannel_authentication_complete_response.ts';
+import { BackchannelAuthenticationFailRequest } from '../dto/backchannel_authentication_fail_request.ts';
+import { BackchannelAuthenticationFailResponse } from '../dto/backchannel_authentication_fail_response.ts';
+import { BackchannelAuthenticationIssueRequest } from '../dto/backchannel_authentication_issue_request.ts';
+import { BackchannelAuthenticationIssueResponse } from '../dto/backchannel_authentication_issue_response.ts';
+import { BackchannelAuthenticationRequest } from '../dto/backchannel_authentication_request.ts';
+import { BackchannelAuthenticationResponse } from '../dto/backchannel_authentication_response.ts';
 import { Client } from '../dto/client.ts';
 import { ClientListResponse } from '../dto/client_list_response.ts';
+import { DeviceAuthorizationRequest } from '../dto/device_authorization_request.ts';
+import { DeviceAuthorizationResponse } from '../dto/device_authorization_response.ts';
+import { DeviceCompleteRequest } from '../dto/device_complete_request.ts';
+import { DeviceCompleteResponse } from '../dto/device_complete_response.ts';
+import { DeviceVerificationRequest } from '../dto/device_verification_request.ts';
+import { DeviceVerificationResponse } from '../dto/device_verification_response.ts';
 import { IntrospectionRequest } from '../dto/introspection_request.ts';
 import { IntrospectionResponse } from '../dto/introspection_response.ts';
+import { PushedAuthReqRequest } from '../dto/pushed_auth_req_request.ts';
+import { PushedAuthReqResponse } from '../dto/pushed_auth_req_response.ts';
 import { RevocationRequest } from '../dto/revocation_request.ts';
 import { RevocationResponse } from '../dto/revocation_response.ts';
 import { Service } from '../dto/service.ts';
@@ -293,4 +309,80 @@ export interface AuthleteApi
      *         The client ID of a client application.
      */
     deleteClient(clientId: number): Promise<void>;
+
+
+    /**
+     * Call Authlete `/backchannel/authentication` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    backchannelAuthentication(request: BackchannelAuthenticationRequest):
+        Promise<BackchannelAuthenticationResponse>;
+
+
+    /**
+     * Call Authlete `/backchannel/authentication/issue` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    backchannelAuthenticationIssue(request: BackchannelAuthenticationIssueRequest):
+        Promise<BackchannelAuthenticationIssueResponse>;
+
+
+    /**
+     * Call Authlete `/backchannel/authentication/fail` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    backchannelAuthenticationFail(request: BackchannelAuthenticationFailRequest):
+        Promise<BackchannelAuthenticationFailResponse>;
+
+
+    /**
+     * Call Authlete `/backchannel/authentication/complete` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    backchannelAuthenticationComplete(request: BackchannelAuthenticationCompleteRequest):
+        Promise<BackchannelAuthenticationCompleteResponse>;
+
+
+    /**
+     * Call Authlete `/device/authorization` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    deviceAuthorization(request: DeviceAuthorizationRequest): Promise<DeviceAuthorizationResponse>;
+
+
+    /**
+     * Call Authlete `/device/verification` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    deviceVerification(request: DeviceVerificationRequest): Promise<DeviceVerificationResponse>;
+
+
+    /**
+     * Call Authlete `/device/complete` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    deviceComplete(request: DeviceCompleteRequest): Promise<DeviceCompleteResponse>;
+
+
+    /**
+     * Call Authlete `/pushed_auth_req` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    pushedAuthorizationRequest(request: PushedAuthReqRequest): Promise<PushedAuthReqResponse>;
 }

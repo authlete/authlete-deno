@@ -57,12 +57,23 @@ export class AuthzDetailsElement
     /**
      * The identifier of a specific resource.
      *
-     * From <i>"OAuth 2.0 Rich Authorization Requests"</i>:
+     * From _"OAuth 2.0 Rich Authorization Requests"_:
      *
      * > _"A string identifier indicating a specific resource available
      * at the API."_
      */
     public identifier?: string;
+
+
+    /**
+     * The types or levels of privilege.
+     *
+     * From _"OAuth 2.0 Rich Authorization Requests"_:
+     *
+     * > _"An array of strings representing the types or levels of privilege
+     * being requested at the resource."_
+     */
+    public privileges?: string[];
 
 
     /**

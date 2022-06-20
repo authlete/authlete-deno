@@ -52,14 +52,14 @@ export class ClientListResponse
 
 
     /**
-     * The total count of client applications either of the service
-     * (when the `developer` property is unset) or of the developer (when
-     * it is set).
+     * The total count of client applications either of the service (when
+     * the `developer` property is unset) or of the developer (when it
+     * is set).
      *
-     * The value returned by this method is not the size of the array
-     * returned by`clients`. Instead, it is the total count of the client
-     * applications (either of the service or of the developer) which
-     * exist in Authlete's database.
+     * The value of this property is not the size of the array `clients`
+     * property has. Instead, it is the total count of the client applications
+     * (either of the service or of the developer) which exist in Authlete's
+     * database.
      */
     public totalCount!: number;
 

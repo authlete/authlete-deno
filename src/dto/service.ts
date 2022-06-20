@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020-2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 
 import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
 import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
+import { AttachmentType } from '../type/attachment_type.ts';
 import { fromJsonValue, toJsonValue } from '../type/base_extended_enum.ts';
 import { ClaimType } from '../type/claim_type.ts';
 import { ClientAuthMethod } from '../type/client_auth_method.ts';
@@ -26,6 +27,7 @@ import { ResponseType } from '../type/response_type.ts';
 import { ServiceProfile } from '../type/service_profile.ts';
 import { Sns } from '../type/sns.ts';
 import { UserCodeCharset } from '../type/user_code_charset.ts';
+import { Hsk } from './hsk.ts';
 import { NamedUri } from './named_uri.ts';
 import { Pair } from './pair.ts';
 import { Scope } from './scope.ts';
@@ -49,7 +51,7 @@ export class Service
      * request to Authlete `/service/create` API or `/service/update`
      * API, it is ignored.
      */
-    public number?: number;
+    public number!: number;
 
 
     /**
@@ -58,7 +60,7 @@ export class Service
      * property has a value in a request to Authlete `/service/create`
      * API or `/service/update` API, it is ignored.
      */
-    public serviceOwnerNumber?: number;
+    public serviceOwnerNumber!: number;
 
 
     /**
@@ -72,7 +74,7 @@ export class Service
      * Even if the property has a value in a request to Authlete `/service/create`
      * API or `/service/update` API, it is ignored.
      */
-    public apiKey?: number;
+    public apiKey!: number;
 
 
     /**
@@ -405,8 +407,8 @@ export class Service
      * SNSes you want to support 'social login' in the UI at the authorization
      * endpoint provided by Authlete. You need to register a client
      * application in each SNS that is set to this parameter and set
-     * Authlete server's `/api/sns/redirection` as the redirection
-     * endpoint of the client application.
+     * Authlete server's `/sns/redirection` as the redirection endpoint
+     * of the client application.
      */
     @Transform((value: any) => fromJsonValue(value, Sns), { toClassOnly: true })
     @Transform(toJsonValue, { toPlainOnly: true })
@@ -425,14 +427,14 @@ export class Service
      * The time at which this service was created. The value is represented
      * as milliseconds since the UNIX epoch (1970-01-01).
      */
-    public createdAt?: number;
+    public createdAt!: number;
 
 
     /**
      * The time at which this service was last modified. The value is
      * represented as milliseconds since the UNIX epoch (1970-01-01).
      */
-    public modifiedAt?: number;
+    public modifiedAt!: number;
 
 
     /**
@@ -468,7 +470,7 @@ export class Service
      * SNSes you want to support 'social login' in the login page of
      * Developer Console provided by Authlete. You need to register a
      * client application in each SNS checked here and set Authlete
-     * server's `/api/developer/sns/redirection` as the redirection
+     * server's `/developer/sns/redirection` as the redirection
      * endpoint of the client application.
      */
     @Transform((value: any) => fromJsonValue(value, Sns), { toClassOnly: true })
@@ -488,7 +490,7 @@ export class Service
      * The maximum number of client applications that a developer is
      * allowed to create. 0 means no limit.
      */
-    public clientsPerDeveloper?: number;
+    public clientsPerDeveloper!: number;
 
 
     /**
@@ -497,14 +499,14 @@ export class Service
      *
      * If `true`, the default implementation of the authorization endpoint
      * of this service works. The path of the endpoint is
-     * `/api/auth/authorization/direct/service-api-key`.
+     * `/auth/authorization/direct/service-api-key`.
      *
      * If `false`, the endpoint returns `'404 Not Found'`. In this case,
      * you have to implement the authorization endpoint by yourself
-     * using Authlete Web APIs such as `/api/auth/authorization`,
-     * `/api/auth/authorization/issue` and `/api/auth/authorization/fail`.
+     * using Authlete Web APIs such as `/auth/authorization`,
+     * `/auth/authorization/issue` and `/auth/authorization/fail`.
      */
-    public directAuthorizationEndpointEnabled?: boolean;
+    public directAuthorizationEndpointEnabled!: boolean;
 
 
     /**
@@ -513,14 +515,13 @@ export class Service
      *
      * If `true`, the default implementation of the token endpoint of
      * this service works. The path of the endpoint is
-     * `/api/auth/token/direct/service-api-key`.
+     * `/auth/token/direct/service-api-key`.
      *
      * If `false`, the endpoint returns `'404 Not Found'`. In this case,
      * you have to implement the token endpoint by yourself using Authlete
-     * Web APIs such as `/api/auth/token`, `/api/auth/token/issue` and
-     * `/api/auth/token/fail`.
+     * Web APIs such as `/auth/token`, `/auth/token/issue` and `/auth/token/fail`.
      */
-    public directTokenEndpointEnabled?: boolean;
+    public directTokenEndpointEnabled!: boolean;
 
 
     /**
@@ -529,14 +530,14 @@ export class Service
      *
      * If `true`, the default implementation of the revocation endpoint
      * ([RFC 7009](http://tools.ietf.org/html/rfc7009)) of this service
-     * works. The path of the endpoint is `/api/auth/revocation/direct/service-api-key`.
+     * works. The path of the endpoint is `/auth/revocation/direct/service-api-key`.
      *
      * If `false`, the endpoint returns `'404 Not Found'`. In this case,
      * if you want to provide a revocation endpoint to client applications,
      * you have to implement the endpoint by yourself using Authlete
-     * `/api/auth/revocation` API.
+     * `/auth/revocation` API.
      */
-    public directRevocationEndpointEnabled?: boolean;
+    public directRevocationEndpointEnabled!: boolean;
 
 
     /**
@@ -545,14 +546,14 @@ export class Service
      *
      * If `true`, the default implementation of the userinfo endpoint
      * of this service works. The path of the endpoint is
-     * `/api/auth/userinfo/direct/service-api-key`.
+     * `/auth/userinfo/direct/service-api-key`.
      *
      * If `false`, the endpoint returns 404 Not Found. In this case,
      * if you want to provide a userinfo endpoint to client applications,
      * you have to implement the endpoint by yourself using Authlete
-     * `/api/auth/userinfo` API.
+     * `/auth/userinfo` API.
      */
-    public directUserInfoEndpointEnabled?: boolean;
+    public directUserInfoEndpointEnabled!: boolean;
 
 
     /**
@@ -561,14 +562,14 @@ export class Service
      *
      * If `true`, the default implementation of the jwk set endpoint
      * of this service works. The path of the endpoint is
-     * `/api/service/jwks/get/direct/service-api-key`.
+     * `/service/jwks/get/direct/service-api-key`.
      *
      * If `false`, the endpoint returns `'404 Not Found'`. In this case,
      * if you want to provide a JWK Set endpoint to client applications,
      * you have to implement the endpoint by yourself using Authlete
-     * `/api/service/jwks/get` API.
+     * `/service/jwks/get` API.
      */
-    public directJwksEndpointEnabled?: boolean;
+    public directJwksEndpointEnabled!: boolean;
 
 
     /**
@@ -577,17 +578,17 @@ export class Service
      *
      * If `true`, the default implementation of the userinfo endpoint
      * of this service works. The path of the endpoint is
-     * `/api/auth/introspection/direct/{serviceApiKey}`.
+     * `/auth/introspection/direct/{serviceApiKey}`.
      *
      * If `false`, the endpoint returns `'404 Not Found'`. In this case,
      * if you want to provide a userinfo endpoint to client applications,
      * you have to implement the endpoint by yourself using Authlete
-     * `/api/auth/introspection` API or `/api/auth/introspection/standard`
+     * `/auth/introspection` API or `/auth/introspection/standard`
      * API.
      *
      * This feature is not implemented yet.
      */
-    public directIntrospectionEndpointEnabled?: boolean;
+    public directIntrospectionEndpointEnabled!: boolean;
 
 
     /**
@@ -607,7 +608,7 @@ export class Service
      * coupled access token only and this invalidation is always performed
      * regardless of whether the property is set to `true` or `false`.
      */
-    public singleAccessTokenPerSubject?: boolean;
+    public singleAccessTokenPerSubject!: boolean;
 
 
     /**
@@ -622,7 +623,7 @@ export class Service
      * for Code Exchange by OAuth Public Clients) for details about
      * `code_challenge` request parameter.
      */
-    public pkceRequired?: boolean;
+    public pkceRequired!: boolean;
 
 
     /**
@@ -636,7 +637,7 @@ export class Service
      * request parameter nor use of `plain` (`code_challenge_method=plain`)
      * is allowed.
      */
-    public pkceS256Required?: boolean;
+    public pkceS256Required!: boolean;
 
 
     /**
@@ -651,7 +652,7 @@ export class Service
      * https://tools.ietf.org/html/rfc6749#section-6), as to how to get
      * a new access token using a refresh token.
      */
-    public refreshTokenKept?: boolean;
+    public refreshTokenKept!: boolean;
 
 
     /**
@@ -665,7 +666,7 @@ export class Service
      * If `true`, Authlete does not embed the `error_description` response
      * parameter in error responses.
      */
-    public errorDescriptionOmitted?: boolean;
+    public errorDescriptionOmitted!: boolean;
 
 
     /**
@@ -679,7 +680,7 @@ export class Service
      * If `true`, Authlete does not embed the `error_uri` response
      * parameter in error responses.
      */
-    public errorUriOmitted?: boolean;
+    public errorUriOmitted!: boolean;
 
 
     /**
@@ -692,7 +693,7 @@ export class Service
      * The client ID alias is, however, recognized only when this property
      * (`clientIdAliasEnabled`) is set to `true`.
      */
-    public clientIdAliasEnabled?: boolean;
+    public clientIdAliasEnabled!: boolean;
 
 
     /**
@@ -707,7 +708,7 @@ export class Service
      * The boolean flag which indicates whether this service supports
      * issuing TLS client certificate bound access tokens.
      */
-    public tlsClientCertificateBoundAccessTokens?: boolean;
+    public tlsClientCertificateBoundAccessTokens!: boolean;
 
 
     /**
@@ -729,7 +730,7 @@ export class Service
      * The flag to indicate whether this service validates certificate
      * chains during PKI-based client mutual TLS authentication.
      */
-    public mutualTlsValidatePkiCertChain?: boolean;
+    public mutualTlsValidatePkiCertChain!: boolean;
 
 
     /**
@@ -743,7 +744,7 @@ export class Service
      * The boolean to indicate whether the dynamic client registration
      * is supported.
      */
-    public dynamicRegistrationSupported?: boolean;
+    public dynamicRegistrationSupported!: boolean;
 
 
     /**
@@ -771,7 +772,7 @@ export class Service
      * `JWSAlg.HS512`) cannot be used for this property. When this property
      * is not set, access tokens issued by this service are just random
      * strings. On the other hand, when it is set, access tokens issued
-     * by this service are JWTs and the value set by this method is used
+     * by this service are JWTs and the value of this property is used
      * as the signature algorithm of the JWTs.
      *
      * This parameter is available since Authlete 2.1. Access tokens
@@ -789,7 +790,7 @@ export class Service
      * token responses. `expires_in` is defined [RFC 6749, 5.1. Successful
      * Response](http://tools.ietf.org/html/rfc6749#section-5.1).
      */
-    public accessTokenDuration?: number;
+    public accessTokenDuration!: number;
 
 
     /**
@@ -797,7 +798,7 @@ export class Service
      * have no requirements on refresh token duration, but Authlete sets
      * expiration for refresh tokens.
      */
-    public refreshTokenDuration?: number;
+    public refreshTokenDuration!: number;
 
 
     /**
@@ -805,7 +806,7 @@ export class Service
      * calculate the value of `exp` claim in an [ID token](
      * http://openid.net/specs/openid-connect-core-1_0.html#IDToken).
      */
-    public idTokenDuration?: number;
+    public idTokenDuration!: number;
 
 
     /**
@@ -820,7 +821,7 @@ export class Service
      * property is used to compute the value of the `exp` claim of the
      * JWT.
      */
-    public authorizationResponseDuration?: number;
+    public authorizationResponseDuration!: number;
 
 
     /**
@@ -834,12 +835,11 @@ export class Service
      * applications can use the URIs as the value of the `request_uri`
      * request parameter in an authorization request.
      *
-     * The value returned from this method represents the duration of
-     * registered authorization requests and is used as the value of
-     * the `expires_in` parameter in responses from the pushed authorization
-     * request endpoint.
+     * The value of this property represents the duration of registered
+     * authorization requests and is used as the value of the `expires_in`
+     * parameter in responses from the pushed authorization request endpoint.
      */
-    public pushedAuthReqDuration?: number;
+    public pushedAuthReqDuration!: number;
 
 
     /**
@@ -962,7 +962,7 @@ export class Service
      * This property corresponds to the `backchannel_user_code_parameter_supported`
      * metadata.
      */
-    public backchannelUserCodeParameterSupported?: boolean;
+    public backchannelUserCodeParameterSupported!: boolean;
 
 
     /**
@@ -972,7 +972,7 @@ export class Service
      * This is used as the value of the `expires_in` property in responses
      * from the backchannel authentication endpoint.
      */
-    public backchannelAuthReqIdDuration?: number;
+    public backchannelAuthReqIdDuration!: number;
 
 
     /**
@@ -981,7 +981,7 @@ export class Service
      * of the interval property in responses from the backchannel
      * authentication endpoint.
      */
-    public backchannelPollingInterval?: number;
+    public backchannelPollingInterval!: number;
 
 
     /**
@@ -1001,7 +1001,7 @@ export class Service
      * your authorization server must implement a custom mechanism that
      * ensures each backchannel authentication request has unique context.
      */
-    public backchannelBindingMessageRequiredInFapi?: boolean;
+    public backchannelBindingMessageRequiredInFapi!: boolean;
 
 
     /**
@@ -1010,7 +1010,7 @@ export class Service
      * The clock skew is taken into consideration when time-related
      * claims in a JWT (e.g. `"exp"`, `"iat"`, `"nbf"`) are verified.
      */
-    public allowableClockSkew?: number;
+    public allowableClockSkew!: number;
 
 
     /**
@@ -1048,7 +1048,7 @@ export class Service
      * This is used as the value of the `expires_in` property in responses
      * from the device authorization endpoint.
      */
-    public deviceFlowCodeDuration?: number;
+    public deviceFlowCodeDuration!: number;
 
 
     /**
@@ -1059,7 +1059,7 @@ export class Service
      * from the device authorization endpoint. Must be in between 0 and
      * 65,535.
      */
-    public deviceFlowPollingInterval?: number;
+    public deviceFlowPollingInterval!: number;
 
 
     /**
@@ -1075,7 +1075,7 @@ export class Service
      * The length of end-user verification codes (`user_code`) for
      * Device Flow.
      */
-    public userCodeLength?: number;
+    public userCodeLength!: number;
 
 
     /**
@@ -1116,14 +1116,12 @@ export class Service
 
 
     /**
-     * The supported data types that can be used as values of the "`type`"
-     * field in `"authorization_details"`.
+     * Supported authorization details types for `"authorization_details"`.
      *
-     * This property corresponds to the `authorization_data_types_supported`
-     * metadata. See "OAuth 2.0 Rich Authorization Requests" (RAR) for
-     * details.
+     * This property was renamed from `supportedAuthorizationDataTypes`
+     * to align with the change made by the 5th draft of the RAR specification.
      */
-    public supportedAuthorizationDataTypes?: string[];
+    public supportedAuthorizationDetailsTypes?: string[];
 
 
     /**
@@ -1145,21 +1143,49 @@ export class Service
 
 
     /**
-     * Identity documents supported by this service.
-     *
-     * This corresponds to the `id_documents_supported` [metadata](
-     * https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html#rfc.section.7).
+     * Supported documents. This property corresponds to the `documents_supported`
+     * server metadata which was renamed to from `id_documents_supported`
+     * by the third implementer's draft of OpenID Connect for Identity
+     * Assurance 1.0.
      */
-    public supportedIdentityDocuments?: string[];
+    public supportedDocuments?: string[];
 
 
     /**
-     * Verification methods supported by this service.
-     *
-     * This corresponds to the `id_documents_verification_methods_supported`
-     * [metadata](https://openid.net/specs/openid-connect-4-identity-assurance-1_0.html#rfc.section.7).
+     * Supported validation and verification processes. This property
+     * corresponds to the `documents_methods_supported` server metadata
+     * which was renamed to from `id_documents_verification_methods_supported`
+     * by the third implementer's draft of OpenID Connect for Identity
+     * Assurance 1.0.
      */
-    public supportedVerificationMethods?: string[];
+    public supportedDocumentsMethods?: string[];
+
+
+    /**
+     * Supported document validation methods. This property corresponds
+     * to the `documents_validation_methods_supported` server metadata
+     * which was added by the third implementer's draft of OpenID Connect
+     * for Identity Assurance 1.0.
+     */
+    public supportedDocumentsValidationMethods?: string[];
+
+
+    /**
+     * Supported document verification methods. This property corresponds
+     * to the `documents_verification_methods_supported` server metadata
+     * which was added by the third implementer's draft of OpenID Connect
+     * for Identity Assurance 1.0.
+     */
+    public supportedDocumentsVerificationMethods?: string[];
+
+
+    /**
+     * Supported electronic record types. This property corresponds to
+     * the `electronic_records_supported` server metadata which was added
+     * by the third implementer's draft of OpenID Connect for Identity
+     * Assurance 1.0.
+     */
+    public supportedElectronicRecords?: string[];
 
 
     /**
@@ -1172,11 +1198,187 @@ export class Service
 
 
     /**
+     * Supported attachment types. This property corresponds to the
+     * `attachments_supported` server metadata which was added by the third
+     * implementer's draft of OpenID Connect for Identity Assurance 1.0.
+     */
+    @Transform((value: any) => fromJsonValue(value, AttachmentType), { toClassOnly: true })
+    @Transform(toJsonValue, { toPlainOnly: true })
+    public supportedAttachments?: AttachmentType[];
+
+
+    /**
+     * Supported algorithms used to compute digest values of external
+     * attachments. This property corresponds to the `digest_algorithms_supported`
+     * server metadata which was added by the third implementer's draft
+     * of OpenID Connect for Identity Assurance 1.0.
+     */
+    public supportedDigestAlgorithms?: string[];
+
+
+    /**
      * The flag indicating whether token requests from public clients
      * without the `client_id` request parameter are allowed when the
      * client can be guessed from `authorization_code` or `refresh_token`.
      *
      * This flag should not be set unless you have special reasons.
      */
-    public missingClientIdAllowed?: boolean;
+    public missingClientIdAllowed!: boolean;
+
+
+    /**
+     * The flag indicating whether this service requires that clients
+     * use the pushed authorization request endpoint.
+     */
+    public parRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether authorization requests must utilize a
+     * request object.
+     */
+    public requestObjectRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether claims specified by shortcut scopes
+     * (e.g. profile) are included in the issued ID token only when no
+     * access token is issued.
+     */
+    public traditionalRequestObjectProcessingApplied!: boolean;
+
+
+    /**
+     * The flag indicating whether requests that request no scope are
+     * rejected or not.
+     */
+    public scopeRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether the `nbf` claim in the request object
+     * is optional even when the authorization request is regarded as
+     * a FAPI-Part2 request.
+     */
+    public nbfOptional!: boolean;
+
+
+    /**
+     * The flag indicating whether generation of the `iss` response
+     * parameter is suppressed.
+     */
+    public issSuppressed!: boolean;
+
+
+    /**
+     * Arbitrary attributes associated with this service.
+     */
+    @Type(() => Pair)
+    public attributes?: Pair[];
+
+
+    /**
+     * Custom client metadata supported by this service.
+     */
+    public supportedCustomClientMetadata?: string[];
+
+
+    /**
+     * The flag indicating whether the expiration date of an access token
+     * never exceeds that of the corresponding refresh token.
+     */
+    public tokenExpirationLinked!: boolean;
+
+
+    /**
+     * The flag indicating whether encryption of request object is required
+     * when the request object is passed through the front channel.
+     */
+    public frontChannelRequestObjectEncryptionRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether the JWE `alg` of encrypted request
+     * object must match the value of the `request_object_encryption_alg`
+     * client metadata.
+     */
+    public requestObjectEncryptionAlgMatchRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether the JWE `enc` of encrypted request
+     * object must match the value of the `request_object_encryption_enc`
+     * client metadata.
+     */
+    public requestObjectEncryptionEncMatchRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether HSM (Hardware Security Module) support
+     * is enabled for this service.
+     */
+    public hsmEnabled!: boolean;
+
+
+    /**
+     * Hardware-secured keys. Output only.
+     */
+    @Type(() => Hsk)
+    public hsks?: Hsk[]
+
+
+    /**
+     * The URL of the grant management endpoint.
+     */
+    public grantManagementEndpoint?: string;
+
+
+    /**
+     * The flag indicating whether every authorization request must include
+     * the `grant_management_action` request parameter.
+     */
+    public grantManagementActionRequired!: boolean;
+
+
+    /**
+     * The flag indicating whether to let /client/registration API use
+     * `ClientRegistrationResponse.Action.UNAUTHORIZED` whenever appropriate.
+     */
+    public unauthorizedOnClientConfigSupported!: boolean;
+
+
+    /**
+     * The flag indicating whether the `scope` request parameter in dynamic
+     * client registration/update requests is used as requestable scopes.
+     */
+    public dcrScopeUsedAsRequestable!: boolean;
+
+
+    /**
+     * Predefined transformed claims in JSON format. Available from
+     * Authlete 2.3 onwards.
+     */
+    public predefinedTransformedClaims!: boolean;
+
+
+    /**
+     * The flag indicating whether the port number component of redirection
+     * URIs can be variable when the host component indicates loopback.
+     */
+    public loopbackRedirectionUriVariable!: boolean;
+
+
+    /**
+     * The flag indicating whether Authlete checks whether the `aud` claim
+     * of request objects matches the issuer identifier of this service.
+     */
+    public requestObjectAudienceChecked!: boolean;
+
+
+    /**
+     * The flag indicating whether Authlete generates access tokens for
+     * external attachments and embeds them in ID tokens and userinfo
+     * responses.
+     */
+    public accessTokenForExternalAttachmentEmbedded!: boolean;
 }

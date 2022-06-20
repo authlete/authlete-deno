@@ -238,6 +238,23 @@ const api = await AuthleteApiFactory.create(config);
 
   - `getServiceConfiguration(pretty: boolean)`
 
+  10. CIBA (Client Initiated Backchannel Authentication) のためのメソッド群
+
+  - `backchannelAuthentication(request)`
+  - `backchannelAuthenticationIssue(request)`
+  - `backchannelAuthenticationFail(request)`
+  - `backchannelAuthenticationComplete(request)`
+
+  11. Device Flow のためのメソッド群
+
+  - `deviceAuthorization(request)`
+  - `deviceComplete(request)`
+  - `deviceVerification(request)`
+
+  12. PAR (Pushed Authorization Request) のためのメソッド群
+
+  - `pushAuthorizationRequest(request)`
+
 リリース手順
 --------
 

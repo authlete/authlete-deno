@@ -38,7 +38,7 @@ export class Scope
      * The flag that indicates whether this scope is included in the
      * default scope list.
      */
-    public defaultEntry?: boolean;
+    public defaultEntry!: boolean;
 
 
     /**
