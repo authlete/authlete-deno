@@ -17,14 +17,6 @@ import { BaseExtendedEnum } from './base_extended_enum.ts';
 
 
 /**
- * Flags to indicate the type of authentication method.
- */
-const FLAG_SECRET_BASED      = 0x1;
-const FLAG_JWT_BASED         = 0x2;
-const FLAG_CERTIFICATE_BASED = 0x4;
-
-
-/**
  * Client authentication methods.
  *
  * For more details, see [OpenID Connect Core 1.0, 9. Client Authentication

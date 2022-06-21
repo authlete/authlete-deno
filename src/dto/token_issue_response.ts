@@ -17,6 +17,7 @@ import ct from 'https://cdn.pika.dev/class-transformer@^0.2.3';
 import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
 import { ApiResponse } from './api_response.ts';
 import { AuthzDetails } from './authz_details.ts';
+import { Pair } from './pair.ts';
 import { Property } from './property.ts';
 const { Type, Transform } = ct;
 
@@ -164,6 +165,20 @@ export class TokenIssueResponse extends ApiResponse
      */
     @Type(() => AuthzDetails)
     public authorizationDetails?: AuthzDetails;
+
+
+    /**
+     * Arbitrary attributes associated with the service.
+     */
+    @Type(() => Pair)
+    public serviceAttributes?: Pair[];
+
+
+    /**
+     * Arbitrary attributes associated with the client.
+     */
+    @Type(() => Pair)
+    public clientAttributes?: Pair[];
 }
 
 

@@ -21,6 +21,7 @@ import { Prompt } from '../type/prompt.ts';
 import { ApiResponse } from './api_response.ts';
 import { AuthzDetails } from './authz_details.ts';
 import { Client } from './client.ts';
+import { DynamicScope } from './dynamic_scope.ts';
 import { Scope } from './scope.ts';
 import { Service } from './service.ts';
 const { Type, Transform } = ct;
@@ -55,7 +56,7 @@ export class AuthorizationResponse extends ApiResponse
     /**
      * The display mode which the client application requests by `display`
      * request parameter. When the authorization request does not contain
-     * `display` request parameter, this method returns `Display.PAGE` as
+     * `display` request parameter, this property has `Display.PAGE` as
      * the default value.
      *
      * For more details, see [OpenID Connect Core 1.0, 3.1.2.1. Authentication
@@ -87,7 +88,7 @@ export class AuthorizationResponse extends ApiResponse
     /**
      * The scopes that the client application requests by `scope` request
      * parameter. When the authorization request does not contain `scope`
-     * request parameter, this method returns a list of scopes which are
+     * request parameter, this property has a list of scopes which are
      * marked as default by the service implementation. This property
      * may be unset if the authorization request does not contain valid
      * scopes and none of registered scopes is marked as default.
@@ -145,9 +146,9 @@ export class AuthorizationResponse extends ApiResponse
      * The flag which indicates whether the end-user authentication must
      * satisfy one of the requested ACRs.
      *
-     * This method returns `true` only when the authorization request
-     * from the client contains `claim` request parameter and it contains
-     *  an entry for `acr` claim with `"essential":true`.
+     * This property has `true` only when the authorization request from
+     * the client contains `claim` request parameter and it contains an
+     * entry for `acr` claim with `"essential":true`.
      *
      * For more details, see [OpenID Connect Core 1.0, 5.5.1. Individual
      * Claims Requests](
@@ -189,7 +190,7 @@ export class AuthorizationResponse extends ApiResponse
     /**
      * The subject (= end-user's unique ID) that the client application
      * requests. The value comes from `sub` claim in `claims` request
-     * parameter. This method may be unset (probably in most cases).
+     * parameter. This property may be unset (probably in most cases).
      *
      * For more details, see [OpenID Connect Core 1.0, 5.5. Requesting
      * Claims using the "claims" Request Parameter](
@@ -277,7 +278,7 @@ export class AuthorizationResponse extends ApiResponse
      *
      * Note that if a request object is given and it contains the `claims`
      * property and if the `claims` request parameter is also given,
-     * this method returns the value in the  former.
+     * this property has the value in the former.
      */
     public idTokenClaims?: string;
 
@@ -335,7 +336,7 @@ export class AuthorizationResponse extends ApiResponse
      *
      * Note that if a request object is given and it contains the `claims`
      * property and if the `claims` request parameter is also given,
-     * this method returns the value in the former.
+     * this property has the value in the former.
      */
     public userInfoClaims?: string;
 
@@ -393,6 +394,15 @@ export class AuthorizationResponse extends ApiResponse
      * API.
      */
     public ticket!: string;
+
+
+    /**
+     * The dynamic scopes which the client application requested by the
+     * `scope` request parameter. See the description of `DynamicScope`
+     * for details.
+     */
+    @Type(() => DynamicScope)
+    public dynamicScopes?: DynamicScope[];
 }
 
 

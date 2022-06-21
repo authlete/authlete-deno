@@ -245,6 +245,23 @@ Methods in `AuthleteApi` interface can be divided into some categories.
 
   - `getServiceConfiguration(pretty: boolean)`
 
+  10. Methods for CIBA (Client Initiated Backchannel Authentication)
+
+  - `backchannelAuthentication(request)`
+  - `backchannelAuthenticationIssue(request)`
+  - `backchannelAuthenticationFail(request)`
+  - `backchannelAuthenticationComplete(request)`
+
+  11. Methods for Device Flow
+
+  - `deviceAuthorization(request)`
+  - `deviceComplete(request)`
+  - `deviceVerification(request)`
+
+  12. Methods for PAR (Pushed Authorization Request)
+
+  - `pushAuthorizationRequest(request)`
+
 How To Release
 --------
 

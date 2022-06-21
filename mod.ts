@@ -34,14 +34,32 @@ export * from './src/dto/authorization_request.ts';
 export * from './src/dto/authorization_response.ts';
 export * from './src/dto/authz_details.ts';
 export * from './src/dto/authz_details_element.ts';
+export * from './src/dto/backchannel_authentication_complete_request.ts'
+export * from './src/dto/backchannel_authentication_complete_response.ts'
+export * from './src/dto/backchannel_authentication_fail_request.ts'
+export * from './src/dto/backchannel_authentication_fail_response.ts'
+export * from './src/dto/backchannel_authentication_issue_request.ts'
+export * from './src/dto/backchannel_authentication_issue_response.ts'
+export * from './src/dto/backchannel_authentication_request.ts'
+export * from './src/dto/backchannel_authentication_response.ts'
 export * from './src/dto/client.ts';
 export * from './src/dto/client_extension.ts';
 export * from './src/dto/client_list_response.ts';
+export * from './src/dto/device_authorization_request.ts'
+export * from './src/dto/device_authorization_response.ts'
+export * from './src/dto/device_complete_request.ts'
+export * from './src/dto/device_complete_response.ts'
+export * from './src/dto/device_verification_request.ts'
+export * from './src/dto/device_verification_response.ts'
+export * from './src/dto/dynamic_scope.ts'
+export * from './src/dto/hsk.ts'
 export * from './src/dto/introspection_request.ts';
 export * from './src/dto/introspection_response.ts';
 export * from './src/dto/named_uri.ts';
 export * from './src/dto/pair.ts';
 export * from './src/dto/property.ts';
+export * from './src/dto/pushed_auth_req_request.ts';
+export * from './src/dto/pushed_auth_req_response.ts';
 export * from './src/dto/revocation_request.ts';
 export * from './src/dto/revocation_response.ts';
 export * from './src/dto/scope.ts';
@@ -67,6 +85,7 @@ export * from './src/model/authorization_page_model.ts';
 
 // type
 export * from './src/type/application_type.ts';
+export * from './src/type/attachment_type.ts';
 export * from './src/type/claim_type.ts';
 export * from './src/type/client_auth_method.ts';
 export * from './src/type/client_type.ts';
@@ -83,8 +102,9 @@ export * from './src/type/service_profile.ts';
 export * from './src/type/sns.ts';
 export * from './src/type/standard_claims.ts';
 export * from './src/type/subject_type.ts';
-export * from './src/type/user.ts';
 export * from './src/type/user_code_charset.ts';
+export * from './src/type/user_identification_hint_type.ts';
+export * from './src/type/user.ts';
 
 // util
 export * from './src/util/util.ts';
