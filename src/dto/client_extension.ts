@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020-2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -95,4 +95,16 @@ export class ClientExtension
      * the minimum value among the candidates.
      */
     public refreshTokenDuration!: number;
+
+
+    /**
+     * The flag indicating whether the client is explicitly given a
+     * permission to make token exchange requests (cf. [RFC 8693](https://www.rfc-editor.org/rfc/rfc8693.html)).
+     *
+     * This flag is referred to only when the `tokenExchangeByPermittedClientOnly`
+     * flag of the service which the client belongs to is `true`.
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    public tokenChangePermitted!: boolean;
 }
