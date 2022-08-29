@@ -1381,4 +1381,25 @@ export class Service
      * responses.
      */
     public accessTokenForExternalAttachmentEmbedded!: boolean;
+
+
+    /**
+     * The flag indicating whether to prohibit unidentifiable clients
+     * from making token exchange requests.
+     */
+    public tokenExchangeByIdentifiableClientsOnly!: boolean;
+
+
+    /**
+     * The flag indicating whether to prohibit public clients from making
+     * token exchange requests.
+     */
+    public tokenExchangeByConfidentialClientsOnly!: boolean;
+
+
+    /**
+     * The flag indicating whether to prohibit clients that have no explicit
+     * permission from making token exchange requests.
+     */
+    public tokenExchangeByPermittedClientsOnly!: boolean;
 }

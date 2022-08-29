@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 // Copyright (C) 2020 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,10 +19,12 @@ import 'https://cdn.pika.dev/reflect-metadata@^0.1.13';
 import { fromJsonValue } from '../type/base_extended_enum.ts';
 import { ClientAuthMethod } from '../type/client_auth_method.ts';
 import { GrantType } from '../type/grant_type.ts';
+import { TokenType } from '../type/token_type.ts';
 import { ApiResponse } from './api_response.ts';
 import { AuthzDetails } from './authz_details.ts';
 import { Pair } from './pair.ts';
 import { Property } from './property.ts';
+import { TokenInfo } from './token_info.ts';
 const { Type, Transform } = ct;
 
 
@@ -74,7 +77,7 @@ export class TokenResponse extends ApiResponse
      * API or `/auth/token/fail` API.
      *
      * This method returns a valid value only when `action` is
-     * `TokenResponse.Action#PASSWORD PASSWORD`.
+     * `TokenResponse.Action.PASSWORD`.
      */
     public ticket!: string;
 
@@ -261,6 +264,112 @@ export class TokenResponse extends ApiResponse
      */
     @Type(() => Pair)
     public clientAttributes?: Pair[];
+
+
+    /**
+     * The values of the `audience` request parameters that are contained
+     * in the token exchange request (cf. [RFC 8693](https://www.rfc-editor.org/rfc/rfc8693.html)).
+     *
+     * The `audience` request parameter is defined in [RFC 8693 OAuth
+     * 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     * Although [RFC 6749 The OAuth 2.0 Authorization Framework](https://www.rfc-editor.org/rfc/rfc6749.html)
+     * states _"Request and response parameters MUST NOT be included more
+     * than once"_, RFC 8693 allows a token exchange request to include
+     * the `audience` request parameter multiple times.
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    public audiences?: string[];
+
+
+    /**
+     * The value of the `requested_token_type` request parameter.
+     *
+     * The `requested_token_type` request parameter is defined in [RFC
+     * 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    @Transform((value: any) => fromJsonValue(value, TokenType), { toClassOnly: true })
+    public requestedTokenType?: TokenType;
+
+
+    /**
+     * The value of the `subject_token` request parameter.
+     *
+     * The `subject_token` request parameter is defined in [RFC 8693 OAuth
+     * 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    public subjectToken?: string;
+
+
+    /**
+     * The value of the `subject_token_type` request parameter.
+     *
+     * The `subject_token_type` request parameter is defined in [RFC 8693
+     * OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    @Transform((value: any) => fromJsonValue(value, TokenType), { toClassOnly: true })
+    public subjectTokenType?: TokenType;
+
+
+    /**
+     * The information about the token specified by the `subject_token`
+     * request parameter.
+     *
+     * This property holds a non-null value only when the value of the
+     * `subject_token_type` request parameter is either `urn:ietf:params:oauth:token-type:access_token`
+     * or `urn:ietf:params:oauth:token-type:refresh_token` (= only when
+     * the `subjectTokenType` property is either `TokenType.ACCESS_TOKEN ACCESS_TOKEN`
+     * or `TokenType.REFRESH_TOKEN REFRESH_TOKEN`).
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    @Type(() => TokenInfo)
+    public subjectTokenInfo?: TokenInfo;
+
+
+    /**
+     * The value of the `actor_token` request parameter.
+     *
+     * The `actor_token` request parameter is defined in [RFC 8693 OAuth
+     * 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    public actorToken?: string;
+
+
+    /**
+     * The value of the `actor_token_type` request parameter.
+     *
+     * The `actor_token_type` request parameter is defined in [RFC 8693 OAuth
+     * 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    @Transform((value: any) => fromJsonValue(value, TokenType), { toClassOnly: true })
+    public actorTokenType?: TokenType;
+
+
+    /**
+     * The information about the token specified by the `actor_token`
+     * request parameter.
+     *
+     * This property holds a non-null value only when the value of the
+     * `actor_token_type` request parameter is either `urn:ietf:params:oauth:token-type:access_token`
+     * or `urn:ietf:params:oauth:token-type:refresh_token` (= only when
+     * the `actorTokenType` property is either `TokenType.ACCESS_TOKEN ACCESS_TOKEN`
+     * or `TokenType.REFRESH_TOKEN REFRESH_TOKEN`).
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    @Type(() => TokenInfo)
+    public actorTokenInfo?: TokenInfo;
 }
 
 
@@ -311,5 +420,16 @@ export namespace TokenResponse
          * with an access token.
          */
         OK,
+
+
+        /**
+         * The token request from the client was a valid token exchange
+         * request. The service implementation should take necessary
+         * actions (e.g. create an access token), generate a response
+         * and return it to the client application.
+         *
+         * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+         */
+        TOKEN_EXCHANGE,
     }
 }

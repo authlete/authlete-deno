@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Authlete, Inc.
+// Copyright (C) 2020-2022 Authlete, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -102,4 +102,13 @@ export class GrantType extends BaseExtendedEnum
      * Device Flow.
      */
     public static readonly DEVICE_CODE = new GrantType(7, 'urn:ietf:params:oauth:grant-type:device_code');
+
+
+    /**
+     * `urn:ietf:params:oauth:grant-type:token-exchange` (8), a `grant_type`
+     * for token exchange.
+     *
+     * For more details, see [RFC 8693 OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html).
+     */
+    public static readonly TOKEN_EXCHANGE = new GrantType(8, 'urn:ietf:params:oauth:grant-type:token-exchange');
 }
