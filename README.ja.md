@@ -39,7 +39,7 @@ Deno Land
 **Step 1**: モジュールをインポート。
 
 ```ts
-import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.6/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.8/mod.ts';
 ```
 
 **Step 2**: `AuthleteApi` のインスタンスを初期化。
