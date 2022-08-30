@@ -42,7 +42,7 @@ Quick Usage
 **Step 1**: Import modules.
 
 ```ts
-import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.8/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.9/mod.ts';
 ```
 
 **Step 2**: Configure and create an `AuthleteApi` instance.
