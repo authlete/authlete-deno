@@ -645,7 +645,7 @@ export class Client
      * to be in an ID token. Regardless of the value of this property,
      * Authlete embeds the `auth_time` claim when `authTime` parameter
      * in the `/auth/authorization/issue` request is not 0 and does not
-     * do it when `authTime` is 0.
+     * do it when `authTime` is `0`.
      *
      * This property corresponds to `require_auth_time` in [OpenID Connect
      * Dynamic Client Registration 1.0, 2. Client Metadata](

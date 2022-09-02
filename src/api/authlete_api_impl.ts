@@ -48,12 +48,17 @@ import { Service } from '../dto/service.ts';
 import { ServiceListResponse } from '../dto/service_list_response.ts';
 import { StandardIntrospectionRequest } from '../dto/standard_introspection_request.ts';
 import { StandardIntrospectionResponse } from '../dto/standard_introspection_response.ts';
+import { TokenCreateRequest } from '../dto/token_create_request.ts';
+import { TokenCreateResponse } from '../dto/token_create_response.ts';
 import { TokenFailRequest } from '../dto/token_fail_request.ts';
 import { TokenFailResponse } from '../dto/token_fail_response.ts';
 import { TokenIssueRequest } from '../dto/token_issue_request.ts';
 import { TokenIssueResponse } from '../dto/token_issue_response.ts';
+import { TokenListResponse } from '../dto/token_list_response.ts';
 import { TokenRequest } from '../dto/token_request.ts';
 import { TokenResponse } from '../dto/token_response.ts';
+import { TokenUpdateRequest } from '../dto/token_update_request.ts';
+import { TokenUpdateResponse } from '../dto/token_update_response.ts';
 import { UserInfoIssueRequest } from '../dto/user_info_issue_request.ts';
 import { UserInfoIssueResponse } from '../dto/user_info_issue_response.ts';
 import { UserInfoRequest } from '../dto/user_info_request.ts';
@@ -62,6 +67,8 @@ import { isNotUndefined } from '../util/util.ts';
 import { BasicCredentials } from '../web/basic_credentials.ts';
 import { AuthleteApi } from './authlete_api.ts';
 import { AuthleteApiException } from './authlete_api_exception.ts';
+import { TokenRevokeRequest } from '../dto/token_revoke_request.ts';
+import { TokenRevokeResponse } from '../dto/token_revoke_response.ts';
 const { classToPlain, plainToClass } = ct;
 
 
@@ -79,8 +86,13 @@ const DEVICE_AUTHORIZATION_API_PATH                = '/device/authorization';
 const DEVICE_VERIFICATION_API_PATH                 = '/device/verification';
 const DEVICE_COMPLETE_API_PATH                     = '/device/complete';
 const TOKEN_API_PATH                               = '/auth/token';
-const TOKEN_ISSUE_API_PATH                         = '/auth/token/issue';
+const TOKEN_CREATE_API_PATH                        = '/auth/token/create';
+const TOKEN_DELETE_API_PATH                        = '/auth/token/delete/{accessTokenIdentifier}';
 const TOKEN_FAIL_API_PATH                          = '/auth/token/fail';
+const TOKEN_GET_LIST_API_PATH                      = '/auth/token/get/list';
+const TOKEN_ISSUE_API_PATH                         = '/auth/token/issue';
+const TOKEN_REVOKE_API_PATH                        = '/auth/token/revoke';
+const TOKEN_UPDATE_API_PATH                        = '/auth/token/update';
 const REVOCATION_API_PATH                          = '/auth/revocation';
 const USER_INFO_API_PATH                           = '/auth/userinfo';
 const USER_INFO_ISSUE_API_PATH                     = '/auth/userinfo/issue';
@@ -433,6 +445,23 @@ function buildQueryParamsForClientGetListApi(
 
 
 /**
+ * Create a request for `/auth/token/get/list` API.
+ */
+ function buildQueryParamsForTokenGetListApi(
+    subject?: string, clientIdentifier?: string, start?: number, end?: number): QueryParams
+{
+    const request: QueryParams = {};
+
+    if (isNotUndefined(start)) request['start'] = start.toString();
+    if (isNotUndefined(end)) request['end'] = end.toString();
+    if (isNotUndefined(subject)) request['subject'] = subject;
+    if (isNotUndefined(clientIdentifier)) request['clientIdentifier'] = clientIdentifier;
+
+    return request;
+}
+
+
+/**
  * An implementation of `AuthleteApi` interface.
  */
 export class AuthleteApiImpl implements AuthleteApi
@@ -615,6 +644,42 @@ export class AuthleteApiImpl implements AuthleteApi
     {
         return <Promise<TokenFailResponse>>
             this.callServicePostApi(TOKEN_FAIL_API_PATH, request, TokenFailResponse);
+    }
+
+
+    public async getTokenList(
+        subject?: string, clientIdentifier?: string, start?: number, end?: number)
+    {
+        return <Promise<TokenListResponse>>this.callServiceGetApi(
+            TOKEN_GET_LIST_API_PATH, buildQueryParamsForTokenGetListApi(subject, clientIdentifier, start, end), TokenListResponse);
+    }
+
+
+    public async tokenCreate(request: TokenCreateRequest)
+    {
+        return <Promise<TokenCreateResponse>>
+            this.callServicePostApi(TOKEN_CREATE_API_PATH, request, TokenCreateResponse);
+    }
+
+
+    public async tokenUpdate(request: TokenUpdateRequest)
+    {
+        return <Promise<TokenUpdateResponse>>
+            this.callServicePostApi(TOKEN_UPDATE_API_PATH, request, TokenUpdateResponse);
+    }
+
+
+    public async tokenDelete(accessTokenIdentifier: string)
+    {
+        await this.callServiceDeleteApi(
+            TOKEN_DELETE_API_PATH.replace('{accessTokenIdentifier}', accessTokenIdentifier.toString()));
+    }
+
+
+    public async tokenRevoke(request: TokenRevokeRequest)
+    {
+        return <Promise<TokenRevokeResponse>>
+            this.callServicePostApi(TOKEN_REVOKE_API_PATH, request, TokenRevokeResponse);
     }
 
 

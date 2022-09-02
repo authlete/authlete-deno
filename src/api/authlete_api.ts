@@ -45,12 +45,19 @@ import { Service } from '../dto/service.ts';
 import { ServiceListResponse } from '../dto/service_list_response.ts';
 import { StandardIntrospectionRequest } from '../dto/standard_introspection_request.ts';
 import { StandardIntrospectionResponse } from '../dto/standard_introspection_response.ts';
+import { TokenCreateRequest } from '../dto/token_create_request.ts';
+import { TokenCreateResponse } from '../dto/token_create_response.ts';
 import { TokenFailRequest } from '../dto/token_fail_request.ts';
 import { TokenFailResponse } from '../dto/token_fail_response.ts';
 import { TokenIssueRequest } from '../dto/token_issue_request.ts';
 import { TokenIssueResponse } from '../dto/token_issue_response.ts';
+import { TokenListResponse } from '../dto/token_list_response.ts';
 import { TokenRequest } from '../dto/token_request.ts';
 import { TokenResponse } from '../dto/token_response.ts';
+import { TokenRevokeRequest } from '../dto/token_revoke_request.ts';
+import { TokenRevokeResponse } from '../dto/token_revoke_response.ts';
+import { TokenUpdateRequest } from '../dto/token_update_request.ts';
+import { TokenUpdateResponse } from '../dto/token_update_response.ts';
 import { UserInfoIssueRequest } from '../dto/user_info_issue_request.ts';
 import { UserInfoIssueResponse } from '../dto/user_info_issue_response.ts';
 import { UserInfoRequest } from '../dto/user_info_request.ts';
@@ -117,6 +124,62 @@ export interface AuthleteApi
 
 
     /**
+     * Call `/auth/token/get/list` API.
+     *
+     * @param subject
+     *         Unique user ID.
+     *
+     * @param clientId
+     *         Client Identifier (client ID or client ID alias).
+     *
+     * @param start
+     *         Start index of search results (inclusive). The default
+     *         value is `0`.
+     *
+     * @param end
+     *         End index of search results (exclusive). The default
+     *         value is `5`.
+     */
+    getTokenList(subject?: string, clientIdentifier?: string, start?: number, end?: number): Promise<TokenListResponse>
+
+
+    /**
+     * Call `/auth/token/create` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    tokenCreate(request: TokenCreateRequest): Promise<TokenCreateResponse>
+
+
+    /**
+     * Call `/auth/token/update` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    tokenUpdate(request: TokenUpdateRequest): Promise<TokenUpdateResponse>
+
+
+    /**
+     * Call `/auth/token/delete` API.
+     *
+     * @param token
+     *         An access token or its hash value.
+     */
+    tokenDelete(token: string): Promise<void>
+
+
+    /**
+     * Call `/auth/token/revoke` API.
+     *
+     * @param request
+     *         Request parameters passed to the API.
+     */
+    tokenRevoke(request: TokenRevokeRequest): Promise<TokenRevokeResponse>
+
+
+    /**
      * Call Authlete `/auth/revocation` API.
      *
      * @param request
@@ -175,11 +238,11 @@ export interface AuthleteApi
      *
      * @param start
      *         The start index (inclusive) of the result set. The default
-     *         value is 0. Must not be a negative number.
+     *         value is `0`. Must not be a negative number.
      *
      * @param end
      *         The end index (exclusive) of the result set. The default
-     *         value is 5. Must not be a negative number.
+     *         value is `5`. Must not be a negative number.
      */
     getServiceList(start?: number, end?: number): Promise<ServiceListResponse>
 
@@ -275,11 +338,11 @@ export interface AuthleteApi
      *
      * @param start
      *         The start index (inclusive) of the result set. The default
-     *         value is 0. Must not be a negative number.
+     *         value is `0`. Must not be a negative number.
      *
      * @param end
      *         The end index (exclusive) of the result set. The default
-     *         value is 5. Must not be a negative number.
+     *         value is `5`. Must not be a negative number.
      */
     getClientList(developer?: string, start?: number, end?: number): Promise<ClientListResponse>;
 

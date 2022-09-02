@@ -24,6 +24,7 @@ export * from './src/config/authlete_configuration.ts';
 export * from './src/config/authlete_configuration_property.ts';
 
 // dto
+export * from './src/dto/access_token.ts';
 export * from './src/dto/address.ts';
 export * from './src/dto/api_response.ts';
 export * from './src/dto/authorization_fail_request.ts';
@@ -69,13 +70,20 @@ export * from './src/dto/sns_credentials.ts';
 export * from './src/dto/standard_introspection_request.ts';
 export * from './src/dto/standard_introspection_response.ts';
 export * from './src/dto/tagged_value.ts';
+export * from './src/dto/token_create_request.ts';
+export * from './src/dto/token_create_response.ts';
 export * from './src/dto/token_fail_request.ts';
 export * from './src/dto/token_fail_response.ts';
 export * from './src/dto/token_info.ts';
 export * from './src/dto/token_issue_request.ts';
 export * from './src/dto/token_issue_response.ts';
+export * from './src/dto/token_list_response.ts';
 export * from './src/dto/token_request.ts';
 export * from './src/dto/token_response.ts';
+export * from './src/dto/token_revoke_request.ts';
+export * from './src/dto/token_revoke_response.ts';
+export * from './src/dto/token_update_request.ts';
+export * from './src/dto/token_update_response.ts';
 export * from './src/dto/user_info_issue_request.ts';
 export * from './src/dto/user_info_issue_response.ts';
 export * from './src/dto/user_info_request.ts';
