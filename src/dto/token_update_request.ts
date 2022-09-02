@@ -65,7 +65,7 @@ export class TokenUpdateRequest
      * parameter is not explicitly specified in the request.
      *
      * 1. The `accessTokenExpiresAt` request parameter is not included
-     * in the request or its value is 0 (or negative).
+     * in the request or its value is `0` (or negative).
      * 2. The scopes linked to the access token are changed by the `scopes`
      * request parameter in the request.
      * 3. Any of the new scopes to be linked to the access token has one
