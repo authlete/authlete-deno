@@ -1,6 +1,18 @@
 CHANGES
 =======
 
+1.2.10 (2022-09-02)
+------------------
+
+- Add support for the following APIs.
+
+  - /auth/token/create API
+  - /auth/token/delete API
+  - /auth/token/get/list API
+  - /auth/token/revoke API
+  - /auth/token/update API
+
+
 1.2.9 (2022-08-30)
 ------------------
 

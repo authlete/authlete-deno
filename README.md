@@ -42,7 +42,7 @@ Quick Usage
 **Step 1**: Import modules.
 
 ```ts
-import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.9/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.10/mod.ts';
 ```
 
 **Step 2**: Configure and create an `AuthleteApi` instance.
@@ -261,6 +261,14 @@ Methods in `AuthleteApi` interface can be divided into some categories.
   12. Methods for PAR (Pushed Authorization Request)
 
   - `pushAuthorizationRequest(request)`
+
+  13. Methods for Token Management
+
+  - `getTokenList(subject, clientIdentifier, start, end)`
+  - `tokenCreate(request)`
+  - `tokenDelete(accessTokenIdentifier)`
+  - `tokenRevoke(request)`
+  - `tokenUpdate(request)`
 
 How To Release
 --------

@@ -39,7 +39,7 @@ Deno Land
 **Step 1**: モジュールをインポート。
 
 ```ts
-import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.9/mod.ts';
+import { AuthleteApiFactory } from 'https://deno.land/x/authlete_deno@v1.2.10/mod.ts';
 ```
 
 **Step 2**: `AuthleteApi` のインスタンスを初期化。
@@ -254,6 +254,14 @@ const api = await AuthleteApiFactory.create(config);
   12. PAR (Pushed Authorization Request) のためのメソッド群
 
   - `pushAuthorizationRequest(request)`
+
+  13. トークン管理のためのメソッド群
+
+  - `getTokenList(subject, clientIdentifier, start, end)`
+  - `tokenCreate(request)`
+  - `tokenDelete(accessTokenIdentifier)`
+  - `tokenRevoke(request)`
+  - `tokenUpdate(request)`
 
 リリース手順
 --------
