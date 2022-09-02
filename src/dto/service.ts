@@ -871,7 +871,7 @@ export class Service
      *
      * Authlete Server searches the JWK Set for a JWK which satisfies
      * conditions for authorization response signature. If the number
-     * of JWK candidates which satisfy the conditions is 1, there is
+     * of JWK candidates which satisfy the conditions is `1`, there is
      * no problem. On the other hand, if there exist multiple candidates,
      * a Key ID is needed to be specified so that Authlete Server can
      * pick up one JWK from among the JWK candidates. This property
